@@ -1,8 +1,8 @@
-### Front End FullStack
+# Front End FullStack
 
 ## Components Needed-
 
-  Login:
+  ### Login:
   + TextInput
   + Button
   + Label
