@@ -9,6 +9,7 @@ export default function Home() {
 
   const [firstN, setFirstN] = useState<string>("");
   const [lastN, setLastN] = useState<string>("");
+  
   const [age, setAge] = useState<string>("");
 
   const [logsign, setLogsign] = useState<boolean>(true);
