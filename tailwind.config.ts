@@ -9,13 +9,20 @@ const config: Config = {
     'node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   theme: {
-    extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
+    fontFamily: {
+      mainFont: ['mainFont']
     },
+    extend: {
+      backgroundImage: theme => ({
+        'bgLogin': "url('/loginpic.png')",
+      }),
+    },
+    colors: {
+      'signHeader':'rgba(57, 28, 11, 1)',
+      'signHeader2': 'rgba(51, 51, 51, 1)',
+      'signUp': 'rgba(102, 102, 102, 1)',
+      'signUpBtn': 'rgba(136, 119, 109, 1)'
+    }
   },
   plugins: [
     require('flowbite/plugin'),

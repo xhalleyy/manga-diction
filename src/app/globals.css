@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components{
+    @font-face{
+        font-family: mainFont;
+        src: url(../assets/Poppins/Poppins-Regular.ttf)
+    }
+  }
+
 .hidden{
     display: none;
 }
