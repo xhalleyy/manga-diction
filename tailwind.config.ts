@@ -21,7 +21,9 @@ const config: Config = {
       'signHeader':'rgba(57, 28, 11, 1)',
       'signHeader2': 'rgba(51, 51, 51, 1)',
       'signUp': 'rgba(102, 102, 102, 1)',
-      'signUpBtn': 'rgba(136, 119, 109, 1)'
+      'signUpBtn': 'rgba(136, 119, 109, 1)',
+      'mainBg': 'rgba(236, 234, 217, 1)',
+      'tagsBg': 'rgba(39, 48, 67, 1)'
     }
   },
   plugins: [
