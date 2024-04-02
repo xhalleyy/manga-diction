@@ -12,9 +12,10 @@ export default function Home() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const [id, setId] = useState<number>(0);
   const [firstN, setFirstN] = useState<string>("");
   const [lastN, setLastN] = useState<string>("");
-  const [age, setAge] = useState<string>("");
+  const [age, setAge] = useState<number>(0);
 
   const [logsign, setLogsign] = useState<boolean>(true);
   const router = useRouter();
@@ -27,13 +28,15 @@ export default function Home() {
   const handleSignUp = async () => {
 
     let userData = {
-      id: 0,
+      id: id,
       username: username,
       firstName: firstN,
       lastName: lastN,
-      age: 0,
+      age: age,
       password: password
     }
+
+    console.log(userData);
 
     if (logsign) {
 
@@ -65,7 +68,9 @@ export default function Home() {
       password: password
     }
 
-    if(logsign){
+    console.log(loginData)
+
+    if(!logsign){
 
       login(loginData);
 
@@ -86,7 +91,6 @@ export default function Home() {
       }
     }
     }
-
 
 
   return (
@@ -137,7 +141,7 @@ export default function Home() {
             <div className={logsign ? "hidden mb-3" : "normale mb-3"}>
               <Label className="text-signUp" htmlFor="age1" value="Age:" />
 
-              <TextInput id="age1" type="text" placeholder="Enter Age" required onChange={(e) => setAge(e.target.value)} />
+              <TextInput id="age1" type="text" placeholder="Enter Age" required onChange={(e) => setAge(Number(e.target.value))} />
             </div>
 
             <div className="mb-3">
@@ -147,7 +151,7 @@ export default function Home() {
             </div>
           </form>
 
-          <button onClick={logsign ? handleSignUp : handleLogIn} className={logsign ? "bg-signHeader p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-signUpBtn p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
+          <button onClick={logsign ? handleLogIn : handleSignUp} className={logsign ? "bg-signHeader p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-signUpBtn p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
 
 
           <div className="flex">

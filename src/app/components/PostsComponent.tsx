@@ -22,7 +22,7 @@ const PostsComponent = () => {
                 </div>
 
                 <div className='inline-flex'>
-                    <Badge className='border rounded-lg text-black font-normal mr-1'>
+                    <Badge className='flex flex-row border rounded-lg text-black font-normal mr-1'>
                             <img src='/likes.png' />
                             <span>comments</span>
                     </Badge>
