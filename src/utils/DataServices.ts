@@ -4,7 +4,7 @@ const url = 'https://mangadictionapi.azurewebsites.net/';
 
 export const createUser = async (createdUser: IUserData) => {
 
-    const res = await fetch(url + 'User/CreateUser', {
+    const res = await fetch(url + '/User/CreateUser', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -12,6 +12,7 @@ export const createUser = async (createdUser: IUserData) => {
         body: JSON.stringify(createdUser)
     })
 
+    console.log('Response: ' + res)
     if(!res.ok){
         const message = 'an error has occured! ' + res.status;
         throw new Error(message);
@@ -22,7 +23,7 @@ export const createUser = async (createdUser: IUserData) => {
 }
 
 export const login = async(loginUser: ILoginUserInfo) => {
-    const res = await fetch(url + 'User/Login', {
+    const res = await fetch(url + '/User/Login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

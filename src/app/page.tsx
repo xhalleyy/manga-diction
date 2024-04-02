@@ -36,16 +36,23 @@ export default function Home() {
       password: password
     }
 
+    
+    let loginData = {
+      username: username,
+      password: password
+    }
+
     console.log(userData);
 
     if (logsign) {
 
-      createUser(userData);
+      await createUser(userData);
+      console.log('user created successfully! go to login page.')
 
     } else {
 
 
-      let token: IToken = await login(userData);
+      let token: IToken = await login(loginData);
       console.log(token);
 
       if(token.token != null){
@@ -55,11 +62,12 @@ export default function Home() {
 
       } else {
         
-        alert('login failed! </3')
+        alert('signup failed! </3')
 
       }
     }
   }
+  
 
   const handleLogIn = async () => {
 
@@ -72,7 +80,7 @@ export default function Home() {
 
     if(!logsign){
 
-      login(loginData);
+      await login(loginData);
 
     } else {
 
@@ -86,7 +94,7 @@ export default function Home() {
 
       } else {
         
-        alert('login failed! </3')
+        console.log('login failed! </3 try again!')
 
       }
     }
@@ -169,4 +177,5 @@ export default function Home() {
       </div>
     </div>
   );
-}
+  }
+
