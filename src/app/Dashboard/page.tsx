@@ -6,13 +6,13 @@ import ClubModalComponent from '../components/ClubModalComponent'
 
 const page = () => {
   return (
-    <div>
+    <div className='bg-mainBg h-screen'>
 
         <NavbarComponent/>
 
         <div>
-          <div className="flex flex-1 justify-between">
-            <p>Popular Public Clubs:</p>
+          <div className="flex flex-1 justify-between px-[70px]">
+            <p className='font-mainFont text-lg mt-1'>Popular Public Clubs:</p>
             <div>
               <ClubModalComponent/>
             </div>
