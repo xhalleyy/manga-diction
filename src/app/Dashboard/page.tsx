@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import PostsComponent from '../components/PostsComponent'
+import CardComponent from '../components/CardComponent'
 
 const page = () => {
   return (
@@ -9,6 +10,8 @@ const page = () => {
         <NavbarComponent/>
 
         <PostsComponent/>
+
+        <CardComponent/>
       
     </div>
   )
