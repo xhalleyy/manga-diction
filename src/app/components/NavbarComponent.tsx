@@ -10,7 +10,7 @@ export function NavbarComponent() {
     <Navbar className="bg-mainBg font-mainFont text-signHeader !pt-6 !px-8 " fluid rounded>
       <Navbar.Brand >
         <img className="w-14 h-14" src='./logo.png' />
-        <span className="self-center whitespace-nowrap text-3xl font-semibold dark:text-white pl-4">MangaDiction!</span>
+        <Link className="self-center whitespace-nowrap text-3xl font-semibold dark:text-white pl-4" href={"Dashboard"}>MangaDiction!</Link>
       </Navbar.Brand>
 
       <Navbar.Collapse className="ml-auto">
