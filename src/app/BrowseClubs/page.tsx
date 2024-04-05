@@ -3,11 +3,11 @@ import { NavbarComponent } from '../components/NavbarComponent'
 
 const page = () => {
   return (
-    <div className='bg-mainBg h-screen'>
+    <div className='bg-mainBg h-screen font-mainFont'>
 
         <NavbarComponent/>
 
-        <p> this is the browse clubs page </p>
+        <p className='text-4xl text-signHeader p-10'> Public Clubs </p>
       
     </div>
   )
