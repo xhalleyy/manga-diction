@@ -36,3 +36,13 @@
 .searchBorder {
     border-color: rgba(207, 198, 183, 1);
 }
+
+.mobileBg {
+    background: url(/mobilebackground.png) no-repeat center center fixed;
+    background-size: cover;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root{
+    font-family: mainFont !important;
+    font-size: 20px !important;
+}
