@@ -18,45 +18,50 @@ function ClubModalComponent() {
         <>
             <Button className="darkBlue" onClick={() => setOpenModal(true)}>Create Club +</Button>
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
-                <Modal.Header className="darkBeige">Create New Club</Modal.Header>
+                
                 <Modal.Body className="darkBeige">
+                        <div className="flex justify-end justify-items-end">
+                        <button className="text-xl" onClick={() => setOpenModal(false)}>X</button>
+                        </div>
+                    <div className="py-4 flex flex-1 justify-center">
+                        <h1 className="text-center text-3xl">Create New Club</h1>
+                    </div>
                     <div className="">
                         <div className="flex-col">
                             <label>Add Cover Image:</label>
-                            <button>Select File</button>
+                            <button className="opaqueWhite px-4 py-1 rounded-xl">Select File</button>
                         </div>
                         <div className="">
                             <label>Club Name</label>
                             <div>
-                                <input />
+                                <input className="opaqueWhite rounded-xl" />
                             </div>
                         </div>
                         <div className="">
                             <label>Description</label>
                             <div>
                                 {/* wider + taller than club name input */}
-                                <input />
+                                <input className="opaqueWhite rounded-xl" />
                             </div>
                         </div>
                         <div className="flex flex-1">
                             <label>Privacy Settings: </label>
                             {/* dropdown, 2 options (public, private) */}
-                            <div>
-                            <Dropdown label={!privateClub ? "Public" : "Private"} dismissOnClick={false}>
+                            <div className="opaqueWhite rounded-xl dropdownBtn flex justify-center">
+                            <Dropdown label={!privateClub ? "Public" : "Private"} style={{color: "black"}} dismissOnClick={false}>
                                 <Dropdown.Item onClick={publicSettingOn}>Public</Dropdown.Item>
                                 <Dropdown.Item onClick={privateSettingOn}>Private</Dropdown.Item>
                             </Dropdown>
                             </div>
                         </div>
                     </div>
-                </Modal.Body>
-                <Modal.Footer className="darkBeige">
                     <div className="flex flex-1 justify-end">
-                    <Button color="gray" onClick={() => setOpenModal(false)}>
+                    <Button className="darkBlue" onClick={() => setOpenModal(false)}>
                         Create +
                     </Button>
                     </div>
-                </Modal.Footer>
+                </Modal.Body>
+               
             </Modal>
         </>
     );

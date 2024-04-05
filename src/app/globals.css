@@ -24,3 +24,11 @@
 .darkBeige{
     background-color: #CFC6B7;
 }
+
+.opaqueWhite{
+    background-color: rgb(255, 255, 255, 0.8);
+}
+
+.dropdownBtn{
+    width: 20%;
+}
