@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { Avatar, Dropdown, DropdownDivider, Navbar } from "flowbite-react";
 import Link from "next/link";
@@ -9,7 +9,7 @@ export function NavbarComponent() {
   return (
     <Navbar className="bg-mainBg font-mainFont text-signHeader !pt-6 !px-8 " fluid rounded>
       <Navbar.Brand >
-        <Link href="/dashboard" className="flex items-center">
+        <Link href="Dashboard" className="flex items-center">
           <img className="w-14 h-14" src='./logo.png' alt="Logo" />
           <span className="self-center whitespace-nowrap text-3xl font-semibold dark:text-white pl-4">MangaDiction!</span>
         </Link>

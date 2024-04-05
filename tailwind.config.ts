@@ -23,7 +23,8 @@ const config: Config = {
       'signUp': 'rgba(102, 102, 102, 1)',
       'signUpBtn': 'rgba(136, 119, 109, 1)',
       'mainBg': 'rgba(236, 234, 217, 1)',
-      'tagsBg': 'rgba(39, 48, 67, 1)'
+      'tagsBg': 'rgba(39, 48, 67, 1)',
+      'searchColor' : 'rgba(207, 198, 183, 1)'
     }
   },
   plugins: [
