@@ -46,44 +46,6 @@ export default function Home() {
 
     if (logsign) {
 
-      await createUser(userData);
-      console.log('user created successfully! go to login page.')
-
-    } else {
-
-
-      let token: IToken = await login(loginData);
-      console.log(token);
-
-      if(token.token != null){
-
-        localStorage.setItem("Token", token.token);
-        alert("user created! go to login.")
-
-      } else {
-        
-        alert('signup failed! </3')
-
-      }
-    }
-  }
-  
-
-  const handleLogIn = async () => {
-
-    let loginData = {
-      username: username,
-      password: password
-    }
-
-    console.log(loginData)
-
-    if(!logsign){
-
-      await login(loginData);
-
-    } else {
-
       let token: IToken = await login(loginData);
       console.log(token);
 
@@ -94,12 +56,16 @@ export default function Home() {
 
       } else {
         
-        console.log('login failed! </3 try again!')
+        alert('Signup failed! </3')
 
       }
-    }
-    }
 
+    } else {
+
+      await createUser(userData);
+      alert('Account created successfully! Head to the login to access your account. ')
+    }
+  }
 
   return (
     <div className="flex">
@@ -159,7 +125,7 @@ export default function Home() {
             </div>
           </form>
 
-          <button onClick={logsign ? handleLogIn : handleSignUp} className={logsign ? "bg-signHeader p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-signUpBtn p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
+          <button onClick={handleSignUp} className={logsign ? "bg-signHeader p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-signUpBtn p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
 
 
           <div className="flex">
