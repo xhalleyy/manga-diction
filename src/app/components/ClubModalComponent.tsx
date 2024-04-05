@@ -2,6 +2,7 @@
 
 import { Button, Dropdown, Modal } from "flowbite-react";
 import { useState } from "react";
+import AddIcon from '@mui/icons-material/Add';
 
 function ClubModalComponent() {
     const [openModal, setOpenModal] = useState(false);
@@ -18,7 +19,8 @@ function ClubModalComponent() {
         <>
             <Button className="darkBlue rounded-xl" onClick={() => setOpenModal(true)}>
                 <span className="font-mainFont text-[22px]">Create Club</span>
-                <img alt="plus sign" src="" />
+                {/* <img alt="plus sign" src={AddIcon} /> */}
+                <AddIcon className="ms-2"/>
             </Button>
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 
@@ -50,18 +52,23 @@ function ClubModalComponent() {
                         <div className="flex flex-1 pt-5">
                             <label className="mt-1 font-mainFont text-lg">Privacy Settings: </label>
                             {/* dropdown, 2 options (public, private) */}
-                            <div className="opaqueWhite rounded-xl dropdownBtn flex justify-center ms-3 font-mainFont">
-                            <Dropdown label={!privateClub ? "Public" : "Private"} style={{color: "black"}} dismissOnClick={false}>
+                            <div className="rounded-xl dropdownBtn flex justify-center ms-3">
+                                <select className="rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none">
+                                    <option value="public" className="font-mainFont">Public</option>
+                                    <option value="priv">Private</option>
+                                </select>
+                            {/* <Dropdown label={!privateClub ? "Public" : "Private"} style={{color: "black"}} dismissOnClick={false}>
                                 <Dropdown.Item onClick={publicSettingOn}>Public</Dropdown.Item>
                                 <Dropdown.Item onClick={privateSettingOn}>Private</Dropdown.Item>
-                            </Dropdown>
+                            </Dropdown> */}
                             </div>
                         </div>
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
                     <Button className="darkBlue rounded-xl" onClick={() => setOpenModal(false)}>
                         <span className="font-mainFont text-lg">Create</span>
-                        <img alt="plus sign" src=""/>
+                        {/* <img alt="plus sign" src=""/> */}
+                        <AddIcon className="ms-1"/>
                     </Button>
                     </div>
                 </Modal.Body>
