@@ -32,3 +32,7 @@
 .dropdownBtn{
     width: 20%;
 }
+
+.searchBorder {
+    border-color: rgba(207, 198, 183, 1);
+}

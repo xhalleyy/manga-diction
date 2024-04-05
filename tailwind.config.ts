@@ -9,6 +9,12 @@ const config: Config = {
     'node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   theme: {
+    screens: {
+      'sm': '425px', // Adjust to your desired breakpoint
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+    },
     fontFamily: {
       mainFont: ['mainFont']
     },
@@ -16,15 +22,15 @@ const config: Config = {
       backgroundImage: theme => ({
         'bgLogin': "url('/loginpic.png')",
       }),
-    },
-    colors: {
-      'signHeader':'rgba(57, 28, 11, 1)',
-      'signHeader2': 'rgba(51, 51, 51, 1)',
-      'signUp': 'rgba(102, 102, 102, 1)',
-      'signUpBtn': 'rgba(136, 119, 109, 1)',
-      'mainBg': 'rgba(236, 234, 217, 1)',
-      'tagsBg': 'rgba(39, 48, 67, 1)',
-      'searchColor' : 'rgba(207, 198, 183, 1)'
+      colors: {
+        'signHeader':'rgba(57, 28, 11, 1)',
+        'signHeader2': 'rgba(51, 51, 51, 1)',
+        'signUp': 'rgba(102, 102, 102, 1)',
+        'signUpBtn': 'rgba(136, 119, 109, 1)',
+        'mainBg': 'rgba(236, 234, 217, 1)',
+        'tagsBg': 'rgba(39, 48, 67, 1)',
+        'searchColor' : 'rgba(207, 198, 183, 1)'
+      }
     }
   },
   plugins: [
