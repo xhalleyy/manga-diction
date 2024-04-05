@@ -1,10 +1,18 @@
 "use client";
 
-import { Button, Modal } from "flowbite-react";
+import { Button, Dropdown, Modal } from "flowbite-react";
 import { useState } from "react";
 
 function ClubModalComponent() {
     const [openModal, setOpenModal] = useState(false);
+    const [privateClub, setPrivateClub] = useState<boolean>(false);
+
+    const privateSettingOn= () => {
+        setPrivateClub(true)
+    }
+    const publicSettingOn = () => {
+        setPrivateClub(false)
+    }
 
     return (
         <>
@@ -17,16 +25,37 @@ function ClubModalComponent() {
                             <label>Add Cover Image:</label>
                             <button>Select File</button>
                         </div>
-                        <div>
+                        <div className="">
                             <label>Club Name</label>
+                            <div>
+                                <input />
+                            </div>
+                        </div>
+                        <div className="">
+                            <label>Description</label>
+                            <div>
+                                {/* wider + taller than club name input */}
+                                <input />
+                            </div>
+                        </div>
+                        <div className="flex flex-1">
+                            <label>Privacy Settings: </label>
+                            {/* dropdown, 2 options (public, private) */}
+                            <div>
+                            <Dropdown label={!privateClub ? "Public" : "Private"} dismissOnClick={false}>
+                                <Dropdown.Item onClick={publicSettingOn}>Public</Dropdown.Item>
+                                <Dropdown.Item onClick={privateSettingOn}>Private</Dropdown.Item>
+                            </Dropdown>
+                            </div>
                         </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className="darkBeige">
-                    <Button onClick={() => setOpenModal(false)}>I accept</Button>
+                    <div className="flex flex-1 justify-end">
                     <Button color="gray" onClick={() => setOpenModal(false)}>
-                        Decline
+                        Create +
                     </Button>
+                    </div>
                 </Modal.Footer>
             </Modal>
         </>
