@@ -1,9 +1,11 @@
-
 "use client";
 
 import { Avatar, Dropdown, DropdownDivider, Navbar } from "flowbite-react";
+import Link from "next/link";
 
 export function NavbarComponent() {
+
+
   return (
     <Navbar className="bg-mainBg font-mainFont text-signHeader !pt-6 !px-8 " fluid rounded>
       <Navbar.Brand >
@@ -12,7 +14,7 @@ export function NavbarComponent() {
       </Navbar.Brand>
 
       <Navbar.Collapse className="ml-auto">
-        <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-signHeader" href="#">Browse Clubs</Navbar.Link>
+        <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-signHeader" as={Link} href="BrowseClubs">Browse Clubs</Navbar.Link>
         <Navbar.Link className="text-xl text-signHeader font-bold mr-3 mt-2" href="#">Search Manga</Navbar.Link>
 
         <div className="mt-2">
