@@ -16,8 +16,8 @@ export function NavbarComponent() {
       </Navbar.Brand>
 
       <Navbar.Collapse className="ml-auto">
-        <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-signHeader" as={Link} href="BrowseClubs">Browse Clubs</Navbar.Link>
-        <Navbar.Link className="text-xl text-signHeader font-bold mr-3 mt-2" href="#">Search Manga</Navbar.Link>
+        <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-signHeader navhover" as={Link} href="BrowseClubs">Browse Clubs</Navbar.Link>
+        <Navbar.Link className="text-xl text-signHeader font-bold mr-3 mt-2 navhover" href="#">Search Manga</Navbar.Link>
 
         <div className="mt-2">
           <Dropdown className=" border-8 rounded-xl border-mainBg w-96"
