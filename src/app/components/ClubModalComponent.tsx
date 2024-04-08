@@ -54,8 +54,8 @@ function ClubModalComponent() {
                             {/* dropdown, 2 options (public, private) */}
                             <div className="rounded-xl dropdownBtn flex justify-center ms-3">
                                 <select className="rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none">
-                                    <option value="public" className="font-mainFont">Public</option>
-                                    <option value="priv">Private</option>
+                                    <option value="public" className="font-mainFont" onClick={publicSettingOn}>Public</option>
+                                    <option value="priv" onClick={privateSettingOn}>Private</option>
                                 </select>
                             {/* <Dropdown label={!privateClub ? "Public" : "Private"} style={{color: "black"}} dismissOnClick={false}>
                                 <Dropdown.Item onClick={publicSettingOn}>Public</Dropdown.Item>

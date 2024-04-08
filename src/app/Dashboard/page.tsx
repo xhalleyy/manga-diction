@@ -18,7 +18,7 @@ const page = () => {
         </div>
       </div>
 
-      <div className='px-[70px]'>
+      <div className='px-[70px] mb-10'>
         {/* both "arrow" buttons are placeholders feel free to delete/replace */}
         <button>arrow left</button>
         <div className="grid grid-cols-4 gap-1">  
@@ -30,11 +30,13 @@ const page = () => {
         <button>arrow right</button>
       </div>
 
-      <div className='px-[70px]'>
-        <div>
+      <div className='px-[70px] grid grid-cols-4 gap-5'>
+        <div className='grid col-span-3'>
+          <p className='font-mainFont text-lg mt-2 mb-6'>Recent Posts:</p>
       <PostsComponent />
         </div>
-        <div>
+        <div className='grid col-span-1'>
+          <p className='font-mainFont text-lg mt-2 mb-6'>Latest Updates:</p>
           {/* latest updates component */}
         </div>
       </div>
