@@ -117,10 +117,12 @@ export function NavbarComponent() {
                             </div>
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
+                      <Link href="SearchManga">
                     <Button className="darkBlue rounded-xl" onClick={() => setOpenModal(false)}>
                         <span className="font-mainFont text-lg">Submit</span>
                         {/* <img alt="plus sign" src=""/> */}
                     </Button>
+                      </Link>
                     </div>
                 </Modal.Body>
                
