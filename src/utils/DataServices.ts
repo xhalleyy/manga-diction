@@ -111,3 +111,11 @@ export const publicClubsApi = async() => {
 }
 
 publicClubsApi();
+
+
+// search (by title)
+// search (by parameter (filtering...), author name)
+// advanced search (tags)
+// sorting (most recent date released, etc....)
+// filter (by demographic)
+// filter (by publication status, ? ex: Ongoing, Discontinued/Cancelled, Finished)
