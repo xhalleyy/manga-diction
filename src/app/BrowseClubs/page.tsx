@@ -12,7 +12,7 @@ const page = () => {
 
 
   return (
-    <div className='bg-mainBg h-full font-mainFont'>
+    <div className='bg-offwhite h-full font-mainFont'>
 
       <NavbarComponent />
 
@@ -20,7 +20,7 @@ const page = () => {
       <div className='grid lg:grid-cols-4 gap-0 pt-12 px-16'>
 
         <div>
-          <p className='text-3xl text-signHeader font-bold'> Public Clubs </p>
+          <p className='text-3xl text-darkbrown font-bold'> Public Clubs </p>
         </div>
 
         <div></div>
@@ -30,7 +30,7 @@ const page = () => {
             style={{ borderRightWidth: '50px', borderColor: 'rgba(207, 198, 183, 1)', height: 30}}
             type="text"
             placeholder=""
-            className="border-searchColor border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+            className="border-ivory border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
           />
 
           <div className="absolute ml-80 inset-y-0 flex items-center">

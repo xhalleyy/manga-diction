@@ -7,7 +7,7 @@ import { CarouselComponent } from '../components/CarouselComponent'
 
 const page = () => {
   return (
-    <div className='bg-mainBg h-screen'>
+    <div className='bg-offwhite h-screen'>
 
       <NavbarComponent />
 
