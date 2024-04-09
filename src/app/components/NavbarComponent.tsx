@@ -66,7 +66,7 @@ export function NavbarComponent() {
 
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 
-                <Modal.Body className="darkBeige rounded-2xl px-10">
+                <Modal.Body className="darkBeige rounded-lg px-10">
                         <div className="flex justify-end justify-items-end">
                         <button className="text-xl" onClick={() => setOpenModal(false)}>X</button>
                         </div>
@@ -93,30 +93,28 @@ export function NavbarComponent() {
                                 <input className="opaqueWhite rounded-xl w-[100%] h-14" />
                             </div>
                         </div>
-                        <div className="flex flex-1 pt-5">
+                        <div className="grid grid-cols-3 pt-5 rounded-xl  ">
                             
                             {/* dropdown, 2 options (public, private) */}
-                            <div className="rounded-xl dropdownBtn flex space-between ms-3">
-                              <div>
-                              <select className="rounded-xl opaqueWhite font-mainFont h-10 px-4 border-none">
+                              <div className="">
+                              <select className="rounded-xl w-36 text-sm opaqueWhite font-mainFont h-10  border-none">
                                     <option value="public" className="font-mainFont">Sort By</option>
                                 </select>
                               </div>
 
-                              <div>
-                              <select className="rounded-xl opaqueWhite font-mainFont h-10 px-4 border-none">
+                              <div className="">
+                              <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
                                     <option value="public" className="font-mainFont">Demographics</option>
                                 </select>
                               </div>
 
                               <div>
-                              <select className="rounded-xl opaqueWhite font-mainFont h-10 px-4 border-none">
+                              <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
                                     <option value="public" className="font-mainFont">Publication Status</option>
                                 </select>
                               </div>
                                                                                   
                             </div>
-                        </div>
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
                     <Button className="darkBlue rounded-xl" onClick={() => setOpenModal(false)}>

@@ -24,7 +24,7 @@ function ClubModalComponent() {
             </Button>
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
                 
-                <Modal.Body className="darkBeige rounded-2xl px-10">
+                <Modal.Body className="darkBeige rounded-lg px-10">
                         <div className="flex justify-end justify-items-end">
                         <button className="text-xl" onClick={() => setOpenModal(false)}>X</button>
                         </div>
