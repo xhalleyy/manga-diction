@@ -4,14 +4,15 @@ import { Card } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const router = useRouter();
-
-const goToClub = () => {
-  router.push('/ClubPage');
-}
 
 
 function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
+  
+  const router = useRouter();
+  
+  const goToClub = () => {
+    router.push('/ClubPage');
+  }
 
   return (
     <Card onClick={goToClub}
