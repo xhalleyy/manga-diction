@@ -3,6 +3,7 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import PostsComponent from '../components/PostsComponent'
 import CardComponent from '../components/CardComponent'
 import ClubModalComponent from '../components/ClubModalComponent'
+import { CarouselComponent } from '../components/CarouselComponent'
 
 const page = () => {
   return (
@@ -18,16 +19,17 @@ const page = () => {
         </div>
       </div>
 
-      <div className='px-[70px] mb-10'>
+      <div className='px-[70px] mb-10 grid grid-cols-7'>
         {/* both "arrow" buttons are placeholders feel free to delete/replace */}
-        <button>arrow left</button>
-        <div className="grid grid-cols-4 gap-1">  
-        <div>
+        <button className='grid col-span-1'>arrow left</button>
+        {/* <div className="grid grid-cols-4 gap-1 col-span-3">   */}
+        {/* <div> */}
           {/* if we define height and width for the cards they wont be altered by flex or grid */}
-          <CardComponent />
-        </div>
-        </div>
-        <button>arrow right</button>
+          {/* <CardComponent /> */}
+        {/* </div> */}
+        <CarouselComponent/>
+        {/* </div> */}
+        <button className='grid col-span-1'>arrow right</button>
       </div>
 
       <div className='px-[70px] grid grid-cols-4 gap-5'>
