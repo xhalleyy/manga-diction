@@ -6,7 +6,7 @@ import { CarouselComponent } from '../components/CarouselComponent'
 import ArrowCircleLeftTwoToneIcon from '@mui/icons-material/ArrowCircleLeftTwoTone';
 import ArrowCircleRightTwoToneIcon from '@mui/icons-material/ArrowCircleRightTwoTone';
 
-const page = () => {
+const Dashboard = () => {
 
   return (
     <div className='bg-offwhite h-screen'>
@@ -47,4 +47,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Dashboard

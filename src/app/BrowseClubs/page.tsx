@@ -13,7 +13,7 @@ import { IClubs } from '@/Interfaces/Interfaces';
 // STILL NEED TO : for the cards, want to randomize clubs and have 12 cards showcasing
 
 
-const page = () => {
+const BrowseClubs = () => {
 
   const [id, setId] = useState<number | undefined>();
   const [leaderId, setLeaderId] = useState<number | undefined>();
@@ -119,4 +119,4 @@ const page = () => {
   )
 }
 
-export default page
+export default BrowseClubs

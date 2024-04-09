@@ -2,7 +2,7 @@ import React from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Badge, Button } from 'flowbite-react'
 
-const page = () => {
+const MangaInfo = () => {
     return (
         <div className='bg-offwhite h-screen'>
 
@@ -84,4 +84,4 @@ const page = () => {
     )
 }
 
-export default page
+export default MangaInfo

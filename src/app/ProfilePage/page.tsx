@@ -2,7 +2,7 @@ import React from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import ClubModalComponent from '../components/ClubModalComponent'
 
-const page = () => {
+const ProfilePage = () => {
   return (
     <div className='bg-offwhite h-screen'>
       
@@ -30,4 +30,4 @@ const page = () => {
   )
 }
 
-export default page
+export default ProfilePage

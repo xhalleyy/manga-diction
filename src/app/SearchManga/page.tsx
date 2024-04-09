@@ -3,7 +3,7 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import Link from 'next/link'
 
 
-const page = () => {
+const SearchManga = () => {
 
     return (
         <div className='bg-offwhite h-screen'>
@@ -11,7 +11,7 @@ const page = () => {
             <NavbarComponent />
 
             <div className='mt-5'>
-                <h1 className='px-16 text-3xl font-mainFont text-darkbrown font-bold'>Manga Results for '{ }'</h1>
+                <h1 className='px-16 text-3xl font-mainFont text-darkbrown font-bold'>Manga Results for &apos;{ }&apos;</h1>
 
                 <div className="grid grid-cols-5 px-[70px] mt-8">
                     {/* search results, 5 per 'row' */}
@@ -37,4 +37,4 @@ const page = () => {
     )
 }
 
-export default page
+export default SearchManga
