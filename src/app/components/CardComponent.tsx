@@ -1,14 +1,21 @@
 "use client";
 
 import { Card } from "flowbite-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+const router = useRouter();
+
+const goToClub = () => {
+  router.push('/ClubPage');
+}
 
 
 function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
 
   return (
-    <Card
-      className="max-w-sm"
+    <Card onClick={goToClub}
+      className="max-w-sm cursor-pointer"
       imgAlt={prop.description}
       imgSrc={prop.image}
     >

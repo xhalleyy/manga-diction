@@ -25,4 +25,4 @@ export interface IClubs {
     dateCreated: string;
     isPublic: boolean;
     isDeleted: boolean;
-  }
+}

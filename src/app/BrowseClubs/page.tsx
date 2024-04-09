@@ -10,6 +10,9 @@ import CardComponent from '../components/CardComponent';
 import { publicClubsApi } from '@/utils/DataServices';
 import { IClubs } from '@/Interfaces/Interfaces';
 
+// STILL NEED TO : for the cards, want to randomize clubs and have 12 cards showcasing
+
+
 const page = () => {
 
   const [id, setId] = useState<number | undefined>();
