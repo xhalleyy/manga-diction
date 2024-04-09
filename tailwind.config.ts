@@ -29,7 +29,8 @@ const config: Config = {
         'lightbrown': 'rgba(136, 119, 109, 1)', // light brown
         'offwhite': 'rgba(236, 234, 217, 1)', // offwhite
         'darkblue': 'rgba(39, 48, 67, 1)', // dark blue
-        'ivory' : 'rgba(207, 198, 183, 1)' // ivory
+        'ivory' : 'rgba(207, 198, 183, 1)', // ivory
+        'paleblue' : 'rgb(173, 196, 206)' //desaturated blue
       }
     }
   },
