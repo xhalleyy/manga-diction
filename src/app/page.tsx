@@ -4,11 +4,13 @@ import { IToken } from "@/Interfaces/Interfaces";
 import { createUser, login } from "@/utils/DataServices";
 import { log } from "console";
 import { create } from "domain";
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button, Label, TextInput, CustomFlowbiteTheme } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 
 import Alert from '@mui/material/Alert';
@@ -32,6 +34,7 @@ export default function Home() {
   const [logsign, setLogsign] = useState<boolean>(true);
 
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
+  const [visibility, setVisibility] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -99,6 +102,20 @@ export default function Home() {
     }
   }
 
+  const handlePasswordVisibility = () => {
+    setVisibility(!visibility);
+  }
+
+  const customInput: CustomFlowbiteTheme['textInput'] = {
+    "field":{
+      "input": {
+        "colors": {
+          "brown": "border-gray-300 bg-gray-50 text-signHeader focus:border-signUpBtn focus:ring-signUpBtn"
+        },
+      },
+    }
+  }
+
   return (
     <>
       <div className="hidden md:flex">
@@ -125,9 +142,9 @@ export default function Home() {
             )}
           </div>
 
-          <div className="p-20 ">
+          <div className={logsign ? "p-20" : "px-20 mt-40"}>
 
-            <div className={logsign ? 'font-bold text-3xl text-signHeader mb-10' : 'font-bold text-3xl text-signHeader2 mb-10'}>
+            <div className={logsign ? 'font-bold text-3xl text-signHeader mb-10' : ' font-bold text-3xl text-signHeader2 mb-10'}>
               <h1>{logsign ? "Sign in" : "Sign up"}</h1>
             </div>
 
@@ -135,31 +152,46 @@ export default function Home() {
               <div className="mb-3">
                 <Label className={logsign ? 'text-signHeader' : 'text-signUp'} htmlFor="username1" value="Username" />
 
-                <TextInput id="username1" type="text" placeholder="Enter Username" required onChange={(e) => setUsername(e.target.value)} />
+                <TextInput theme={customInput} color="brown" id="username1" type="text" placeholder="Enter Username" required onChange={(e) => setUsername(e.target.value)} />
               </div>
 
               <div className={logsign ? "hidden mb-3 " : "normale mb-3"}>
                 <Label className="text-signUp" htmlFor="firstname1" value="First Name:" />
 
-                <TextInput id="firstname1" type="text" placeholder="Enter First Name" required onChange={(e) => setFirstN(e.target.value)} />
+                <TextInput theme={customInput} color="brown" id="firstname1" type="text" placeholder="Enter First Name" required onChange={(e) => setFirstN(e.target.value)} />
               </div>
 
               <div className={logsign ? "hidden mb-3" : "normale mb-3"}>
                 <Label className="text-signUp" htmlFor="lastname1" value="Last Name:" />
 
-                <TextInput id="lastname1" type="text" placeholder="Enter Last Name" required onChange={(e) => setLastN(e.target.value)} />
+                <TextInput theme={customInput} color="brown" id="lastname1" type="text" placeholder="Enter Last Name" required onChange={(e) => setLastN(e.target.value)} />
               </div>
 
               <div className={logsign ? "hidden mb-3" : "normale mb-3"}>
                 <Label className="text-signUp" htmlFor="age1" value="Age:" />
 
-                <TextInput id="age1" type="text" placeholder="Enter Age" required onChange={(e) => setAge(Number(e.target.value))} />
+                <TextInput theme={customInput} color="brown" id="age1" type="text" placeholder="Enter Age" required onChange={(e) => setAge(Number(e.target.value))} />
               </div>
 
-              <div className="mb-3">
-                <Label className={logsign ? 'text-signHeader' : 'text-signUp'} htmlFor="password1" value="Password" />
+              <div className="mb-3 flex flex-col">
+                <div className="flex flex-row place-content-between">
+                  <Label className={logsign ? 'text-signHeader' : 'text-signUp'} htmlFor="password1" value="Password" />
+                  <div onClick={handlePasswordVisibility} className="text-sm text-signUp cursor-pointer">
+                    {visibility ? (
+                      <>
+                        <VisibilityOffIcon fontSize="small" className="me-1" />
+                        Hide Password
+                      </>
+                    ) : (
+                      <>
+                        <RemoveRedEyeIcon fontSize="small" className="me-1" />
+                        Show Password
+                      </>
+                    )}
+                  </div>
+                </div>
 
-                <TextInput id="password1" type="text" placeholder="Enter Password" required onChange={(e) => setPassword(e.target.value)} />
+                <TextInput theme={customInput} color="brown" id="password1" type={visibility ? 'text' : 'password'} placeholder="Enter Password" required onChange={(e) => setPassword(e.target.value)} />
               </div>
             </form>
 
