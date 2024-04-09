@@ -1,4 +1,4 @@
-import { ILoginUserInfo, IToken, IUserData } from "@/Interfaces/Interfaces";
+import { IClubs, ILoginUserInfo, IToken, IUserData } from "@/Interfaces/Interfaces";
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
 
@@ -49,4 +49,11 @@ export const checkToken = () => {
     }
 
     return result;
+}
+
+// Get Public Clubs
+export const publicClubsApi = async() => {
+    const promise = await fetch('https://mangadictionapi.azurewebsites.net/Club/GetAllClubs');
+    const data: IClubs[] = await promise.json();
+    return data;
 }

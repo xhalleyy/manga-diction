@@ -1,15 +1,36 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import SearchIcon from '@mui/icons-material/Search'
 import { Button, TextInput } from 'flowbite-react';
 import ClubModalComponent from '../components/ClubModalComponent';
 import { CarouselComponent } from '../components/CarouselComponent';
 import CardComponent from '../components/CardComponent';
+import { publicClubsApi } from '@/utils/DataServices';
+import { IClubs } from '@/Interfaces/Interfaces';
 
 const page = () => {
 
+  const [id, setId] = useState<number | undefined>();
+  const [leaderId, setLeaderId] = useState<number | undefined>();
+  const [description, setDescription] = useState<string>("");
+  const [dateCreated, setDateCreated] = useState<string>("");
+  const [image, setImage] = useState<string>("");
+  const [isPublic, setisPublic] = useState<boolean>(true);
+  const [clubName, setClubName] = useState<string>("");
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+
+  const [clubs, setClubs] = useState<IClubs[]>([]);
+
+  useEffect(()=> {
+    const fetchedData = async()=> {
+      const getClubs = await publicClubsApi();
+      // console.log(getClubs)
+      setClubs(getClubs);
+    } 
+    fetchedData();
+  }, []);
 
   return (
     <div className='bg-offwhite h-full font-mainFont'>
@@ -53,10 +74,28 @@ const page = () => {
         <CarouselComponent/>
       </div>
 
-      <div className='px-16 p-8'>
+      <div className='px-16 pt-8 pb-3'>
         <p className='text-lg'> More Public Clubs: </p>
       </div>
 
+      <div className='grid grid-cols-4 justify-around  gap-5 px-20 '>
+      {clubs.map((club) => (
+        <div className='col-span-1'>
+          <CardComponent
+            key={club.id} // Provide a unique key for each CardComponent
+            id={club.id}
+            leaderId={club.leaderId}
+            description={club.description}
+            dateCreated={club.dateCreated}
+            image={club.image}
+            isPublic={club.isPublic}
+            clubName={club.clubName}
+            isDeleted={club.isDeleted}
+          />
+        </div>
+      ))}
+      </div>
+{/* 
       <div className='flex justify-around px-16 py-5'>
         <CardComponent/>
         <CardComponent/>
@@ -69,14 +108,7 @@ const page = () => {
         <CardComponent/>
         <CardComponent/>
         <CardComponent/>
-      </div>
-
-      <div className='flex justify-around px-16 py-5'>
-        <CardComponent/>
-        <CardComponent/>
-        <CardComponent/>
-        <CardComponent/>
-      </div>
+      </div> */}
 
 
 
