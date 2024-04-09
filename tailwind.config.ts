@@ -23,13 +23,13 @@ const config: Config = {
         'bgLogin': "url('/loginpic.png')",
       }),
       colors: {
-        'signHeader':'rgba(57, 28, 11, 1)', // dark brown
-        'signHeader2': 'rgba(51, 51, 51, 1)', // dark gray/ black
+        'darkbrown':'rgba(57, 28, 11, 1)', // dark brown
+        'darkgray': 'rgba(51, 51, 51, 1)', // dark gray/ black
         'signUp': 'rgba(102, 102, 102, 1)', // light gray
-        'signUpBtn': 'rgba(136, 119, 109, 1)', // light brown
-        'mainBg': 'rgba(236, 234, 217, 1)', // offwhite
-        'tagsBg': 'rgba(39, 48, 67, 1)', // dark blue
-        'searchColor' : 'rgba(207, 198, 183, 1)' // ivory
+        'lightbrown': 'rgba(136, 119, 109, 1)', // light brown
+        'offwhite': 'rgba(236, 234, 217, 1)', // offwhite
+        'darkblue': 'rgba(39, 48, 67, 1)', // dark blue
+        'ivory' : 'rgba(207, 198, 183, 1)' // ivory
       }
     }
   },

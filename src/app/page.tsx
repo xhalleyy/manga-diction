@@ -110,7 +110,7 @@ export default function Home() {
     "field":{
       "input": {
         "colors": {
-          "brown": "border-gray-300 bg-gray-50 text-signHeader focus:border-signUpBtn focus:ring-signUpBtn"
+          "brown": "border-gray-300 bg-gray-50 text-darkbrown focus:border-lightbrown focus:ring-lightbrown"
         },
       },
     }
@@ -144,15 +144,15 @@ export default function Home() {
 
           <div className={logsign ? "p-20" : "px-20 mt-40"}>
 
-            <div className={logsign ? 'font-bold text-3xl text-signHeader mb-10' : ' font-bold text-3xl text-signHeader2 mb-10'}>
+            <div className={logsign ? 'font-bold text-3xl text-darkbrown mb-10' : ' font-bold text-3xl text-darkgray mb-10'}>
               <h1>{logsign ? "Sign in" : "Sign up"}</h1>
             </div>
 
             <form>
               <div className="mb-3">
-                <Label className={logsign ? 'text-signHeader' : 'text-signUp'} htmlFor="username1" value="Username" />
+                <Label className={logsign ? 'text-darkbrown' : 'text-signUp'} htmlFor="username1" value="Username" />
 
-                <TextInput theme={customInput} color="brown" id="username1" type="text" placeholder="Enter Username" required onChange={(e) => setUsername(e.target.value)} />
+                <TextInput value={username} theme={customInput} color="brown" id="username1" type="text" placeholder="Enter Username" required onChange={(e) => setUsername(e.target.value)} />
               </div>
 
               <div className={logsign ? "hidden mb-3 " : "normale mb-3"}>
@@ -175,7 +175,7 @@ export default function Home() {
 
               <div className="mb-3 flex flex-col">
                 <div className="flex flex-row place-content-between">
-                  <Label className={logsign ? 'text-signHeader' : 'text-signUp'} htmlFor="password1" value="Password" />
+                  <Label className={logsign ? 'text-darkbrown' : 'text-signUp'} htmlFor="password1" value="Password" />
                   <div onClick={handlePasswordVisibility} className="text-sm text-signUp cursor-pointer">
                     {visibility ? (
                       <>
@@ -191,17 +191,17 @@ export default function Home() {
                   </div>
                 </div>
 
-                <TextInput theme={customInput} color="brown" id="password1" type={visibility ? 'text' : 'password'} placeholder="Enter Password" required onChange={(e) => setPassword(e.target.value)} />
+                <TextInput value={password} theme={customInput} color="brown" id="password1" type={visibility ? 'text' : 'password'} placeholder="Enter Password" required onChange={(e) => setPassword(e.target.value)} />
               </div>
             </form>
 
-            <button onClick={handleSignUp} className={logsign ? "bg-signHeader p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-signUpBtn p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-5 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
+            <button onClick={handleSignUp} className={logsign ? "bg-darkbrown p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-lightbrown p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-5 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
 
 
             <div className="flex pt-1.5 ps-3 ">
 
               <button>
-                <a className={logsign ? 'text-signHeader' : 'text-signUp'} onClick={logsignSwitch}>
+                <a className={logsign ? 'text-darkbrown' : 'text-signUp'} onClick={logsignSwitch}>
                   {logsign ? "Don't have an account? " : "Already have an account? "}
                   <span className="underline">Sign {logsign ? "up" : "in"}</span>
                 </a>
@@ -220,7 +220,7 @@ export default function Home() {
       <div className="flex flex-col md:hidden mobileBg min-h-screen w-auto">
         <div className="flex flex-col gap-2 justify-center items-center pt-24">
           <img className="w-20" src="/logo.png" />
-          <h1 className="text-4xl font-mainFont text-signHeader font-bold">MangaDiction!</h1>
+          <h1 className="text-4xl font-mainFont text-darkbrown font-bold">MangaDiction!</h1>
         </div>
 
         <div className="flex flex-row gap-5 justify-center">

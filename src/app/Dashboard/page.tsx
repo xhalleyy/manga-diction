@@ -6,7 +6,7 @@ import ClubModalComponent from '../components/ClubModalComponent'
 
 const page = () => {
   return (
-    <div className='bg-mainBg h-screen'>
+    <div className='bg-offwhite h-screen'>
 
       <NavbarComponent />
 

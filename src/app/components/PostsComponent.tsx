@@ -16,8 +16,8 @@ const PostsComponent = () => {
                 <p className='text-xl'> username </p>
 
                 <div className='inline-flex'>
-                    <Badge className='bg-tagsBg rounded-lg text-white px-2 mr-1'>tags</Badge>
-                    <Badge className='bg-tagsBg rounded-lg text-white'>tags</Badge>
+                    <Badge className='bg-darkblue rounded-lg text-white px-2 mr-1'>tags</Badge>
+                    <Badge className='bg-darkblue rounded-lg text-white'>tags</Badge>
                 </div>
 
                 <div>
