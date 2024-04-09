@@ -7,7 +7,14 @@ import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 
 const PostsComponent = () => {
     return (
-        <div className='flex font-mainFont w-full bg-white/80 rounded-md'>
+        <div className='font-mainFont w-full bg-white/80 rounded-md'>
+
+            <div className='pl-8 pt-2'>
+                <p className='text-2xl'> jujutsu lovers</p>
+            </div>
+
+            <div className='flex'>
+
             <div style={{ width: '10%' }} className='flex-col mt-1.5'>
                 <Avatar rounded />
             </div>
@@ -39,6 +46,9 @@ const PostsComponent = () => {
                 </div>
 
             </div>
+
+            </div>
+            
 
 
 

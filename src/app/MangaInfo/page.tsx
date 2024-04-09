@@ -17,7 +17,7 @@ const page = () => {
                     </div>
 
                     <div className='flex justify-end pt-8'>
-                        <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkblue focus:ring-0 px-12 font-mainFont'>
+                        <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont'>
                             <span className='text-xl'>Favorite Manga +</span>
                         </Button>
                     </div>

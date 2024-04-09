@@ -17,7 +17,7 @@ function ClubModalComponent() {
 
     return (
         <>
-            <Button className="darkBlue rounded-xl" onClick={() => setOpenModal(true)}>
+            <Button className="darkBlue rounded-xl enabled:hover:bg-darkerblue focus:ring-0" onClick={() => setOpenModal(true)}>
                 <span className="font-mainFont text-[22px]">Create Club</span>
                 {/* <img alt="plus sign" src={AddIcon} /> */}
                 <AddIcon className="ms-2"/>

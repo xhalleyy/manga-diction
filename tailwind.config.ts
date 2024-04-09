@@ -30,7 +30,8 @@ const config: Config = {
         'offwhite': 'rgba(236, 234, 217, 1)', // offwhite
         'darkblue': 'rgba(39, 48, 67, 1)', // dark blue
         'ivory' : 'rgba(207, 198, 183, 1)', // ivory
-        'paleblue' : 'rgb(173, 196, 206)' //desaturated blue
+        'paleblue' : 'rgb(173, 196, 206)', //desaturated blue
+        'darkerblue': 'rgba(12, 20, 37, 1)' //darker blue
       }
     }
   },
