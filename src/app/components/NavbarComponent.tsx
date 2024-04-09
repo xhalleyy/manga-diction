@@ -77,7 +77,7 @@ export function NavbarComponent() {
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Search Manga</label>
                             <div>
-                                <input className="opaqueWhite rounded-xl w-[50%] h-8" />
+                                <input className="opaqueWhite rounded-xl w-[50%] h-8" id="titleSearch" />
                             </div>
                         </div>
                         <div className="py-2">
