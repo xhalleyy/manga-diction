@@ -18,16 +18,14 @@ function ClubModalComponent() {
     const [clubImg, setClubImg] = useState<any>("");
     const [privateClub, setPrivateClub] = useState<boolean>(false);
 
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
+    const uploadFiles = styled(Button)({
+        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        borderRadius: 3,
+        border: 0,
+        color: 'white',
+        height: 48,
+        padding: '0 30px',
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
     });
 
 
@@ -72,6 +70,8 @@ function ClubModalComponent() {
 
     }
 
+
+
     return (
         <>
             <Button className="darkBlue rounded-xl enabled:hover:bg-darkerblue focus:ring-0" onClick={() => setOpenModal(true)}>
@@ -89,32 +89,36 @@ function ClubModalComponent() {
                         <h1 className="text-center text-3xl font-mainFont font-bold">Create New Club</h1>
                     </div>
                     <div className="pt-3">
-                        <div className="flex-col pb-3">
-                            <label className="font-mainFont text-lg">Add Cover Image:</label>
-                            <button className="opaqueWhite px-4 py-1 rounded-xl ms-2 font-mainFont">Select File</button>
-                            <FileInput className="bg-ivory" onChange={handleClubImg} accept='image/png. image/jpg' id="picture" placeholder='choose image' required />
-                            {/* <Button
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                startIcon={<CloudUploadIcon />}
-                            >
-                                Upload file
-                                <VisuallyHiddenInput type="file" />
-                            </Button> */}
+
+                        <div className=" pb-3 inline-flex">
+                            <div>
+                                <label className="font-mainFont text-lg">Add Cover Image:</label>
+                            </div>
+
+                            <div>
+                                <label className="opaqueWhite px-4 py-1 rounded-xl ms-2 font-mainFont">
+                                    Select File
+                                    <input
+                                        type="file"
+                                        onChange={handleClubImg}
+                                        className="hidden"
+                                        accept="image/png, image/jpeg" // Add your accepted file types here
+                                    />
+                                </label>
+                            </div>
                         </div>
+
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Club Name:</label>
                             <div>
-                                <input className="opaqueWhite rounded-xl w-[50%] h-8" />
+                                <input onChange={handleClubName} className="opaqueWhite rounded-xl w-[50%] h-8" />
                             </div>
                         </div>
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Description:</label>
                             <div>
                                 {/* wider + taller than club name input */}
-                                <input className="opaqueWhite rounded-xl w-[100%] h-14" />
+                                <input onChange={handleClubDescription} className="opaqueWhite rounded-xl w-[100%] h-14" />
                             </div>
                         </div>
                         <div className="flex flex-1 pt-5">
@@ -133,7 +137,7 @@ function ClubModalComponent() {
                         </div>
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
-                        <Button className="darkBlue rounded-xl" onClick={() => setOpenModal(false)}>
+                        <Button  className="darkBlue rounded-xl" onClick={() => handleCreateClub}>
                             <span className="font-mainFont text-lg">Create</span>
                             {/* <img alt="plus sign" src=""/> */}
                             <AddIcon className="ms-1" />
