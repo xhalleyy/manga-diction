@@ -2,20 +2,26 @@
 
 import { Avatar, Button, Dropdown, DropdownDivider, Modal, Navbar } from "flowbite-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function NavbarComponent() {
 
   const [openModal, setOpenModal] = useState<boolean>(false);
 
+  const router = useRouter();
+
+  const homePage = () => {
+    router.push('/Dashboard');
+  }
 
   return (
     <Navbar className="bg-offwhite font-mainFont text-darkbrown !pt-6 !px-8 " fluid rounded>
-      <Navbar.Brand >
-        <Link href="Dashboard" className="flex items-center">
+      <Navbar.Brand onClick={homePage} className="cursor-pointer">
+        <div className="flex items-center">
           <img className="w-14 h-14" src='./logo.png' alt="Logo" />
           <span className="self-center whitespace-nowrap text-3xl font-semibold dark:text-white pl-4">MangaDiction!</span>
-        </Link>
+        </div>
       </Navbar.Brand>
 
       <Navbar.Collapse className="ml-auto">

@@ -16,7 +16,8 @@ const config: Config = {
       'xl': '1280px',
     },
     fontFamily: {
-      mainFont: ['mainFont']
+      mainFont: ['mainFont'],
+      poppinsMed: ['poppinsMed']
     },
     extend: {
       backgroundImage: theme => ({
@@ -31,7 +32,9 @@ const config: Config = {
         'darkblue': 'rgba(39, 48, 67, 1)', // dark blue
         'ivory' : 'rgba(207, 198, 183, 1)', // ivory
         'paleblue' : 'rgb(173, 196, 206)', //desaturated blue
-        'darkerblue': 'rgba(12, 20, 37, 1)' //darker blue
+        'darkerblue': 'rgba(12, 20, 37, 1)', //darker blue
+        'brown' : 'rgba(180, 163, 138, 1)'
+
       }
     }
   },
