@@ -82,10 +82,10 @@ const BrowseClubs = () => {
       </div>
 
       <div className='grid grid-cols-4 justify-around  gap-5 px-20 '>
-      {clubs.map((club) => (
+      {clubs.map((club, idx) => (
         <div className='col-span-1'>
           <CardComponent
-            key={club.id} // Provide a unique key for each CardComponent
+            key={idx} // Provide a unique key for each CardComponent
             id={club.id}
             leaderId={club.leaderId}
             description={club.description}
