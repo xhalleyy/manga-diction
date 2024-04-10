@@ -21,6 +21,38 @@ const ClubPage = () => {
     setCreatePost(!createPost);
   }
 
+  const customInput = {
+    "field": {
+      "input": {
+        "sizes": {
+          "post": "py-1 px-2 text-lg font-mainFont"
+        }
+      }
+    }
+  }
+
+  const customDropdown = {
+
+    "floating": {
+      "base": "z-10 w-fit divide-y divide-gray-100 rounded shadow focus:outline-none",
+      "content": "py-1 text-sm text-gray-700 dark:text-gray-200",
+      "divider": "my-1 h-px bg-gray-100 dark:bg-gray-600",
+      "header": "block px-3 py-1 text-sm text-gray-700 dark:text-gray-200",
+      "hidden": "invisible opacity-0",
+      "item": {
+        "container": "",
+        "base": " flex w-full cursor-pointer items-center justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:bg-gray-600 dark:focus:text-white",
+        "icon": "mr-2 h-4 w-4"
+      },
+      "style": {
+        "lightblue": "bg-teal-100 text-black text-lg font-mainFont",
+        "dark": "bg-gray-900 text-white dark:bg-gray-700",
+        "light": "border border-gray-200 bg-white text-gray-900",
+        "auto": "bg-teal-100 border border-gray-200 bg-white text-gray-900 dark:border-none dark:bg-gray-700 dark:text-white"
+      },
+    },
+  }
+
   return (
 
     <div className='min-h-screen bg-offwhite'>
@@ -61,24 +93,24 @@ const ClubPage = () => {
           <div className='col-span-5'>
             {createPost && joined ?
               <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
-                <div className='flex flex-row items-center gap-3 py-1'>
-                  <Label htmlFor="base" value="Title:" className='text-lg' />
-                  <TextInput id="base" type="text" sizing="md" className='w-96' />
+                <div className='grid grid-cols-12 items-center gap-3 py-1'>
+                  <Label htmlFor="base" value="Title:" className='col-span-1 text-lg' />
+                  <TextInput theme={customInput} id="base" type="text" sizing="post" className='col-span-11 w-7/12' />
                 </div>
-                <div className='flex flex-row items-center py-1 gap-3'>
-                  <Label htmlFor="base2" value="Tags:" className='text-lg' />
-                  <TextInput id="base2" type="text" sizing="md" className='w-96' />
+                <div className='grid grid-cols-12 items-center gap-3 py-1'>
+                  <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg' />
+                  <TextInput theme={customInput} id="base2" type="text" sizing="post" className='col-span-11 w-4/12' />
                 </div>
-                <div className='flex flex-row items-center py-1 gap-3'>
-                  <Label htmlFor="base3" value="Post:" className='text-lg' />
-                  <TextInput id="base3" type="text" sizing="md" className='w-96' />
+                <div className='grid grid-cols-12 items-center gap-3 py-1'>
+                  <Label htmlFor="base3" value="Post:" className='col-span-1 text-lg' />
+                  <TextInput theme={customInput} id="base3" type="text" sizing="post" className='col-span-11 w-full' />
                 </div>
               </div> : null
             }
 
             <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
               <div className='flex justify-end items-center'>
-                <Dropdown label="Sort Posts" dismissOnClick={false}>
+                <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
                   <Dropdown.Item>Popular</Dropdown.Item>
                   <Dropdown.Item>Newest</Dropdown.Item>
                   <Dropdown.Item>Oldest</Dropdown.Item>

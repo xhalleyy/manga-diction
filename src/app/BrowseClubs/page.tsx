@@ -36,7 +36,7 @@ const BrowseClubs = () => {
   }, []);
 
   return (
-    <div className='bg-offwhite h-full font-mainFont'>
+    <div className='bg-offwhite font-mainFont'>
 
       <NavbarComponent />
 
