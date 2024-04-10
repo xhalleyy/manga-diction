@@ -56,7 +56,7 @@ export function NavbarComponent() {
             }
           >
 
-            <Dropdown.Item className="text-lg flex justify-center text-darkbrown">Profile</Dropdown.Item>
+            <Dropdown.Item className="text-lg flex justify-center text-darkbrown" as={Link} href="ProfilePage">Profile</Dropdown.Item>
             <DropdownDivider className="border-2 border-offwhite" />
             <Dropdown.Item className="text-lg flex justify-center text-darkbrown"> Edit Settings</Dropdown.Item>
             <DropdownDivider className="border-2 border-offwhite" />
