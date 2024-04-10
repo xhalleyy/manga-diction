@@ -1,9 +1,38 @@
-import React from 'react'
+'use client'
+import React, { useEffect } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import Link from 'next/link'
+import axios from 'axios';
+import { getTags, mangaSearch, specificManga } from '@/utils/DataServices';
 
 
 const SearchManga = () => {
+
+    useEffect(()=> {
+        async function fetchData() {
+            try {
+                const includedTagNames = ['391b0423-d847-456f-aff0-8b0cfc03066b'];
+                const fetchedTags = await getTags(includedTagNames);
+                const fetchedData = await mangaSearch('shingeki', '31e059c9-6040-4765-b7bd-40a16d657a94', fetchedTags.includedTagIDs, ['completed'], ['safe', 'suggestive', 'erotica']);
+                // shows the list of manga IDs in the console
+                console.log(fetchedData);
+                return fetchedData;
+            } catch (error) {
+                // console.error('Error fetching data:', error);
+                return null;
+            }
+        }
+        async function getManga () {
+            try {
+                const fetchedManga = await specificManga("304ceac3-8cdb-4fe7-acf7-2b6ff7a60613");
+                console.log(fetchedManga)
+            } catch (error) {
+                console.log("Error");
+            }
+        }
+        fetchData();
+        getManga();
+    },[])
 
     return (
         <div className='bg-offwhite h-screen'>
