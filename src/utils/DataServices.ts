@@ -1,4 +1,5 @@
 import { IClubs, ILoginUserInfo, IToken, IUserData } from "@/Interfaces/Interfaces";
+import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
 let userData: IClubs
@@ -112,10 +113,55 @@ export const publicClubsApi = async() => {
 
 publicClubsApi();
 
+// for example: https://api.mangadex.org/manga?limit=10&title=shingeki&includedTags%5B%5D=391b0423-d847-456f-aff0-8b0cfc03066b&includedTagsMode=AND&excludedTagsMode=OR&status%5B%5D=completed&publicationDemographic%5B%5D=shounen&contentRating%5B%5D=safe&contentRating%5B%5D=suggestive&contentRating%5B%5D=erotica&order%5BlatestUploadedChapter%5D=desc
+const mangaUrl: string = 'https://api.mangadex.org';
 
-// search (by title)
-// search (by parameter (filtering...), author name)
-// advanced search (tags)
-// sorting (most recent date released, etc....)
-// filter (by demographic)
-// filter (by publication status, ? ex: Ongoing, Discontinued/Cancelled, Finished)
+export const getTags = async (includedTagNames: string[]) => {
+    const tagsResponse = await axios.get(`${mangaUrl}/manga/tag`);
+    const includedTagIDs: string[] = tagsResponse.data.data
+        .filter((tag: any) => includedTagNames.includes(tag.attributes.name.en))
+        .map((tag: any) => tag.id);
+    return { includedTagIDs };
+};
+
+export const mangaSearch = async (title: string, author: string, includedTagIDs: string[], status: string[], contentRating: string[]) => {
+    const queryParams = new URLSearchParams({
+        limit: '10',
+        title: title,
+        authorOrArtist: author,
+        includedTagsMode: 'AND',
+        excludedTagsMode: 'OR',
+        'order[latestUploadedChapter]': 'desc'
+    });
+
+    // Add includedTagIDs to query string if present
+    if (includedTagIDs.length > 0) {
+        includedTagIDs.forEach(tagId => {
+            queryParams.append('includedTags[]', tagId);
+        });
+    }
+
+    // Add status to query string if present
+    if (status.length > 0) {
+        status.forEach(s => {
+            queryParams.append('status[]', s);
+        });
+    }
+
+    // Add contentRating to query string if present
+    if (contentRating.length > 0) {
+        contentRating.forEach(rating => {
+            queryParams.append('contentRating[]', rating);
+        });
+    }
+
+    const res = await axios.get(`${mangaUrl}/manga?${queryParams}`);
+    return res.data.data.map((manga: any) => manga.id);
+};
+
+// GET MANGA BY ID
+export const specificManga = async(mangaId: string) => {
+    const promise = await fetch(`https://api.mangadex.org/manga/${mangaId}?includes%5B%5D=cover_art`)
+    const data = await promise.json();
+    return data;
+}

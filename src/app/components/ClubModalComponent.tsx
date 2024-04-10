@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Dropdown, FileInput, Modal } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import { IClubs } from "@/Interfaces/Interfaces";
 import { getClubItemsByLeaderId, loggedInData, updateClubs } from "@/utils/DataServices";
@@ -11,23 +11,33 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 function ClubModalComponent() {
     const [openModal, setOpenModal] = useState(false);
-    const [clubItems, setClubItems] = useState<IClubs[]>();
+    const [clubItems, setClubItems] = useState<IClubs[]>([]);
 
+    const [id, setId] = useState<number>(0);
+    const [leader, setLeader] = useState<number>(0);
     const [clubName, setClubName] = useState<string>("");
     const [clubDescription, setClubDescription] = useState<string>("");
     const [clubImg, setClubImg] = useState<any>("");
     const [privateClub, setPrivateClub] = useState<boolean>(false);
+    const [dateCreated, setDateCreated] = useState<string>("");
 
-    const uploadFiles = styled(Button)({
-        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-        borderRadius: 3,
-        border: 0,
-        color: 'white',
-        height: 48,
-        padding: '0 30px',
-        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    });
+    useEffect(()=> {
+        const fetchClubs = async () => {
+            try {
+                const userLoggedIn = loggedInData();
 
+                if(userLoggedIn && userLoggedIn.leaderId){
+                    const clubs = await getClubItemsByLeaderId(userLoggedIn.leaderId);
+                    setClubItems(prevClubItems => [...prevClubItems, clubs]);
+
+                }
+            } catch (error) {
+                console.error('Error fetching club data!')
+            }
+        }
+
+        fetchClubs();
+    }, [])
 
     const privateSettingOn = () => {
         setPrivateClub(true)
@@ -36,15 +46,31 @@ function ClubModalComponent() {
         setPrivateClub(false)
     }
 
-    const handleCreateClub = async (clubs: IClubs) => {
-        let result = await updateClubs(clubs)
+    const handleCreateClub = async () => {
+        const newClub: IClubs = {
+            id: id,
+            leaderId: leader,
+            clubName: clubName,
+            description: clubDescription,
+            dateCreated: dateCreated,
+            image: clubImg,
+            isPublic: true,
+            isDeleted: false
+        };
+        setClubItems(prevClubItems => [...prevClubItems, newClub]);
+
+        let result = await updateClubs(newClub)
 
         if (result) {
             const loggedIn = loggedInData();
             let userClubs: IClubs[] = await getClubItemsByLeaderId(loggedIn.leaderId)
             let filteredClubs = userClubs.filter(club => club.isDeleted == false)
             setClubItems(filteredClubs);
+            console.log("Updated Club Items:", filteredClubs);
+
         }
+
+        
 
     }
 
@@ -137,7 +163,7 @@ function ClubModalComponent() {
                         </div>
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
-                        <Button  className="darkBlue rounded-xl" onClick={() => handleCreateClub}>
+                        <Button  className="darkBlue rounded-xl" onClick={() =>{handleCreateClub(); setOpenModal(false)}}>
                             <span className="font-mainFont text-lg">Create</span>
                             {/* <img alt="plus sign" src=""/> */}
                             <AddIcon className="ms-1" />
