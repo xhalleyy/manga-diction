@@ -33,7 +33,8 @@ const config: Config = {
         'ivory' : 'rgba(207, 198, 183, 1)', // ivory
         'paleblue' : 'rgb(173, 196, 206)', //desaturated blue
         'darkerblue': 'rgba(12, 20, 37, 1)', //darker blue
-        'brown' : 'rgba(180, 163, 138, 1)'
+        'brown' : 'rgba(180, 163, 138, 1)',
+        'mutedblue': 'rgba(150, 182, 197, 1)'
 
       }
     }

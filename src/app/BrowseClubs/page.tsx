@@ -13,7 +13,7 @@ import { IClubs } from '@/Interfaces/Interfaces';
 // STILL NEED TO : for the cards, want to randomize clubs and have 12 cards showcasing
 
 
-const page = () => {
+const BrowseClubs = () => {
 
   const [id, setId] = useState<number | undefined>();
   const [leaderId, setLeaderId] = useState<number | undefined>();
@@ -26,17 +26,17 @@ const page = () => {
 
   const [clubs, setClubs] = useState<IClubs[]>([]);
 
-  useEffect(()=> {
-    const fetchedData = async()=> {
+  useEffect(() => {
+    const fetchedData = async () => {
       const getClubs = await publicClubsApi();
       // console.log(getClubs)
       setClubs(getClubs);
-    } 
+    }
     fetchedData();
   }, []);
 
   return (
-    <div className='bg-offwhite h-full font-mainFont'>
+    <div className='bg-offwhite font-mainFont'>
 
       <NavbarComponent />
 
@@ -51,7 +51,8 @@ const page = () => {
 
         <div className="relative ml-20">
           <TextInput
-            style={{ borderRightWidth: '50px', borderColor: 'rgba(207, 198, 183, 1)', height: 30}}
+            id='base'
+            style={{ borderRightWidth: '50px', borderColor: 'rgba(207, 198, 183, 1)', height: 30 }}
             type="text"
             placeholder=""
             className="border-ivory border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
@@ -74,7 +75,7 @@ const page = () => {
       </div>
 
       <div className='px-16'>
-        <CarouselComponent/>
+        <CarouselComponent />
       </div>
 
       <div className='px-16 pt-8 pb-3'>
@@ -82,23 +83,22 @@ const page = () => {
       </div>
 
       <div className='grid grid-cols-4 justify-around  gap-5 px-20 '>
-      {clubs.map((club) => (
-        <div className='col-span-1'>
-          <CardComponent
-            key={club.id} // Provide a unique key for each CardComponent
-            id={club.id}
-            leaderId={club.leaderId}
-            description={club.description}
-            dateCreated={club.dateCreated}
-            image={club.image}
-            isPublic={club.isPublic}
-            clubName={club.clubName}
-            isDeleted={club.isDeleted}
-          />
-        </div>
-      ))}
+        {clubs.map((club, idx) => (
+          <div key={idx} className='col-span-1'>
+            <CardComponent
+              id={club.id}
+              leaderId={club.leaderId}
+              description={club.description}
+              dateCreated={club.dateCreated}
+              image={club.image}
+              isPublic={club.isPublic}
+              clubName={club.clubName}
+              isDeleted={club.isDeleted}
+            />
+          </div>
+        ))}
       </div>
-{/* 
+      {/* 
       <div className='flex justify-around px-16 py-5'>
         <CardComponent/>
         <CardComponent/>
@@ -119,4 +119,4 @@ const page = () => {
   )
 }
 
-export default page
+export default BrowseClubs
