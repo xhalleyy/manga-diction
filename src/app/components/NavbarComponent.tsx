@@ -15,6 +15,11 @@ export function NavbarComponent() {
     router.push('/Dashboard');
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem("Token");
+    router.push('/');
+  }
+
   return (
     <Navbar className="bg-offwhite font-mainFont text-darkbrown !pt-6 !px-8 " fluid rounded>
       <Navbar.Brand onClick={homePage} className="cursor-pointer">
@@ -60,7 +65,7 @@ export function NavbarComponent() {
             <DropdownDivider className="border-2 border-offwhite" />
             <Dropdown.Item className="text-lg flex justify-center text-darkbrown"> Edit Settings</Dropdown.Item>
             <DropdownDivider className="border-2 border-offwhite" />
-            <Dropdown.Item className="text-lg flex justify-center text-darkbrown">Sign Out</Dropdown.Item>
+            <Dropdown.Item className="text-lg flex justify-center text-darkbrown" onClick={handleLogout}>Sign Out</Dropdown.Item>
           </Dropdown>
           <Navbar.Toggle />
         </div>
