@@ -7,7 +7,7 @@ import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 
 const PostsComponent = () => {
     return (
-        <div className='font-mainFont w-full bg-white rounded-md'>
+        <div className='font-mainFont w-full bg-white rounded-lg'>
 
             <div className='pl-8 pt-2'>
                 <p className='text-2xl'> jujutsu lovers</p>
