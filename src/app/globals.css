@@ -72,3 +72,16 @@
     height: 55px;
     object-fit: cover;
 }
+
+.arrowBtn{
+    height: 41px;
+    width: 41px;
+    background-color: #92b7c7;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.arrowBox {
+    height: 50px;
+    width: 50px;
+}

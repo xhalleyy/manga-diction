@@ -1,17 +1,20 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { TextInput, Label, Dropdown } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
+import { getPostsByClubId } from '@/utils/DataServices';
+import { IPosts } from '@/Interfaces/Interfaces';
 
 const ClubPage = () => {
 
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
+  const [posts, setPosts] = useState<IPosts[]>([]);
 
   const handleJoinBtn = () => {
     setJoined(!joined)
@@ -20,6 +23,15 @@ const ClubPage = () => {
   const handleCreatePost = () => {
     setCreatePost(!createPost);
   }
+
+  useEffect(() => {
+    const fetchedData = async (clubId: number) => {
+      const getPosts = await getPostsByClubId(clubId);
+      setPosts(getPosts);
+      console.log(getPosts);
+    }
+    fetchedData(1);
+  }, [])
 
   const customInput = {
     "field": {
@@ -119,7 +131,24 @@ const ClubPage = () => {
                 </Dropdown>
               </div>
               <div className='opacity-90 py-3'>
-                <PostsComponent />
+                {posts.map((post, idx) => (
+                  <div key={idx} className='col-span-1 py-2'>
+                    <PostsComponent
+                      id={post.id}
+                      userId={post.userId}
+                      clubId={post.clubId}
+                      title={post.title}
+                      category={post.category}
+                      tags={post.tags}
+                      description={post.description}
+                      image={post.image}
+                      likes={post.likes}
+                      dateCreated={post.dateCreated}
+                      dateUpdated={post.dateUpdated}
+                      isDeleted={post.isDeleted}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

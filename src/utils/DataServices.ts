@@ -165,3 +165,12 @@ export const specificManga = async(mangaId: string) => {
     const data = await promise.json();
     return data;
 }
+
+
+// GET POSTS BY CLUB ID 
+export const getPostsByClubId = async( clubId: number) => {
+    const res = await fetch(url + 'Post/GetAllPostsInClub/' + clubId)
+    const data = await res.json();
+    // console.log(data);
+    return data;
+}

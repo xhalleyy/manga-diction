@@ -6,6 +6,8 @@ import 'react-multi-carousel/lib/styles.css';
 import { publicClubsApi } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import CardComponent from "./CardComponent";
+import CarouselButtonsComponent from "./CarouselButtonsComponent";
+
 
 export function CarouselComponent(props: any) {
   const [clubs, setClubs] = useState<IClubs[]>([]);
@@ -36,21 +38,18 @@ export function CarouselComponent(props: any) {
     },
   };
 
-  const carouselContainerStyles = {
-    width: '100%', // Make the carousel container 100% width
-    // Add more custom styles as needed
-  };
 
   return (
-    <div className="min-w-screen">
+    <div className="min-w-screen relative">
       <Carousel 
         additionalTransfrom={0}
-        arrows
+        arrows={false}
         autoPlaySpeed={3000}
         centerMode={false}
         className="w-full"
         containerClass="container-with-dots "
         dotListClass=""
+        customButtonGroup={<CarouselButtonsComponent previous={() => {}} next={() => {}}/>}
         draggable
         focusOnSelect={false}
         infinite
@@ -59,7 +58,7 @@ export function CarouselComponent(props: any) {
         minimumTouchDrag={80}
         pauseOnHover
         renderArrowsWhenDisabled={false}
-        renderButtonGroupOutside={true}
+        renderButtonGroupOutside
         renderDotsOutside={false}
         responsive={responsive}
         rewind={false}
@@ -72,7 +71,7 @@ export function CarouselComponent(props: any) {
         swipeable
       >
         {clubs.map((club,idx) => (
-          <div key={idx} className='col-span-1'>
+          <div key={idx} className='col-span-1 mx-2'>
           <CardComponent
             id={club.id}
             leaderId={club.leaderId}
@@ -84,15 +83,6 @@ export function CarouselComponent(props: any) {
             isDeleted={club.isDeleted}
           />
         </div>
-          // <div key={club.id}>
-          //   <img
-          //     src={club.image}
-          //     alt={club.clubName}
-          //     style={{ maxWidth: '100%', height: 'auto' }}
-          //   />
-          //   <h3>{club.clubName}</h3>
-          //   <p>{club.description}</p>
-          // </div>
         ))}
       </Carousel>
     </div>
