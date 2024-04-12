@@ -41,7 +41,7 @@ export function CarouselComponent(props: any) {
 
   return (
     <div className="min-w-screen relative">
-      <Carousel 
+      <Carousel
         additionalTransfrom={0}
         arrows={false}
         autoPlaySpeed={3000}
@@ -49,7 +49,7 @@ export function CarouselComponent(props: any) {
         className="w-full"
         containerClass="container-with-dots "
         dotListClass=""
-        customButtonGroup={<CarouselButtonsComponent previous={() => {}} next={() => {}}/>}
+        customButtonGroup={<CarouselButtonsComponent previous={() => { }} next={() => { }} />}
         draggable
         focusOnSelect={false}
         infinite
@@ -70,19 +70,19 @@ export function CarouselComponent(props: any) {
         slidesToSlide={1}
         swipeable
       >
-        {clubs.map((club,idx) => (
+        {clubs.slice(0, 8).map((club, idx) => (
           <div key={idx} className='col-span-1 mx-2'>
-          <CardComponent
-            id={club.id}
-            leaderId={club.leaderId}
-            description={club.description}
-            dateCreated={club.dateCreated}
-            image={club.image}
-            isPublic={club.isPublic}
-            clubName={club.clubName}
-            isDeleted={club.isDeleted}
-          />
-        </div>
+            <CardComponent
+              id={club.id}
+              leaderId={club.leaderId}
+              description={club.description}
+              dateCreated={club.dateCreated}
+              image={club.image}
+              isPublic={club.isPublic}
+              clubName={club.clubName}
+              isDeleted={club.isDeleted}
+            />
+          </div>
         ))}
       </Carousel>
     </div>

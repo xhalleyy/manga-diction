@@ -35,6 +35,9 @@ const BrowseClubs = () => {
     fetchedData();
   }, []);
 
+  const shuffledClubs = clubs.sort(() => Math.random() - 0.5);
+  const randomClubs = shuffledClubs.slice(0, 12);
+
   return (
     <div className='bg-offwhite font-mainFont'>
 
@@ -83,7 +86,7 @@ const BrowseClubs = () => {
       </div>
 
       <div className='grid grid-cols-4 justify-around  gap-5 px-20 '>
-        {clubs.map((club, idx) => (
+      {randomClubs.map((club, idx) => (
           <div key={idx} className='col-span-1'>
             <CardComponent
               id={club.id}
@@ -98,21 +101,6 @@ const BrowseClubs = () => {
           </div>
         ))}
       </div>
-      {/* 
-      <div className='flex justify-around px-16 py-5'>
-        <CardComponent/>
-        <CardComponent/>
-        <CardComponent/>
-        <CardComponent/>
-      </div>
-
-      <div className='flex justify-around px-16 py-5'>
-        <CardComponent/>
-        <CardComponent/>
-        <CardComponent/>
-        <CardComponent/>
-      </div> */}
-
 
 
     </div>
