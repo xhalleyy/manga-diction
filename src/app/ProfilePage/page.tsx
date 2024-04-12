@@ -1,10 +1,28 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import ClubModalComponent from '../components/ClubModalComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CardComponent from '../components/CardComponent';
 
 const ProfilePage = () => {
+
+    const [showClubs, setShowClubs] = useState<boolean>(true);
+
+    const clubox:string = 'grid grid-cols-3 gap-5'
+    const noClubox: string = 'grid grid-cols-3 gap-5 hidden'
+    const favbox: string = "px-1"
+    const noFavbox: string = "px-1 hidden"
+    const activeBtn: string = 'bg-mutedblue text-2xl py-1 px-9 rounded-xl font-mainFont font-light'
+    const inactiveBtn: string = 'bg-paleblue text-2xl py-1 px-9 rounded-xl font-mainFont font-light'
+    
+    const clubDisplay = () => {
+        setShowClubs(true);
+    }
+    const favDisplay = () => {
+        setShowClubs(false);
+    }
+
   return (
     <div className='bg-offwhite h-screen'>
       
@@ -78,12 +96,12 @@ const ProfilePage = () => {
                 <div className="col-span-3 ms-10">
                     {/* (if own profile + user is in no clubs, create club button = true) clubs section, favorites section, displays 6+ clubs at a time, faves display 5 covers per 'row' */}
                     <div className="flex">
-                    <div>
-                    <button className='bg-mutedblue text-2xl py-1 px-9 rounded-xl font-mainFont font-light me-5'>Clubs</button>
+                    <div className='me-5'>
+                    <button className={showClubs ? activeBtn : inactiveBtn} onClick={clubDisplay}>Clubs</button>
                     </div>
 
                     <div>
-                    <button className='bg-mutedblue text-2xl py-1 px-9 rounded-xl font-mainFont font-light'>Favorites</button>
+                    <button className={!showClubs ? activeBtn : inactiveBtn} onClick={favDisplay}>Favorites</button>
                     </div>
                     {/* display none div unless conditions are met (viewing your own profile, in no clubs) */}
                     <div className='ms-auto'>
@@ -92,25 +110,25 @@ const ProfilePage = () => {
                     </div>
 
                     <div className='mt-4'>
-                        {/* <div className='grid grid-cols-3 gap-5'>
+                        <div className={showClubs ? clubox : noClubox}>
                            <CardComponent/>
                            <CardComponent/>
                            <CardComponent/>
                            <CardComponent/>
                            <CardComponent/>
                            <CardComponent/>
-                        </div> */}
+                        </div>
 
-                        <div>
+                        <div className={!showClubs ? favbox : noFavbox}>
                             <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
-                            <div className='grid grid-cols-5'>
+                            <div className='grid grid-cols-5 ms-5'>
                                 {/* current reads */}
                                 <img src='/aot.png' className="h-[215px] w-[150px] mb-4"/>
                                 
                                
                             </div>
                             <p className='font-mainFont text-lg mb-4'>Completed:</p>
-                            <div className='grid grid-cols-5'>
+                            <div className='grid grid-cols-5 ms-5'>
                                 {/* finished reads */}
                                 <img src='/aot.png' className="h-[215px] w-[150px] mb-4"/>
 
