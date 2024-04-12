@@ -26,3 +26,18 @@ export interface IClubs {
     isPublic: boolean;
     isDeleted: boolean;
 }
+
+export interface IPosts {
+    id: number,
+    userId: number,
+    clubId: number,
+    title: string,
+    category: string,
+    tags: string,
+    description: string,
+    image: string,
+    likes: number,
+    dateCreated: string,
+    dateUpdated: string,
+    isDeleted: boolean
+}

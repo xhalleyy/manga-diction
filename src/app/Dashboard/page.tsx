@@ -1,5 +1,6 @@
 'use client'
-import React from 'react'
+
+import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import PostsComponent from '../components/PostsComponent'
 import ClubModalComponent from '../components/ClubModalComponent'
@@ -7,11 +8,24 @@ import { CarouselComponent } from '../components/CarouselComponent'
 import ArrowCircleLeftTwoToneIcon from '@mui/icons-material/ArrowCircleLeftTwoTone';
 import ArrowCircleRightTwoToneIcon from '@mui/icons-material/ArrowCircleRightTwoTone';
 import { Card } from "flowbite-react";
+import { getPostsByClubId } from '@/utils/DataServices'
+import { IPosts } from '@/Interfaces/Interfaces'
 
 const Dashboard = () => {
 
+  const [posts, setPosts] = useState<IPosts[]>([]);
+
+  useEffect(()=> {
+    const fetchedData = async(clubId: number)=> {
+      const getPosts = await getPostsByClubId(clubId);
+      setPosts(getPosts);
+      console.log(getPosts);
+    }
+    fetchedData(1);
+  },[])
+
   return (
-    <div className='bg-offwhite h-screen'>
+    <div className='bg-offwhite pb-10'>
 
       <NavbarComponent />
 
@@ -23,15 +37,32 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className='px-[70px] mb-10 '>
+      <div className='px-[130px] mb-2 '>
         <CarouselComponent />
       </div>
 
       <div className='px-[70px] grid grid-cols-4 gap-12'>
         <div className='col-span-3'>
           <p className='font-mainFont text-lg mt-2 mb-3'>Recent Posts:</p>
-          <div className='bg-paleblue p-5 rounded-lg'>
-            <PostsComponent />
+          <div className='bg-paleblue px-5 py-3 rounded-lg'>
+          {posts.map((post, idx) => (
+          <div key={idx} className='col-span-1 py-2'>
+            <PostsComponent
+              id={post.id}
+              userId={post.userId}
+              clubId={post.clubId}
+              title={post.title}
+              category={post.category}
+              tags={post.tags}
+              description={post.description}
+              image={post.image}
+              likes={post.likes}
+              dateCreated={post.dateCreated}
+              dateUpdated={post.dateUpdated}
+              isDeleted={post.isDeleted}
+            />
+          </div>
+        ))}
             {/* <PostsComponent /> */}
           </div>
         </div>
