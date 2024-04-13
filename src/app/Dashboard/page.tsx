@@ -25,6 +25,7 @@ const Dashboard = () => {
   },[])
 
   return (
+    <div className='bg-offWhite min-h-screen'>
     <div className='bg-offwhite pb-10'>
 
       <NavbarComponent />
@@ -93,6 +94,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+    </div>
 
     </div>
   )

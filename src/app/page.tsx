@@ -118,7 +118,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="hidden md:flex min-h-screen bg-bgLogin">
+      <div className="hidden md:flex ">
         <div className="bg-bgLogin w-screen h-screen bg-cover bg-center flex flex-col flex-1">
           <div className="mt-20 ml-24">
             <img className="w-32" src="/logo.png" />
