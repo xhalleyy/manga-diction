@@ -30,6 +30,7 @@ export default function Home() {
   const [firstN, setFirstN] = useState<string>("");
   const [lastN, setLastN] = useState<string>("");
   const [age, setAge] = useState<number>(0);
+  const [profilePic, setProfilePic] = useState<string>("");
 
   const [logsign, setLogsign] = useState<boolean>(true);
 
@@ -51,7 +52,8 @@ export default function Home() {
       firstName: firstN,
       lastName: lastN,
       age: age,
-      password: password
+      password: password,
+      picture: profilePic
     }
 
 
@@ -64,21 +66,23 @@ export default function Home() {
 
     // if you're loggin in then this codeblock:
     if (logsign) {
+      try {
+        let token: IToken = await login(loginData);
+        console.log('Token received:', token);
 
-      let token: IToken = await login(loginData);
-      console.log(token);
-
-      if (token.token != null) {
-
-        localStorage.setItem("Token", token.token);
-        router.push('/Dashboard')
-
-      } else {
-
-        alert('Signup failed! </3')
-
+        if (token.token != null) {
+          setId(token.userId);
+          localStorage.setItem("Token", token.token);
+          localStorage.setItem("UserId", token.userId.toLocaleString());
+          router.push('/Dashboard');
+          // console.log('Username:', username);
+        } else {
+          alert('Signup failed! </3');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed! Please try again.');
       }
-
     } else {
       // ELSE you're signing up so 
       try {
@@ -92,22 +96,22 @@ export default function Home() {
         setFirstN("");
         setLastN("");
         setAge(0);
-
+        
       } catch (error) {
         setLogsign(true);
         setSuccess(false)
-        // Reset 
         // setSuccess(false);
       }
     }
   }
 
+  
   const handlePasswordVisibility = () => {
     setVisibility(!visibility);
   }
 
   const customInput: CustomFlowbiteTheme['textInput'] = {
-    "field":{
+    "field": {
       "input": {
         "colors": {
           "brown": "border-gray-300 bg-gray-50 text-darkbrown focus:border-lightbrown focus:ring-lightbrown"

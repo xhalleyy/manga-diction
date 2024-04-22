@@ -4,12 +4,14 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import ClubModalComponent from '../components/ClubModalComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CardComponent from '../components/CardComponent';
-import { IClubs } from '@/Interfaces/Interfaces';
-import { publicClubsApi } from '@/utils/DataServices';
+import { IClubs, IUserData } from '@/Interfaces/Interfaces';
+import { getUserInfo, publicClubsApi } from '@/utils/DataServices';
 
 const ProfilePage = (props: any) => {
 
     const [showClubs, setShowClubs] = useState<boolean>(true);
+    const [userData, setUserData] = useState<IUserData>();
+    const [isMyProfile, setIsMyProfile] = useState<boolean>(true);
 
     const clubox: string = 'grid grid-cols-3 gap-5'
     const noClubox: string = 'grid grid-cols-3 gap-5 hidden'
@@ -35,6 +37,15 @@ const ProfilePage = (props: any) => {
       fetchedData();
     }, []);
 
+    useEffect(() => {
+        let userId = Number(localStorage.getItem("UserId"));
+        const fetchedUser = async() => {
+            const user = await getUserInfo(userId);
+            setUserData(user);
+        }
+        fetchedUser();
+    }, [])
+
     return (
         <div className='bg-offwhite h-screen'>
 
@@ -46,15 +57,16 @@ const ProfilePage = (props: any) => {
                         {/* username, name, add btn, friends section */}
                         <div className='flex flex-col justify-center mb-10'>
                             <div className='flex justify-center'>
-                                <img src='/dummyImg.png' alt='profile image' className='pfp shadow-md' />
+                                <img src={userData?.picture} alt='profile image' className='pfp shadow-md' />
                             </div>
                             <div className='text-center'>
-                                <h1 className='text-[28px] font-mainFont font-bold'>User Name</h1>
-                                <h2 className='text-[22px] font-mainFont'>Nanami Kento</h2>
+                                <h1 className='text-[28px] font-mainFont font-bold'>{userData?.username}</h1>
+                                <h2 className='text-[22px] font-mainFont'>{`${userData?.firstName} ${userData?.lastName}`}</h2>
                                 <div className='mt-3'>
-                                    <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend
-                                        <AddIcon />
-                                    </button>
+                                    {!isMyProfile && 
+                                    <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />
+                                        
+                                    </button>}
                                 </div>
                             </div>
                         </div>

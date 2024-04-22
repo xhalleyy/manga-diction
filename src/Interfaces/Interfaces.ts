@@ -5,6 +5,7 @@ export interface IUserData {
     lastName: string
     age: number
     password: string
+    picture: string
 }
 
 export interface ILoginUserInfo {
@@ -13,7 +14,8 @@ export interface ILoginUserInfo {
 }
 
 export interface IToken {
-    token: string
+    token: string, 
+    userId: number
 }
 
 export interface IClubs {

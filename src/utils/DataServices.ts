@@ -1,9 +1,10 @@
-import { IClubs, ILoginUserInfo, IToken, IUserData } from "@/Interfaces/Interfaces";
+import { IClubs, ILoginUserInfo, IPosts, IToken, IUserData } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
 let userData: IClubs
 
+// FETCH TO CREATE USER
 export const createUser = async (createdUser: IUserData) => {
 
     const res = await fetch(url + 'User/CreateUser', {
@@ -21,9 +22,10 @@ export const createUser = async (createdUser: IUserData) => {
     }
 
     const data = await res.json()
-    console.log(data);
+    // console.log(data);
 }
 
+// FETCH FOR LOGIN
 export const login = async(loginUser: ILoginUserInfo) => {
     const res = await fetch(url + 'User/Login', {
         method: 'POST',
@@ -39,9 +41,11 @@ export const login = async(loginUser: ILoginUserInfo) => {
     }
 
     const data: IToken = await res.json();
+    // console.log(data);
     return data;
 }
 
+// FETCH FOR CREATING CLUB
 export const createClub = async (Club: IClubs) => {
     const res = await fetch(url + 'Club/CreateClub', {
         method: "PUT",
@@ -61,6 +65,7 @@ export const createClub = async (Club: IClubs) => {
 
 }
 
+// FETCH FOR UPDATING CLUBS
 export const updateClubs = async (Club: IClubs) => {
     const res = await fetch(url + 'Club/UpdateClub/', {
         method: "PUT",
@@ -79,6 +84,7 @@ export const updateClubs = async (Club: IClubs) => {
     return data;
 }
 
+// FETCH FOR CHECKING LOGIN TOKEN
 export const checkToken = () => {
     let result = false;
     let isData = localStorage.getItem("Token");
@@ -90,6 +96,7 @@ export const checkToken = () => {
     return result;
 }
 
+// FETCH FOR GETTING CLUB BY LEADERS
 export const getClubItemsByLeaderId = async (leaderId: number) => {
     const res = await fetch(url + 'Club/GetClubById/' + leaderId)
     const data = await res.json();
@@ -107,7 +114,7 @@ export const loggedInData = () => {
 export const publicClubsApi = async() => {
     const promise = await fetch('https://mangadictionapi.azurewebsites.net/Club/GetAllClubs');
     const data: IClubs[] = await promise.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -170,7 +177,34 @@ export const specificManga = async(mangaId: string) => {
 // GET POSTS BY CLUB ID 
 export const getPostsByClubId = async( clubId: number) => {
     const res = await fetch(url + 'Post/GetAllPostsInClub/' + clubId)
-    const data = await res.json();
+    const data: IPosts[] = await res.json();
     // console.log(data);
+    return data;
+}
+
+// GET USER INFO
+export const getUserInfo = async(userId: number) => {
+    const res = await fetch(url + 'User/GetUser/' + userId);
+    const data: IUserData = await res.json();
+    console.log(data)
+    return data;
+}
+
+// UPDATE USER INFO
+export const updateUser = async(User: IUserData) => {
+    const res = await fetch(url + 'User/UpdateUser/', {
+        method: "PUT",
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify(User)
+    });
+
+    if(!res.ok){
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json();
     return data;
 }

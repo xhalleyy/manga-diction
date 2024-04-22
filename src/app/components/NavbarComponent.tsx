@@ -15,8 +15,13 @@ export function NavbarComponent() {
     router.push('/Dashboard');
   }
 
+  const settings = () => {
+    router.push('/EditSettings')
+  }
+
   const handleLogout = () => {
     localStorage.removeItem("Token");
+    localStorage.removeItem("UserId");
     router.push('/');
   }
 
@@ -63,7 +68,7 @@ export function NavbarComponent() {
 
             <Dropdown.Item className="text-lg flex justify-center text-darkbrown" as={Link} href="ProfilePage">Profile</Dropdown.Item>
             <DropdownDivider className="border-2 border-offwhite" />
-            <Dropdown.Item className="text-lg flex justify-center text-darkbrown"> Edit Settings</Dropdown.Item>
+            <Dropdown.Item className="text-lg flex justify-center text-darkbrown" onClick={settings}> Edit Settings</Dropdown.Item>
             <DropdownDivider className="border-2 border-offwhite" />
             <Dropdown.Item className="text-lg flex justify-center text-darkbrown" onClick={handleLogout}>Sign Out</Dropdown.Item>
           </Dropdown>
