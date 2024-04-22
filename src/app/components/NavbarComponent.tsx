@@ -54,9 +54,9 @@ export function NavbarComponent() {
           </Dropdown>
           <Navbar.Toggle />
         </div>
-
-        <Avatar rounded />
-
+        
+        <div className="flex gap-2.5">
+        <Avatar rounded className="cursor-pointer" onClick={() => {router.push('/ProfilePage')}}/>
         <div className="mt-3">
           <Dropdown className="border-8 border-offwhite rounded-xl w-56"
             arrowIcon={false}
@@ -74,6 +74,9 @@ export function NavbarComponent() {
           </Dropdown>
           <Navbar.Toggle />
         </div>
+
+        </div>
+
 
 
 

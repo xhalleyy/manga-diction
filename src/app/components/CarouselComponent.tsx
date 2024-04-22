@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { publicClubsApi } from "@/utils/DataServices";
+import { publicClubsApi, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import CardComponent from "./CardComponent";
 import CarouselButtonsComponent from "./CarouselButtonsComponent";
+import { useClubContext } from "@/context/ClubContext";
 
 
 export function CarouselComponent(props: any) {
+  const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
 
   useEffect(() => {
@@ -19,6 +21,16 @@ export function CarouselComponent(props: any) {
     };
     fetchedData();
   }, []);
+
+  const handleClubCardClick = async (club: IClubs) => {
+    try {
+      const clubDisplayedInfo = await specifiedClub(club.id);
+      clubData.setDisplayedClub(clubDisplayedInfo);
+    } catch (error) {
+      alert("Error fetching club information");
+      console.error(error); 
+    }
+  };
 
   const responsive = {
     desktop: {
@@ -71,7 +83,7 @@ export function CarouselComponent(props: any) {
         swipeable
       >
         {clubs.slice(0, 8).map((club, idx) => (
-          <div key={idx} className='col-span-1 mx-2'>
+          <div key={idx} className='col-span-1 mx-2' onClick={() => handleClubCardClick(club)}>
             <CardComponent
               id={club.id}
               leaderId={club.leaderId}

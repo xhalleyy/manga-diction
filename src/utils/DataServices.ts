@@ -118,6 +118,14 @@ export const publicClubsApi = async() => {
     return data;
 }
 
+// GET CLUB BY ID
+export const specifiedClub = async(clubId: number) => {
+    const promise = await fetch(url + '/Club/GetClubById/' + clubId);
+    const data: IClubs = await promise.json();
+    console.log(data);
+    return data;
+}
+
 publicClubsApi();
 
 // for example: https://api.mangadex.org/manga?limit=10&title=shingeki&includedTags%5B%5D=391b0423-d847-456f-aff0-8b0cfc03066b&includedTagsMode=AND&excludedTagsMode=OR&status%5B%5D=completed&publicationDemographic%5B%5D=shounen&contentRating%5B%5D=safe&contentRating%5B%5D=suggestive&contentRating%5B%5D=erotica&order%5BlatestUploadedChapter%5D=desc

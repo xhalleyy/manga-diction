@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import ClubModalComponent from '../components/ClubModalComponent'
 import AddIcon from '@mui/icons-material/Add';
+import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
 import { IClubs, IUserData } from '@/Interfaces/Interfaces';
 import { getUserInfo, publicClubsApi } from '@/utils/DataServices';
@@ -53,13 +54,19 @@ const ProfilePage = (props: any) => {
 
             <div className="px-[70px]">
                 <div className="grid grid-cols-4 gap-1">
-                    <div className="col-span-1">
+                    <div className="col-span-1 mt-8">
                         {/* username, name, add btn, friends section */}
                         <div className='flex flex-col justify-center mb-10'>
                             <div className='flex justify-center'>
-                                <img src={userData?.picture} alt='profile image' className='pfp shadow-md' />
+                            <Image
+                            src={userData?.picture || '/dummyImg.png'}
+                            alt='profile image'
+                            width={150}
+                            height={150}
+                            className='pfp shadow-md'
+                        />
                             </div>
-                            <div className='text-center'>
+                            <div className='text-center mt-5'>
                                 <h1 className='text-[28px] font-mainFont font-bold'>{userData?.username}</h1>
                                 <h2 className='text-[22px] font-mainFont'>{`${userData?.firstName} ${userData?.lastName}`}</h2>
                                 <div className='mt-3'>

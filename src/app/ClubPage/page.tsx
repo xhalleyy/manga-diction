@@ -9,9 +9,13 @@ import { TextInput, Label, Dropdown } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
 import { getPostsByClubId } from '@/utils/DataServices';
 import { IPosts } from '@/Interfaces/Interfaces';
+import { useClubContext } from '@/context/ClubContext';
+import Image from 'next/image';
 
 const ClubPage = () => {
 
+  // const {id, leaderId, clubName, image, description, dateCreated, isPublic, isDeleted} = useClubContext();
+  const { displayedClub } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
@@ -72,7 +76,7 @@ const ClubPage = () => {
       <div className='px-16'>
         <div className='flex pt-4'>
           <div className='flex-1 items-end pt-3'>
-            <h1 className='font-poppinsMed text-3xl text-darkbrown'>Jujutsu Lovers&lt;3</h1>
+            <h1 className='font-poppinsMed text-3xl text-darkbrown'>{displayedClub?.clubName}</h1>
           </div>
           <div className='flex flex-row gap-3'>
             {!joined ?
@@ -97,7 +101,7 @@ const ClubPage = () => {
 
         <div className='py-1.5'>
           <div className='bg-ivory inline-block rounded-xl'>
-            <p className='text-lg font-mainFont text-darkbrown px-4'>Public</p>
+            <p className='text-lg font-mainFont text-darkbrown px-4'>{displayedClub?.isPublic ? 'Public' : 'Private'}</p>
           </div>
         </div>
 
@@ -155,7 +159,12 @@ const ClubPage = () => {
           <div className='col-span-2'>
             <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
             <div className='bg-white/80 border-8 border-ivory rounded-xl'>
-              <p className='p-2.5 font-mainFont text-darkbrown text-lg'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex consequat. </p>
+              <img
+                src={displayedClub?.image}
+                alt='profile image'
+                className='object-fit w-full shadow-lg'
+              />
+              <p className='p-2.5 font-poppinsMed text-darkbrown text-lg mt-1'>{displayedClub?.description}</p>
             </div>
 
             <div>
