@@ -125,6 +125,7 @@ function ClubModalComponent() {
                                 <label className="opaqueWhite px-4 py-1 rounded-xl ms-2 font-mainFont">
                                     Select File
                                     <input
+                                        required
                                         type="file"
                                         onChange={handleClubImg}
                                         className="hidden"
@@ -137,21 +138,21 @@ function ClubModalComponent() {
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Club Name:</label>
                             <div>
-                                <input onChange={handleClubName} className="opaqueWhite rounded-xl w-[50%] h-8" />
+                                <input required onChange={handleClubName} className="opaqueWhite rounded-xl w-[50%] h-8" />
                             </div>
                         </div>
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Description:</label>
                             <div>
                                 {/* wider + taller than club name input */}
-                                <input onChange={handleClubDescription} className="opaqueWhite rounded-xl w-[100%] h-14" />
+                                <input required onChange={handleClubDescription} className="opaqueWhite rounded-xl w-[100%] h-14" />
                             </div>
                         </div>
                         <div className="flex flex-1 pt-5">
                             <label className="mt-1 font-mainFont text-lg">Privacy Settings: </label>
                             {/* dropdown, 2 options (public, private) */}
                             <div className="rounded-xl dropdownBtn flex justify-center ms-3">
-                                <select className="rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none">
+                                <select required className="rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none">
                                     <option value="public" className="font-mainFont" onClick={publicSettingOn}>Public</option>
                                     <option value="priv" onClick={privateSettingOn}>Private</option>
                                 </select>
