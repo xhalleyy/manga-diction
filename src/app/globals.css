@@ -127,3 +127,13 @@
     background-repeat: no-repeat;
     width: 100%;
 }
+
+.tabActive{
+    color: #a49781;
+}
+.tabActive:focus{
+    color: #391C0B;
+}
+.tabActive:active{
+    color: #391C0B;
+}

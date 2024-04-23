@@ -229,8 +229,8 @@ export default function Home() {
 
         <div className="flex flex-row gap-5 justify-center">
           <Tabs value={value} onChange={handleChange} className="!font-mainFont !text-2xl" aria-label="disabled tabs example">
-            <Tab label="Login" onClick={logsignSwitch} />
-            <Tab label="Register" onClick={logsignSwitch} />
+            <Tab label="Login" onClick={logsignSwitch} className="tabActive"/>
+            <Tab label="Register" onClick={logsignSwitch} className="tabActive" />
           </Tabs>
         </div>
 
