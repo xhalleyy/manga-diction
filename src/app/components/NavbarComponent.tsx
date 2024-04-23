@@ -3,11 +3,21 @@
 import { Avatar, Button, Dropdown, DropdownDivider, Modal, Navbar } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function NavbarComponent() {
 
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [profilePic, setProfilePic] = useState<string>("");
+
+  useEffect(() => {
+    const updatedPic = localStorage.getItem("profilePic")
+    if(updatedPic){
+      setProfilePic(updatedPic);
+    }
+  })
+
+
 
   const router = useRouter();
 
@@ -54,9 +64,12 @@ export function NavbarComponent() {
           </Dropdown>
           <Navbar.Toggle />
         </div>
+
+        {/* onClick={() => {router.push('/ProfilePage')} */}
         
         <div className="flex gap-2.5">
-        <Avatar rounded className="cursor-pointer" onClick={() => {router.push('/ProfilePage')}}/>
+        <img src={profilePic} alt="Profile Picture" className="cursor-pointer w-10 h-10 rounded-3xl" onClick={() => router.push('/ProfilePage')} />
+
         <div className="mt-3">
           <Dropdown className="border-8 border-offwhite rounded-xl w-56"
             arrowIcon={false}
