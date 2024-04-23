@@ -8,7 +8,7 @@ import { grey, brown } from '@mui/material/colors';
 import { TextInput, Label, Dropdown } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
 import { getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
-import { IPosts } from '@/Interfaces/Interfaces';
+import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image';
 
@@ -20,14 +20,42 @@ const ClubPage = () => {
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
   const [seeMembers, setSeeMembers] = useState<boolean>(false);
+  const [members, setMembers] = useState<IUserData[]>([]);
 
 
-  useEffect(() => {
-    const fetchedClubMembers = async(clubId: number) => {
-      const data = await getClubMembers(clubId);
-    }
-    fetchedClubMembers(1);
-  },[])
+  // useEffect(() => {
+  //   const fetchClubMembers = async (clubId: number | undefined) => {
+  //     try {
+  //       const memberIds = await getClubMembers(clubId);
+  //       const promises = memberIds.map((userId: number) => getUserInfo(userId));
+  //       const usersInfo = await Promise.all(promises);
+  //       setMembers(usersInfo);
+  //     } catch (error) {
+  //       console.error('Error fetching club members:', error);
+  //     }
+  //   };
+
+  //   fetchClubMembers(displayedClub?.id); // Assuming clubId 1
+  // }, []);
+
+    const fetchClubMembers = async (clubId: number | undefined) => {
+      try {
+        const memberIds = await getClubMembers(clubId);
+        const promises = memberIds.map((userId: number) => getUserInfo(userId));
+        const usersInfo = await Promise.all(promises);
+        setMembers(usersInfo);
+      } catch (error) {
+        console.error('Error fetching club members:', error);
+      }
+    };
+
+  // const promises = memberIds.map((userId) => getUserInfo(userId));
+  //       const membersInfo = await Promise.all(promises);
+  //       setMembers(membersInfo);
+  //     } catch (error) {
+  //       console.error('Error fetching members info:', error);
+  //     }
+  //   };
 
   const handleJoinBtn = () => {
     setJoined(!joined)
@@ -37,14 +65,17 @@ const ClubPage = () => {
     setCreatePost(!createPost);
   }
 
-  const getMembers = async(userId: number) => {
-    const data = await getUserInfo(userId);
-  }
-
   const handleSeeMembers = () => {
     setSeeMembers(!seeMembers);
+
   }
 
+  useEffect(() => {
+    if(seeMembers){
+      fetchClubMembers(displayedClub?.id);
+    }
+  },[seeMembers])
+  
   useEffect(() => {
     const fetchedData = async (clubId: number) => {
       const getPosts = await getPostsByClubId(clubId);
@@ -178,11 +209,13 @@ const ClubPage = () => {
             <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl'>
                 <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon/></h1>
                 <div className='grid grid-cols-5 px-8 justify-center py-2'>
-                  <div className='col-span-1 flex flex-col justify-center items-center'>
-                    <img src="/dummyImg.png" alt="Member" className='member-img' />
-                    <h1 className='font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none'>Username</h1>
-                    <p className='font-mainFont text-darkbrown text-sm'>Name</p>
-                  </div>
+                {members.map((member) => (
+                  <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
+                    <img src={member.picture || '/dummyImg.png'} alt="Member" className="member-img" />
+                    <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
+                    <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
+                 </div>
+                ))}
                 </div>
             </div>
           </div>}

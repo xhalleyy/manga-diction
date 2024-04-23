@@ -44,7 +44,7 @@ const BrowseClubs = () => {
       <NavbarComponent />
 
       {/* header , search, create clubs modal start */}
-      <div className='grid lg:grid-cols-4 gap-0 pt-12 px-16'>
+      <div className='grid lg:grid-cols-4 gap-0 pt-5 px-16 items-center pb-4'>
 
         <div>
           <p className='text-3xl text-darkbrown font-bold'> Public Clubs </p>
@@ -67,17 +67,17 @@ const BrowseClubs = () => {
             </Button>          </div>
         </div>
 
-        <div className='flex justify-end'>
+        <div className='flex justify-end '>
           <ClubModalComponent />
         </div>
       </div>
       {/* header , search, create clubs modal end */}
 
-      <div className='px-16 p-3'>
+      {/* <div className='px-16 p-3'>
         <p className='text-lg'> Popular Clubs: </p>
-      </div>
+      </div> */}
 
-      <div className='px-16'>
+      <div className='px-[130px] mb-2'>
         <CarouselComponent />
       </div>
 

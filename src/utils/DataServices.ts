@@ -222,17 +222,17 @@ export const updateUser = async(User: IUserData) => {
 
 // ----------------- CLUB MEMBERS API FETCHES--------------
 // GET USER'S CLUBS
-export const getUserClubs = async(userId: number) => {
+export const getUserClubs = async(userId: number ) => {
     const res = await fetch(url + '/Member/GetUserClubs/' + userId);
-    const data: IMemberToClubAssociation = await res.json();
+    const data: number[] = await res.json();
     console.log(data);
     return data;
 }
 
 // GET CLUB'S MEMBERS
-export const getClubMembers = async(clubId: number) => {
+export const getClubMembers = async(clubId: number | undefined) => {
     const res = await fetch(url + '/Member/GetClubMembers/' + clubId);
-    const data: IMemberToClubAssociation = await res.json();
+    const data: number[] = await res.json();
     console.log(data);
     return data;
 }
