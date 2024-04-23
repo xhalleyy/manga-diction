@@ -29,9 +29,7 @@ const EditSettings = () => {
     const [firstN, setFirstN] = useState<string>("");
     const [lastN, setLastN] = useState<string>("");
     const [age, setAge] = useState<number>(0);
-    const [profilePic, setProfilePic] = useState<string>(() => {
-        return localStorage.getItem('profilePic') || '/dummyImg.png'
-    });
+    const [profilePic, setProfilePic] = useState<string>("");
 
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
 

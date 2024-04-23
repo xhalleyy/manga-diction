@@ -38,12 +38,6 @@ const ProfilePage = (props: any) => {
         setClubs(getClubs);
       };
       fetchedData();
-
-      const updatedPic = localStorage.getItem("profilePic")
-
-      if(updatedPic){
-        setProfilePic(updatedPic);
-      }
     }, []);
 
     useEffect(() => {
@@ -55,19 +49,19 @@ const ProfilePage = (props: any) => {
         fetchedUser();
     }, [])
 
-    const handlePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files && e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const picData = reader.result as string;
-                localStorage.setItem('profilePic', picData)
-                setProfilePic(picData)
-            };
-            reader.readAsDataURL(file);
-        }
+    // const handlePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files && e.target.files[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = () => {
+    //             const picData = reader.result as string;
+    //             localStorage.setItem('profilePic', picData)
+    //             setProfilePic(picData)
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
 
-    }
+    // }
 
     return (
         <div className='bg-offwhite h-screen'>
