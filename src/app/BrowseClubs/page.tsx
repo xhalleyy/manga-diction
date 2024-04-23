@@ -85,7 +85,7 @@ const BrowseClubs = () => {
         <p className='text-lg'> More Public Clubs: </p>
       </div>
 
-      <div className='grid grid-cols-4 justify-around  gap-5 px-20 '>
+      <div className='grid grid-cols-4 justify-around  gap-4 px-[140px] pb-8 '>
       {randomClubs.map((club, idx) => (
           <div key={idx} className='col-span-1'>
             <CardComponent
