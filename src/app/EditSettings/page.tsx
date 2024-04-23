@@ -137,7 +137,7 @@ const EditSettings = () => {
                 <div className='bg-paleblue p-8 rounded-xl grid grid-cols-2'>
                     <div className='col-span-1 flex justify-center'>
                         <Image
-                            src={profilePic}
+                            src={userData.picture || '/dummyImg.png'}
                             onMouseEnter={() => setChangePic(true)}
                             onMouseLeave={() => setChangePic(false)}
                             alt='profile image'

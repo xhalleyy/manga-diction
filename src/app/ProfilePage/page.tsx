@@ -75,7 +75,7 @@ const ProfilePage = (props: any) => {
                         <div className='flex flex-col justify-center mb-10'>
                             <div className='flex justify-center'>
                             <Image
-                            src={profilePic}
+                            src={userData && userData?.picture || '/dummyImg.png'}
                             alt='profile image'
                             width={150}
                             height={150}
