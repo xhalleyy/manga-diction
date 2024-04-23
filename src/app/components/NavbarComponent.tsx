@@ -10,12 +10,12 @@ export function NavbarComponent() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [profilePic, setProfilePic] = useState<string>("");
 
-  useEffect(() => {
-    const updatedPic = localStorage.getItem("profilePic")
-    if(updatedPic){
-      setProfilePic(updatedPic);
-    }
-  })
+  // useEffect(() => {
+  //   const updatedPic = localStorage.getItem("profilePic")
+  //   if(updatedPic){
+  //     setProfilePic(updatedPic);
+  //   }
+  // }, [])
 
 
 
