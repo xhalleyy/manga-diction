@@ -33,11 +33,16 @@ const ProfilePage = (props: any) => {
     const [clubs, setClubs] = useState<IClubs[]>([]);
 
     useEffect(() => {
-      const fetchedData = async () => {
-        const getClubs = await publicClubsApi();
-        setClubs(getClubs);
-      };
-      fetchedData();
+        let userId = Number(localStorage.getItem("UserId"));
+        const fetchedUser = async () => {
+            const user = await getUserInfo(userId);
+            console.log(user.picture)
+            const storedPicData = localStorage.getItem(`profilePic_${userId}`);
+            if (storedPicData) {
+                setProfilePic(storedPicData);
+            } setUserData(user);
+        }
+        fetchedUser();
     }, []);
 
     useEffect(() => {
@@ -75,7 +80,7 @@ const ProfilePage = (props: any) => {
                         <div className='flex flex-col justify-center mb-10'>
                             <div className='flex justify-center'>
                             <Image
-                            src={userData && userData?.picture || '/dummyImg.png'}
+                            src={profilePic || '/dummyImg.png'}
                             alt='profile image'
                             width={150}
                             height={150}

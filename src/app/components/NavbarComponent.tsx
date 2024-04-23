@@ -1,6 +1,7 @@
 "use client"
 
 import { IUserData } from "@/Interfaces/Interfaces";
+import { getUserInfo } from "@/utils/DataServices";
 import { Avatar, Button, Dropdown, DropdownDivider, Modal, Navbar } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,12 +13,18 @@ export function NavbarComponent() {
   const [profilePic, setProfilePic] = useState<string>("");
   const [userData, setUserData] = useState<IUserData>();
 
-  // useEffect(() => {
-  //   const updatedPic = localStorage.getItem("profilePic")
-  //   if(updatedPic){
-  //     setProfilePic(updatedPic);
-  //   }
-  // }, [])
+  useEffect(() => {
+    let userId = Number(localStorage.getItem("UserId"));
+        const fetchedUser = async () => {
+            const user = await getUserInfo(userId);
+            console.log(user.picture)
+            const storedPicData = localStorage.getItem(`profilePic_${userId}`);
+            if (storedPicData) {
+                setProfilePic(storedPicData);
+            } setUserData(user);
+        }
+        fetchedUser();
+  }, [])
 
 
 
@@ -70,7 +77,7 @@ export function NavbarComponent() {
         {/* onClick={() => {router.push('/ProfilePage')} */}
         
         <div className="flex gap-2.5">
-        <img src={userData?.picture || '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-10 h-10 rounded-3xl" onClick={() => router.push('/ProfilePage')} />
+        <img src={profilePic || '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-10 h-10 rounded-3xl" onClick={() => router.push('/ProfilePage')} />
 
         <div className="mt-3">
           <Dropdown className="border-8 border-offwhite rounded-xl w-56"

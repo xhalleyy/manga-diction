@@ -4,7 +4,7 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import { getUserInfo, updateUser } from '@/utils/DataServices'
 import { IUserData } from '@/Interfaces/Interfaces'
 import Image from 'next/image'
-import {  Button, Label, TextInput } from 'flowbite-react'
+import { Button, Label, TextInput } from 'flowbite-react'
 import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
 
@@ -32,16 +32,21 @@ const EditSettings = () => {
     const [profilePic, setProfilePic] = useState<string>("");
 
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
-
+    const [pictureSuccess, setPictureSuccess] = useState<boolean | undefined>(undefined);
 
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
-            setUserData(user);
+            console.log(user.picture)
+            const storedPicData = localStorage.getItem(`profilePic_${userId}`);
+            if (storedPicData) {
+                setProfilePic(storedPicData);
+            } setUserData(user);
         }
         fetchedUser();
     }, [])
+    
 
     const customInput = {
         "field": {
@@ -85,22 +90,32 @@ const EditSettings = () => {
         }))
     };
 
-    const handlePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files && e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = () => {
+            reader.onload = async () => {
                 const picData = reader.result as string;
                 setUserData(prevUserData => ({
                     ...prevUserData,
                     picture: picData
                 }));
-                localStorage.setItem('profilePic', picData)
-                setProfilePic(picData)
+
+                try {
+                    const userId = Number(localStorage.getItem("UserId"));
+                    const userInfo = await getUserInfo(userId);
+
+                    const updatedUserInfo = { ...userInfo, picture: picData }
+                    await updateUser(updatedUserInfo);
+
+                    localStorage.setItem(`profilePic_${userId}`, picData);
+                } catch (error) {
+                    console.error("Error updating profile picture:", error)
+                }
             };
             reader.readAsDataURL(file);
         }
-
+        setPictureSuccess(true);
     }
 
 
@@ -133,11 +148,22 @@ const EditSettings = () => {
                         </div>
                     )}
                 </div>
+
+                <div className="w-full relative flex justify-end items-end -mt-[px]">
+                    {pictureSuccess && (
+                        <div className="w-72">
+                            <Alert severity="success">
+                                <AlertTitle>Success</AlertTitle>
+                                Profile Picture Updated!
+                            </Alert>
+                        </div>
+                    )}
+                </div>
                 <h1 className='text-darkbrown font-mainFont text-4xl ps-4 pb-2'>Account Settings</h1>
                 <div className='bg-paleblue p-8 rounded-xl grid grid-cols-2'>
                     <div className='col-span-1 flex justify-center'>
                         <Image
-                            src={userData.picture || '/dummyImg.png'}
+                            src={profilePic || '/dummyImg.png'}
                             onMouseEnter={() => setChangePic(true)}
                             onMouseLeave={() => setChangePic(false)}
                             alt='profile image'
