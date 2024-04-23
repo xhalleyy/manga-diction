@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { TextInput, Label, Dropdown } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { getPostsByClubId } from '@/utils/DataServices';
+import { getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image';
@@ -19,6 +19,15 @@ const ClubPage = () => {
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
+  const [seeMembers, setSeeMembers] = useState<boolean>(false);
+
+
+  useEffect(() => {
+    const fetchedClubMembers = async(clubId: number) => {
+      const data = await getClubMembers(clubId);
+    }
+    fetchedClubMembers(1);
+  },[])
 
   const handleJoinBtn = () => {
     setJoined(!joined)
@@ -26,6 +35,14 @@ const ClubPage = () => {
 
   const handleCreatePost = () => {
     setCreatePost(!createPost);
+  }
+
+  const getMembers = async(userId: number) => {
+    const data = await getUserInfo(userId);
+  }
+
+  const handleSeeMembers = () => {
+    setSeeMembers(!seeMembers);
   }
 
   useEffect(() => {
@@ -106,7 +123,7 @@ const ClubPage = () => {
         </div>
 
         <div className='grid grid-cols-7 pt-3 gap-5'>
-          <div className='col-span-5'>
+          {!seeMembers ? <div className='col-span-5'>
             {createPost && joined ?
               <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
                 <div className='grid grid-cols-12 items-center gap-3 py-1'>
@@ -156,6 +173,19 @@ const ClubPage = () => {
               </div>
             </div>
           </div>
+          : 
+          <div className='col-span-5'>
+            <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl'>
+                <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon/></h1>
+                <div className='grid grid-cols-5 px-8 justify-center py-2'>
+                  <div className='col-span-1 flex flex-col justify-center items-center'>
+                    <img src="/dummyImg.png" alt="Member" className='member-img' />
+                    <h1 className='font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none'>Username</h1>
+                    <p className='font-mainFont text-darkbrown text-sm'>Name</p>
+                  </div>
+                </div>
+            </div>
+          </div>}
           <div className='col-span-2'>
             <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
             <div className='bg-white/80 border-8 border-ivory rounded-xl'>
@@ -169,7 +199,7 @@ const ClubPage = () => {
 
             <div>
               <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button>
-              <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'>All Members</button>
+              <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'>All Members</button>
               <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg'>Delete Club</button>
             </div>
           </div>

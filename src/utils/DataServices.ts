@@ -1,9 +1,9 @@
-import { IClubs, ILoginUserInfo, IPosts, IToken, IUserData } from "@/Interfaces/Interfaces";
+import { IClubs, ILoginUserInfo, IMemberToClubAssociation, IPosts, IToken, IUserData } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
 let userData: IClubs
-
+// --------------------- CREATING AN ACCOUNT/ LOGIN ----------------------
 // FETCH TO CREATE USER
 export const createUser = async (createdUser: IUserData) => {
 
@@ -45,6 +45,19 @@ export const login = async(loginUser: ILoginUserInfo) => {
     return data;
 }
 
+// FETCH FOR CHECKING LOGIN TOKEN
+export const checkToken = () => {
+    let result = false;
+    let isData = localStorage.getItem("Token");
+
+    if(isData != null){
+        result = true;
+    }
+
+    return result;
+}
+
+// ----------------- CLUB API FETCHES -----------------------
 // FETCH FOR CREATING CLUB
 export const createClub = async (Club: IClubs) => {
     const res = await fetch(url + 'Club/CreateClub', {
@@ -62,7 +75,7 @@ export const createClub = async (Club: IClubs) => {
 
     const data = await res.json;
     return data;
-
+    
 }
 
 // FETCH FOR UPDATING CLUBS
@@ -82,18 +95,6 @@ export const updateClubs = async (Club: IClubs) => {
 
     const data = await res.json();
     return data;
-}
-
-// FETCH FOR CHECKING LOGIN TOKEN
-export const checkToken = () => {
-    let result = false;
-    let isData = localStorage.getItem("Token");
-
-    if(isData != null){
-        result = true;
-    }
-
-    return result;
 }
 
 // FETCH FOR GETTING CLUB BY LEADERS
@@ -128,6 +129,7 @@ export const specifiedClub = async(clubId: number) => {
 
 publicClubsApi();
 
+// ----------------- MANGADEX API -------------------------
 // for example: https://api.mangadex.org/manga?limit=10&title=shingeki&includedTags%5B%5D=391b0423-d847-456f-aff0-8b0cfc03066b&includedTagsMode=AND&excludedTagsMode=OR&status%5B%5D=completed&publicationDemographic%5B%5D=shounen&contentRating%5B%5D=safe&contentRating%5B%5D=suggestive&contentRating%5B%5D=erotica&order%5BlatestUploadedChapter%5D=desc
 const mangaUrl: string = 'https://api.mangadex.org';
 
@@ -181,7 +183,7 @@ export const specificManga = async(mangaId: string) => {
     return data;
 }
 
-
+// ------------------------ POST API FETCHES -----------------------
 // GET POSTS BY CLUB ID 
 export const getPostsByClubId = async( clubId: number) => {
     const res = await fetch(url + 'Post/GetAllPostsInClub/' + clubId)
@@ -190,6 +192,7 @@ export const getPostsByClubId = async( clubId: number) => {
     return data;
 }
 
+// ---------------------- USERS API FETCHES ------------
 // GET USER INFO
 export const getUserInfo = async(userId: number) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
@@ -214,5 +217,37 @@ export const updateUser = async(User: IUserData) => {
     }
 
     const data = await res.json();
+    return data;
+}
+
+// ----------------- CLUB MEMBERS API FETCHES--------------
+// GET USER'S CLUBS
+export const getUserClubs = async(userId: number) => {
+    const res = await fetch(url + '/Member/GetUserClubs/' + userId);
+    const data: IMemberToClubAssociation = await res.json();
+    console.log(data);
+    return data;
+}
+
+// GET CLUB'S MEMBERS
+export const getClubMembers = async(clubId: number) => {
+    const res = await fetch(url + '/Member/GetClubMembers/' + clubId);
+    const data: IMemberToClubAssociation = await res.json();
+    console.log(data);
+    return data;
+}
+
+// ADD USER TO CLUB
+export const AddUserToClub = async(userId: number, clubId: number) => {
+    const res = await fetch(`${url}Member/AddMemberToClub?userId=${userId}&clubId=${clubId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        
+    });
+
+    const data = res.json();
+    console.log(data);
     return data;
 }

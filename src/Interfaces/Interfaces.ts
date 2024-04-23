@@ -43,3 +43,9 @@ export interface IPosts {
     dateUpdated: string,
     isDeleted: boolean
 }
+
+export interface IMemberToClubAssociation {
+    // id: number,
+    userId: number,
+    clubId: number
+}

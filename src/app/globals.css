@@ -92,3 +92,14 @@
     width: 200px;
     object-fit: cover;
 }
+
+.members {
+    border: solid 20px rgba(207, 198, 183, 1);
+    height: 470px;
+}
+
+.member-img{
+    height: 90px;
+    width: 90px;
+    border-radius: 50%;
+}
