@@ -16,5 +16,4 @@
   + dark beige: #CFC6B7
   + dark brown variation at 60% opacity
   + posts + members inner div variation of #FFFFFF at 80% opacity
-  + 
   

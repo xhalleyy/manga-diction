@@ -103,3 +103,27 @@
     width: 90px;
     border-radius: 50%;
 }
+
+.mobileInputUser{
+    font-family: poppinsMed;
+    background-color: rgb(255, 255, 255, 0);
+    border-bottom: 1px solid darkgray;
+    padding-left: 40px;
+    background-position: 10px 1px;
+    background-image: url(../assets/grey\ pfp\ transparent.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 100%;
+}
+
+.mobileInputPass{
+    font-family: poppinsMed;
+    background-color: rgb(255, 255, 255, 0);
+    border-bottom: 1px solid darkgray;
+    padding-left: 40px;
+    background-position: 10px -1px;
+    background-image: url(../assets/grey\ lock\ transparent.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 100%;
+}

@@ -229,9 +229,47 @@ export default function Home() {
 
         <div className="flex flex-row gap-5 justify-center">
           <Tabs value={value} onChange={handleChange} className="!font-mainFont !text-2xl" aria-label="disabled tabs example">
-            <Tab label="Active" />
-            <Tab label="Disabled" disabled />
+            <Tab label="Login" onClick={logsignSwitch} />
+            <Tab label="Register" onClick={logsignSwitch} />
           </Tabs>
+        </div>
+
+        <div className="mx-auto mt-10 w-[80%]">
+          <form>
+            <div className=" my-5">
+              <input className="mobileInputUser" placeholder="Username" id="username1" required onChange={(e) => setUsername(e.target.value)}/>
+            </div>
+            
+            <div className={logsign ? "hidden" : "my-7 "}>
+              <input className="mobileInputUser" placeholder="First Name" id="firstname1" required onChange={(e) => setFirstN(e.target.value)}/>
+            </div>
+            <div className={logsign ? "hidden" : "my-7 "}>
+              <input className="mobileInputUser" placeholder="Last Name" id="lastname1" required onChange={(e) => setLastN(e.target.value)}/>
+            </div>
+            <div className={logsign ? "hidden" : "my-7 "}>
+              <input className="mobileInputUser" placeholder="Age" id="age1" required onChange={(e) => setAge(Number(e.target.value))} />
+            </div>
+
+            <div className={logsign ? "grid grid-cols-8 mt-10" : "grid grid-cols-8" }>
+              <input className="mobileInputPass col-span-7" placeholder="Password" id="password1" required onChange={(e) => setPassword(e.target.value)}/>
+
+            <div onClick={handlePasswordVisibility} className=" col-span-1 justify-end text-sm text-signUp cursor-pointer border-b border-gray-400">
+                    {visibility ? (
+                      <>
+                        <VisibilityOffIcon fontSize="small" className="me-1" />
+                      </>
+                    ) : (
+                      <>
+                        <RemoveRedEyeIcon fontSize="small" className="me-1" />
+                      </>
+                    )}
+                  </div>
+                    </div>
+            <div>
+              {/* remember password? buttons */}
+            </div>
+            <button className=" h-12 w-full mt-14 text-3xl text-white darkBeige rounded-md font-mainFont">Sign In</button>
+          </form>
         </div>
       </div>
     </>
