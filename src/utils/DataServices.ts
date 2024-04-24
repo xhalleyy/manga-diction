@@ -232,7 +232,7 @@ export const getClubMembers = async(clubId: number | undefined) => {
 }
 
 // ADD USER TO CLUB
-export const AddUserToClub = async(userId: number, clubId: number) => {
+export const AddUserToClub = async(userId: number | undefined, clubId: number | undefined) => {
     const res = await fetch(`${url}Member/AddMemberToClub?userId=${userId}&clubId=${clubId}`, {
         method: 'POST',
         headers: {
@@ -241,7 +241,7 @@ export const AddUserToClub = async(userId: number, clubId: number) => {
         
     });
 
-    const data = res.json();
+    const data = res.text();
     console.log(data);
     return data;
 }

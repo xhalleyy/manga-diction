@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { TextInput, Label, Dropdown } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
+import { AddUserToClub, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image';
@@ -35,9 +35,16 @@ const ClubPage = () => {
     }
   };
 
-  const handleJoinBtn = () => {
-    setJoined(!joined)
-  }
+  const handleJoinBtn = async () => {
+    try {
+      let userId = Number(localStorage.getItem("UserId"));
+      const joinUser = await AddUserToClub(userId, displayedClub?.id);
+      setJoined(true);
+    } catch (error) {
+      alert('Unable to Join Club at this moment');
+      console.log(error);
+    }
+  };
 
   const handleCreatePost = () => {
     setCreatePost(!createPost);
@@ -116,7 +123,7 @@ const ClubPage = () => {
                   <h1 className='font-poppinsMed text-xl text-darkbrown py-2'>Create Post</h1>
                   <AddIcon sx={{ fontSize: 30, color: brown[800] }} />
                 </div>
-                <div onClick={handleJoinBtn} className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
+                <div className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
                   <h1 className='font-poppinsMed text-xl text-white py-2'>Joined</h1>
                   <CheckIcon sx={{ fontSize: 25, color: grey[50] }} />
                 </div>
