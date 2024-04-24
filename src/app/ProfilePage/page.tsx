@@ -6,7 +6,9 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
 import { IClubs, IUserData } from '@/Interfaces/Interfaces';
-import { getUserInfo, publicClubsApi } from '@/utils/DataServices';
+import { getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const ProfilePage = (props: any) => {
 
@@ -14,6 +16,7 @@ const ProfilePage = (props: any) => {
     const [userData, setUserData] = useState<IUserData>();
     const [isMyProfile, setIsMyProfile] = useState<boolean>(true);
     const [profilePic, setProfilePic] = useState<string>("");
+    const router = useRouter();
 
     const clubox: string = 'grid grid-cols-3 gap-5'
     const noClubox: string = 'grid grid-cols-3 gap-5 hidden'
@@ -29,14 +32,14 @@ const ProfilePage = (props: any) => {
         setShowClubs(false);
     }
 
-
     const [clubs, setClubs] = useState<IClubs[]>([]);
 
+    // This displays user's information by gettint the user's ID from local storage
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
-            console.log(user.picture)
+            // console.log(user.picture)
             const storedPicData = localStorage.getItem(`profilePic_${userId}`);
             if (storedPicData) {
                 setProfilePic(storedPicData);
@@ -45,15 +48,24 @@ const ProfilePage = (props: any) => {
         fetchedUser();
     }, []);
 
-    useEffect(() => {
-        let userId = Number(localStorage.getItem("UserId"));
-        const fetchedUser = async() => {
-            const user = await getUserInfo(userId);
-            setUserData(user);
+    const fetchUserClubs = async (userId: number | undefined) => {
+        try {
+          const memberIds = await getUserClubs(userId);
+          const promises = memberIds.map((clubId: number) => specifiedClub(clubId));
+          const usersInfo = await Promise.all(promises);
+          setClubs(usersInfo);
+        } catch (error) {
+          console.error('Error fetching club members:', error);
         }
-        fetchedUser();
-    }, [])
+      };
 
+    useEffect(()=> {
+        if (showClubs) {
+            let userId = Number(localStorage.getItem("UserId"));
+            fetchUserClubs(userId);
+          }
+    }, [showClubs])
+    
     // const handlePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     const file = e.target.files && e.target.files[0];
     //     if (file) {
@@ -163,7 +175,7 @@ const ProfilePage = (props: any) => {
 
                         <div className='mt-4'>
                             <div className={showClubs ? clubox : noClubox}>
-                                {clubs.slice(0, 4).map((club, idx) => (
+                                {clubs.length !== 0 ? clubs.map((club, idx) => (
                                     <div key={idx} className='col-span-1 mx-2'>
                                         <CardComponent
                                             id={club.id}
@@ -176,7 +188,11 @@ const ProfilePage = (props: any) => {
                                             isDeleted={club.isDeleted}
                                         />
                                     </div>
-                                ))}
+                                )) :  
+                                <div className='col-span-3'>
+                                    <h1 className='pt-20 text-center font-poppinsMed text-2xl text-darkbrown'>You are not in any clubs. <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
+                                </div>
+                                }
                             </div>
 
                             <div className={!showClubs ? favbox : noFavbox}>

@@ -17,7 +17,7 @@ export function NavbarComponent() {
     let userId = Number(localStorage.getItem("UserId"));
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
-            console.log(user.picture)
+            // console.log(user.picture)
             const storedPicData = localStorage.getItem(`profilePic_${userId}`);
             if (storedPicData) {
                 setProfilePic(storedPicData);

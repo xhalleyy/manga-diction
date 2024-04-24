@@ -2,7 +2,7 @@ import { IClubs, ILoginUserInfo, IMemberToClubAssociation, IPosts, IToken, IUser
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
-let userData: IClubs
+// let userData: IClubs
 // --------------------- CREATING AN ACCOUNT/ LOGIN ----------------------
 // FETCH TO CREATE USER
 export const createUser = async (createdUser: IUserData) => {
@@ -97,19 +97,13 @@ export const updateClubs = async (Club: IClubs) => {
     return data;
 }
 
-// FETCH FOR GETTING CLUB BY LEADERS
-export const getClubItemsByLeaderId = async (leaderId: number) => {
-    const res = await fetch(url + 'Club/GetClubById/' + leaderId)
-    const data = await res.json();
-    // console.log(data);
-    return data;
-}
+// FETCH FOR GETTING CLUB BY ID OF CLUB
 
 // getClubItemsByLeaderId(1);
 
-export const loggedInData = () => {
-    return userData;
-}
+// export const loggedInData = () => {
+//     return userData;
+// }
 
 // Get Public Clubs
 export const publicClubsApi = async() => {
@@ -222,7 +216,7 @@ export const updateUser = async(User: IUserData) => {
 
 // ----------------- CLUB MEMBERS API FETCHES--------------
 // GET USER'S CLUBS
-export const getUserClubs = async(userId: number ) => {
+export const getUserClubs = async(userId: number | undefined ) => {
     const res = await fetch(url + '/Member/GetUserClubs/' + userId);
     const data: number[] = await res.json();
     console.log(data);

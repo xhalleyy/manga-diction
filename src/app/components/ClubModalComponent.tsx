@@ -4,40 +4,44 @@ import { Button, Dropdown, FileInput, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import { IClubs } from "@/Interfaces/Interfaces";
-import { getClubItemsByLeaderId, loggedInData, updateClubs } from "@/utils/DataServices";
+import { updateClubs } from "@/utils/DataServices";
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useRouter } from "next/navigation";
+import { useClubContext } from "@/context/ClubContext";
 
 function ClubModalComponent() {
     const [openModal, setOpenModal] = useState(false);
     const [clubItems, setClubItems] = useState<IClubs[]>([]);
+    const clubData = useClubContext();
 
     const [id, setId] = useState<number>(0);
-    const [leader, setLeader] = useState<number>(0);
     const [clubName, setClubName] = useState<string>("");
     const [clubDescription, setClubDescription] = useState<string>("");
     const [clubImg, setClubImg] = useState<any>("");
     const [privateClub, setPrivateClub] = useState<boolean>(false);
     const [dateCreated, setDateCreated] = useState<string>("");
 
-    useEffect(()=> {
-        const fetchClubs = async () => {
-            try {
-                const userLoggedIn = loggedInData();
+    const router = useRouter();
 
-                if(userLoggedIn && userLoggedIn.leaderId){
-                    const clubs = await getClubItemsByLeaderId(userLoggedIn.leaderId);
-                    setClubItems(prevClubItems => [...prevClubItems, clubs]);
+    // useEffect(()=> {
+    //     const fetchClubs = async () => {
+    //         try {
+    //             const userLoggedIn = loggedInData();
 
-                }
-            } catch (error) {
-                console.error('Error fetching club data!')
-            }
-        }
+    //             if(userLoggedIn && userLoggedIn.leaderId){
+    //                 const clubs = await getClubItemsByLeaderId(userLoggedIn.leaderId);
+    //                 setClubItems(prevClubItems => [...prevClubItems, clubs]);
 
-        fetchClubs();
-    }, [])
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching club data!')
+    //         }
+    //     }
+
+    //     fetchClubs();
+    // }, [])
 
     const privateSettingOn = () => {
         setPrivateClub(true)
@@ -46,33 +50,6 @@ function ClubModalComponent() {
         setPrivateClub(false)
     }
 
-    const handleCreateClub = async () => {
-        const newClub: IClubs = {
-            id: id,
-            leaderId: leader,
-            clubName: clubName,
-            description: clubDescription,
-            dateCreated: dateCreated,
-            image: clubImg,
-            isPublic: true,
-            isDeleted: false
-        };
-        setClubItems(prevClubItems => [...prevClubItems, newClub]);
-
-        let result = await updateClubs(newClub)
-
-        if (result) {
-            const loggedIn = loggedInData();
-            let userClubs: IClubs[] = await getClubItemsByLeaderId(loggedIn.leaderId)
-            let filteredClubs = userClubs.filter(club => club.isDeleted == false)
-            setClubItems(filteredClubs);
-            console.log("Updated Club Items:", filteredClubs);
-
-        }
-
-        
-
-    }
 
     const handleClubName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setClubName(e.target.value);
@@ -96,7 +73,32 @@ function ClubModalComponent() {
 
     }
 
+    const handleCreateClub = async () => {
+        let userId = Number(localStorage.getItem("UserId"));
+        const newClub: IClubs = {
+            id: id,
+            leaderId: userId,
+            clubName: clubName,
+            description: clubDescription,
+            dateCreated: dateCreated,
+            image: clubImg,
+            isPublic: true,
+            isDeleted: false
+        };
+        setClubItems(prevClubItems => [...prevClubItems, newClub]);
 
+        try {
+            let result = await updateClubs(newClub)
+
+            if (result) {
+                clubData.setDisplayedClub(newClub)
+                router.push('/ClubPage')
+            }
+        } catch (error) {
+            alert("Creating Group Unsuccessful!")
+        }
+
+    }
 
     return (
         <>
@@ -164,7 +166,7 @@ function ClubModalComponent() {
                         </div>
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
-                        <Button  className="darkBlue rounded-xl" onClick={() =>{handleCreateClub(); setOpenModal(false)}}>
+                        <Button className="darkBlue rounded-xl" onClick={() => { handleCreateClub(); setOpenModal(false) }}>
                             <span className="font-mainFont text-lg">Create</span>
                             {/* <img alt="plus sign" src=""/> */}
                             <AddIcon className="ms-1" />

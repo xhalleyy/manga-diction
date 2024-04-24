@@ -23,39 +23,17 @@ const ClubPage = () => {
   const [members, setMembers] = useState<IUserData[]>([]);
 
 
-  // useEffect(() => {
-  //   const fetchClubMembers = async (clubId: number | undefined) => {
-  //     try {
-  //       const memberIds = await getClubMembers(clubId);
-  //       const promises = memberIds.map((userId: number) => getUserInfo(userId));
-  //       const usersInfo = await Promise.all(promises);
-  //       setMembers(usersInfo);
-  //     } catch (error) {
-  //       console.error('Error fetching club members:', error);
-  //     }
-  //   };
 
-  //   fetchClubMembers(displayedClub?.id); // Assuming clubId 1
-  // }, []);
-
-    const fetchClubMembers = async (clubId: number | undefined) => {
-      try {
-        const memberIds = await getClubMembers(clubId);
-        const promises = memberIds.map((userId: number) => getUserInfo(userId));
-        const usersInfo = await Promise.all(promises);
-        setMembers(usersInfo);
-      } catch (error) {
-        console.error('Error fetching club members:', error);
-      }
-    };
-
-  // const promises = memberIds.map((userId) => getUserInfo(userId));
-  //       const membersInfo = await Promise.all(promises);
-  //       setMembers(membersInfo);
-  //     } catch (error) {
-  //       console.error('Error fetching members info:', error);
-  //     }
-  //   };
+  const fetchClubMembers = async (clubId: number | undefined) => {
+    try {
+      const memberIds = await getClubMembers(clubId);
+      const promises = memberIds.map((userId: number) => getUserInfo(userId));
+      const usersInfo = await Promise.all(promises);
+      setMembers(usersInfo);
+    } catch (error) {
+      console.error('Error fetching club members:', error);
+    }
+  };
 
   const handleJoinBtn = () => {
     setJoined(!joined)
@@ -71,11 +49,11 @@ const ClubPage = () => {
   }
 
   useEffect(() => {
-    if(seeMembers){
+    if (seeMembers) {
       fetchClubMembers(displayedClub?.id);
     }
-  },[seeMembers])
-  
+  }, [seeMembers])
+
   useEffect(() => {
     const fetchedData = async (clubId: number) => {
       const getPosts = await getPostsByClubId(clubId);
@@ -204,21 +182,21 @@ const ClubPage = () => {
               </div>
             </div>
           </div>
-          : 
-          <div className='col-span-5'>
-            <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl'>
-                <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon/></h1>
+            :
+            <div className='col-span-5'>
+              <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl'>
+                <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon /></h1>
                 <div className='grid grid-cols-5 px-8 justify-center py-2'>
-                {members.map((member) => (
-                  <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
-                    <img src={member.picture || '/dummyImg.png'} alt="Member" className="member-img" />
-                    <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
-                    <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
-                 </div>
-                ))}
+                  {members.map((member) => (
+                    <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
+                      <img src={member.picture || '/dummyImg.png'} alt="Member" className="member-img" />
+                      <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
+                      <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
+                    </div>
+                  ))}
                 </div>
-            </div>
-          </div>}
+              </div>
+            </div>}
           <div className='col-span-2'>
             <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
             <div className='bg-white/80 border-8 border-ivory rounded-xl'>

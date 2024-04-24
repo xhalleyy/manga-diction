@@ -7,33 +7,33 @@ import { Button, TextInput } from 'flowbite-react';
 import ClubModalComponent from '../components/ClubModalComponent';
 import { CarouselComponent } from '../components/CarouselComponent';
 import CardComponent from '../components/CardComponent';
-import { publicClubsApi } from '@/utils/DataServices';
+import { publicClubsApi, specifiedClub } from '@/utils/DataServices';
 import { IClubs } from '@/Interfaces/Interfaces';
-
-// STILL NEED TO : for the cards, want to randomize clubs and have 12 cards showcasing
+import { useClubContext } from '@/context/ClubContext';
 
 
 const BrowseClubs = () => {
 
-  const [id, setId] = useState<number | undefined>();
-  const [leaderId, setLeaderId] = useState<number | undefined>();
-  const [description, setDescription] = useState<string>("");
-  const [dateCreated, setDateCreated] = useState<string>("");
-  const [image, setImage] = useState<string>("");
-  const [isPublic, setisPublic] = useState<boolean>(true);
-  const [clubName, setClubName] = useState<string>("");
-  const [isDeleted, setIsDeleted] = useState<boolean>(false);
-
+  const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
 
   useEffect(() => {
     const fetchedData = async () => {
       const getClubs = await publicClubsApi();
-      // console.log(getClubs)
       setClubs(getClubs);
     }
     fetchedData();
   }, []);
+
+  const handleClubCardClick = async (club: IClubs) => {
+    try {
+      const clubDisplayedInfo = await specifiedClub(club.id);
+      clubData.setDisplayedClub(clubDisplayedInfo);
+    } catch (error) {
+      alert("Error fetching club information");
+      console.error(error);
+    }
+  };
 
   const shuffledClubs = clubs.sort(() => Math.random() - 0.5);
   const randomClubs = shuffledClubs.slice(0, 12);
@@ -44,38 +44,34 @@ const BrowseClubs = () => {
       <NavbarComponent />
 
       {/* header , search, create clubs modal start */}
-      <div className='grid lg:grid-cols-4 gap-0 pt-5 px-16 items-center pb-4'>
+      <div className='grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4'>
 
         <div>
           <p className='text-3xl text-darkbrown font-bold'> Public Clubs </p>
         </div>
 
-        <div></div>
+        <div className='flex justify-end gap-5'>
+          <div className="relative ml-20">
+            <TextInput
+              id='base'
+              style={{ borderRightWidth: '50px', borderColor: 'rgba(207, 198, 183, 1)', height: 30 }}
+              type="text"
+              placeholder=""
+              className="border-ivory border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+            />
 
-        <div className="relative ml-20">
-          <TextInput
-            id='base'
-            style={{ borderRightWidth: '50px', borderColor: 'rgba(207, 198, 183, 1)', height: 30 }}
-            type="text"
-            placeholder=""
-            className="border-ivory border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
-          />
+            <div className="absolute ml-80 inset-y-0 flex items-center">
+              <Button style={{ backgroundColor: 'transparent' }} className="bg-transparent focus:ring-0">
+                <SearchIcon className='text-4xl text-white' />
+              </Button>          </div>
+          </div>
 
-          <div className="absolute ml-80 inset-y-0 flex items-center">
-            <Button style={{ backgroundColor: 'transparent' }} className="bg-transparent focus:ring-0">
-              <SearchIcon className='text-4xl text-white' />
-            </Button>          </div>
+          <div className='flex justify-end '>
+            <ClubModalComponent />
+          </div>
         </div>
 
-        <div className='flex justify-end '>
-          <ClubModalComponent />
-        </div>
       </div>
-      {/* header , search, create clubs modal end */}
-
-      {/* <div className='px-16 p-3'>
-        <p className='text-lg'> Popular Clubs: </p>
-      </div> */}
 
       <div className='px-[130px] mb-2'>
         <CarouselComponent />
@@ -86,8 +82,8 @@ const BrowseClubs = () => {
       </div>
 
       <div className='grid grid-cols-4 justify-around  gap-4 px-[140px] pb-8 '>
-      {randomClubs.map((club, idx) => (
-          <div key={idx} className='col-span-1'>
+        {randomClubs.map((club, idx) => (
+          <div key={idx} className='col-span-1' onClick={() => handleClubCardClick(club)}>
             <CardComponent
               id={club.id}
               leaderId={club.leaderId}
