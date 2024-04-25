@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DrawerComponent from "./DrawerComponent";
+import { profile } from "console";
 
 export function NavbarComponent() {
 
@@ -17,15 +18,12 @@ export function NavbarComponent() {
   useEffect(() => {
     let userId = Number(localStorage.getItem("UserId"));
     const fetchedUser = async () => {
-      const user = await getUserInfo(userId);
-      // console.log(user.picture)
-      const storedPicData = localStorage.getItem(`profilePic_${userId}`);
-      if (storedPicData) {
-        setProfilePic(storedPicData);
-      } setUserData(user);
+        const user = await getUserInfo(userId);
+        setUserData(user);
     }
     fetchedUser();
-  }, [])
+    
+}, []);
 
   const router = useRouter();
 
@@ -81,7 +79,7 @@ export function NavbarComponent() {
         {/* onClick={() => {router.push('/ProfilePage')} */}
 
         <div className="flex gap-2.5">
-        <img src={profilePic || '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-11 h-11 shadow-md rounded-3xl" onClick={() => router.push('/ProfilePage')} />
+          <img src={userData?.picture ? userData.picture : '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-10 h-10 rounded-3xl" onClick={() => router.push('/ProfilePage')} />
 
           <div className="mt-3">
             <Dropdown className="border-8 border-offwhite rounded-xl w-56"

@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { Button, Label, TextInput } from 'flowbite-react'
 import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
+import { useRouter } from 'next/navigation'
 
 const EditSettings = () => {
 
@@ -32,7 +33,8 @@ const EditSettings = () => {
     const [profilePic, setProfilePic] = useState<any>("");
 
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
-    const [pictureSuccess, setPictureSuccess] = useState<boolean | undefined>(undefined);
+
+    const router = useRouter();
 
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
@@ -42,7 +44,7 @@ const EditSettings = () => {
         }
         fetchedUser();
     }, [])
-    
+
 
     const customInput = {
         "field": {
@@ -94,27 +96,29 @@ const EditSettings = () => {
                 const picData = reader.result as string;
                 setUserData(prevUserData => ({
                     ...prevUserData,
-                    picture: picData
+                    profilePic: picData
                 }))
+                setProfilePic(picData);
             };
             reader.readAsDataURL(file);
         }
     }
 
 
-    const updateUserInfo = () => {
+    const updateUserInfo = async () => {
         try {
-            const changeInfo = async () => {
-                const user = await updateUser(userData)
-                return user;
-            }
-            changeInfo();
+            await updateUser(userData)
+            
+
             setSuccess(true);
+
         } catch (error) {
             console.error('Failed to update:', error)
             setSuccess(false)
         }
     }
+
+    console.log(userData);
 
     return (
         <div className='bg-offwhite h-screen'>
@@ -136,7 +140,7 @@ const EditSettings = () => {
                 <div className='bg-paleblue p-8 rounded-xl grid grid-cols-2'>
                     <div className='col-span-1 flex justify-center'>
                         <Image
-                            src={userData.picture || '/dummyImg.png'}
+                            src={userData.picture ? userData.picture : '/dummyImg.png'}
                             onMouseEnter={() => setChangePic(true)}
                             onMouseLeave={() => setChangePic(false)}
                             alt='profile image'
