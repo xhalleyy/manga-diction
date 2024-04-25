@@ -10,6 +10,7 @@ import ArrowCircleRightTwoToneIcon from '@mui/icons-material/ArrowCircleRightTwo
 import { Card } from "flowbite-react";
 import { getPostsByClubId } from '@/utils/DataServices'
 import { IPosts } from '@/Interfaces/Interfaces'
+import DrawerComponent from '../components/DrawerComponent'
 
 const Dashboard = () => {
 

@@ -21,7 +21,6 @@ function ClubModalComponent() {
     const [clubDescription, setClubDescription] = useState<string>("");
     const [clubImg, setClubImg] = useState<any>("");
     const [privateClub, setPrivateClub] = useState<boolean>(false);
-    const [dateCreated, setDateCreated] = useState<string>("");
 
     const router = useRouter();
 
@@ -50,7 +49,6 @@ function ClubModalComponent() {
         setPrivateClub(false)
     }
 
-
     const handleClubName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setClubName(e.target.value);
     }
@@ -73,6 +71,16 @@ function ClubModalComponent() {
 
     }
 
+    // formatting date for clubs 
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = `0${date.getMonth() + 1}`.slice(-2);
+    const day = `0${date.getDate()}`.slice(-2);
+
+    const formattedDate = `${year}-${month}-${day}`
+    console.log(formattedDate);
+     
+
     const handleCreateClub = async () => {
         let userId = Number(localStorage.getItem("UserId"));
         const newClub: IClubs = {
@@ -80,7 +88,7 @@ function ClubModalComponent() {
             leaderId: userId,
             clubName: clubName,
             description: clubDescription,
-            dateCreated: dateCreated,
+            dateCreated: formattedDate,
             image: clubImg,
             isPublic: true,
             isDeleted: false
