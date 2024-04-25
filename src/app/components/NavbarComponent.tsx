@@ -81,7 +81,7 @@ export function NavbarComponent() {
         {/* onClick={() => {router.push('/ProfilePage')} */}
 
         <div className="flex gap-2.5">
-          <img src={profilePic || '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-10 h-10 rounded-3xl" onClick={() => router.push('/ProfilePage')} />
+        <img src={profilePic || '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-11 h-11 shadow-md rounded-3xl" onClick={() => router.push('/ProfilePage')} />
 
           <div className="mt-3">
             <Dropdown className="border-8 border-offwhite rounded-xl w-56"

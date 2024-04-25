@@ -64,7 +64,7 @@ function ClubModalComponent() {
         if (file) {
             reader.onload = () => {
                 setClubImg(reader.result)
-                console.log(reader.result);
+                // console.log(reader.result);
             }
             reader.readAsDataURL(file);
         }
@@ -74,11 +74,11 @@ function ClubModalComponent() {
     // formatting date for clubs 
     const date = new Date();
     const year = date.getFullYear();
-    const month = `0${date.getMonth() + 1}`.slice(-2);
-    const day = `0${date.getDate()}`.slice(-2);
-
-    const formattedDate = `${year}-${month}-${day}`
-    console.log(formattedDate);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+    const day = date.getDate().toString().padStart(2, '0'); 
+    
+    const formattedDate = `${year}-${month}-${day}`;
+    // console.log(formattedDate);
      
 
     const handleCreateClub = async () => {

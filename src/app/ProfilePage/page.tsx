@@ -9,9 +9,13 @@ import { IClubs, IUserData } from '@/Interfaces/Interfaces';
 import { getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
+import { useClubContext } from '@/context/ClubContext';
 
 const ProfilePage = (props: any) => {
 
+    const clubData = useClubContext();
+    const [clubs, setClubs] = useState<IClubs[]>([]);
+    
     const [showClubs, setShowClubs] = useState<boolean>(true);
     const [userData, setUserData] = useState<IUserData>();
     const [isMyProfile, setIsMyProfile] = useState<boolean>(true);
@@ -32,7 +36,15 @@ const ProfilePage = (props: any) => {
         setShowClubs(false);
     }
 
-    const [clubs, setClubs] = useState<IClubs[]>([]);
+    const handleClubCardClick = async (club: IClubs) => {
+        try {
+          const clubDisplayedInfo = await specifiedClub(club.id);
+          clubData.setDisplayedClub(clubDisplayedInfo);
+        } catch (error) {
+          alert("Error fetching club information");
+          console.error(error);
+        }
+      };
 
     // This displays user's information by gettint the user's ID from local storage
     useEffect(() => {
@@ -46,7 +58,9 @@ const ProfilePage = (props: any) => {
             } setUserData(user);
         }
         fetchedUser();
+        
     }, []);
+
 
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
@@ -176,7 +190,7 @@ const ProfilePage = (props: any) => {
                         <div className='mt-4'>
                             <div className={showClubs ? clubox : noClubox}>
                                 {clubs.length !== 0 ? clubs.map((club, idx) => (
-                                    <div key={idx} className='col-span-1 mx-2'>
+                                    <div key={idx} className='col-span-1 mx-2' onClick={() => handleClubCardClick(club)}>
                                         <CardComponent
                                             id={club.id}
                                             leaderId={club.leaderId}
