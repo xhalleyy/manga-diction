@@ -36,7 +36,24 @@ const BrowseClubs = () => {
 
   const shuffledClubs = clubs.sort(() => Math.random() - 0.5);
   const randomClubs = shuffledClubs.slice(0, 12);
+  const recentClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
+    const dateA = new Date(a.dateCreated);
+    const dateB = new Date(b.dateCreated);
+    const comparisonResult = dateB.getTime() - dateA.getTime(); 
+    return comparisonResult;
+  });
+  const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
+    const dateA = new Date(a.dateCreated);
+    const dateB = new Date(b.dateCreated);
+    const comparisonResult = dateA.getTime() - dateB.getTime(); 
+    return comparisonResult;
+  });
+  
+  const slicedRecentClubs = recentClubs.slice(0, 12);
+  const slicedOldestClubs = oldestClubs.slice(0,12);
+  // console.log('Recent Clubs:', slicedRecentClubs);
 
+  // CUSTOM FLOWBITE CLASSES
   const customTabs: CustomFlowbiteTheme['tabs'] = {
     "base": "flex flex-col gap-3 mt-[-2px]",
     "tablist": {
@@ -49,7 +66,7 @@ const BrowseClubs = () => {
 
       },
       "tabitem": {
-        "base": "flex rounded-t-lg py-1.5 px-3 text-sm font-mainFont first:ml-0 focus:outline-none focus:ring-4 focus:ring-cyan-300 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
+        "base": "flex rounded-t-lg py-1.5 px-3 text-sm font-mainFont first:ml-0 focus:outline-none focus:ring-4 focus:ring-paleblue disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
         "styles": {
           "default": {
             "base": "rounded-t-lg",
@@ -82,7 +99,17 @@ const BrowseClubs = () => {
         },
         "icon": "mr-2 h-5 w-5"
       }
-    }
+    },
+    "tabitemcontainer": {
+      "base": "",
+      "styles": {
+        "default": "",
+        "underline": "",
+        "pills": "w-full",
+        "fullWidth": ""
+      }
+    },
+    "tabpanel": "py-3"
   }
 
   return (
@@ -92,7 +119,7 @@ const BrowseClubs = () => {
       {/* header , search, create clubs modal start */}
       <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
         <div>
-          <p className="text-3xl text-darkbrown font-bold"> Public Clubs </p>
+          <p className="text-3xl text-darkbrown font-bold">Popular Public Clubs </p>
         </div>
 
         <div className="flex justify-end gap-5">
@@ -105,8 +132,8 @@ const BrowseClubs = () => {
                 height: 30,
               }}
               type="text"
-              placeholder=""
-              className="border-ivory border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+              placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+              className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
             />
 
             <div className="absolute ml-80 inset-y-0 flex items-center">
@@ -129,15 +156,13 @@ const BrowseClubs = () => {
         <CarouselComponent />
       </div>
 
-      <div className="flex px-16 pt-8 pb-3 ">
-        <p className="text-lg me-5 text-nowrap"> More Public Clubs: </p>
-        <div className="flex justify-end">
+      <div className="flex pt-8 pb-3 min-w-full">
+        <h1 className="font-mainFont text-lg text-darkbrown me-5 ps-16 text-nowrap">More Public Clubs:</h1>
+        <div className="flex justify-start w-full">
           <Tabs theme={customTabs} aria-label="Pills" style="pills">
+
             <Tabs.Item active title="Random">
-              {/* <p className="text-sm text-gray-500 dark:text-gray-400">
-                Content 1
-              </p> */}
-              <div className="grid grid-cols-4 justify-around gap-4 pb-8 ms-[-115px] me-[70px]">
+              <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
                 {randomClubs.map((club, idx) => (
                   <div
                     key={idx}
@@ -159,14 +184,48 @@ const BrowseClubs = () => {
               </div>
             </Tabs.Item>
             <Tabs.Item title="Most Recently Created">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Content 2
-              </p>
+              <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
+                {slicedRecentClubs.map((club, idx) => (
+                  <div
+                    key={idx}
+                    className="col-span-1"
+                    onClick={() => handleClubCardClick(club)}
+                  >
+                    <CardComponent
+                      id={club.id}
+                      leaderId={club.leaderId}
+                      description={club.description}
+                      dateCreated={club.dateCreated}
+                      image={club.image}
+                      isPublic={club.isPublic}
+                      clubName={club.clubName}
+                      isDeleted={club.isDeleted}
+                    />
+                  </div>
+                ))}
+              </div>
             </Tabs.Item>
             <Tabs.Item title="Least Recently Created">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Content 3
-              </p>
+            <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
+                {slicedOldestClubs.map((club, idx) => (
+                  <div
+                    key={idx}
+                    className="col-span-1"
+                    onClick={() => handleClubCardClick(club)}
+                  >
+                    <CardComponent
+                      id={club.id}
+                      leaderId={club.leaderId}
+                      description={club.description}
+                      dateCreated={club.dateCreated}
+                      image={club.image}
+                      isPublic={club.isPublic}
+                      clubName={club.clubName}
+                      isDeleted={club.isDeleted}
+                    />
+                  </div>
+                ))}
+              </div>
             </Tabs.Item>
           </Tabs>
         </div>
