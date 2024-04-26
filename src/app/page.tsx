@@ -2,7 +2,7 @@
 
 import { IToken } from "@/Interfaces/Interfaces";
 import { createUser, login } from "@/utils/DataServices";
-import { log } from "console";
+import { log, profile } from "console";
 import { create } from "domain";
 import { Button, Label, TextInput, CustomFlowbiteTheme } from "flowbite-react";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ export default function Home() {
   const [firstN, setFirstN] = useState<string>("");
   const [lastN, setLastN] = useState<string>("");
   const [age, setAge] = useState<number>(0);
-  const [profilePic, setProfilePic] = useState<string>("");
+  const [profilePic, setProfilePic] = useState<string | null>(null);
 
   const [logsign, setLogsign] = useState<boolean>(true);
 
@@ -53,7 +53,7 @@ export default function Home() {
       lastName: lastN,
       age: age,
       password: password,
-      picture: profilePic
+      profilePic: profilePic
     }
 
 
@@ -95,6 +95,7 @@ export default function Home() {
         setId(0);
         setFirstN("");
         setLastN("");
+        setProfilePic(null);
         setAge(0);
         
       } catch (error) {
