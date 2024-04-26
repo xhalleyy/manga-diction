@@ -37,9 +37,14 @@ const ClubPage = () => {
 
   const handleJoinBtn = async () => {
     try {
-      let userId = Number(localStorage.getItem("UserId"));
-      const joinUser = await AddUserToClub(userId, displayedClub?.id);
-      setJoined(true);
+      if (typeof window !== 'undefined') {
+        // Check if window is defined (i.e., we're in the browser)
+        let userId = Number(localStorage.getItem("UserId"));
+        const joinUser = await AddUserToClub(userId, displayedClub?.id);
+        setJoined(true);
+      } else {
+        console.error('localStorage is not available in this environment.');
+      }
     } catch (error) {
       alert('Unable to Join Club at this moment');
       console.log(error);
