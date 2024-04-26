@@ -1,11 +1,13 @@
 'use client'
 
-import { IClubs } from "@/Interfaces/Interfaces";
+import { IClubs, IUserData } from "@/Interfaces/Interfaces";
 import { SetStateAction, createContext, useContext, useState } from "react"
 
 type ClubContextType = {
     displayedClub: IClubs | null,
     setDisplayedClub: React.Dispatch<React.SetStateAction<IClubs | null>>
+    displayedUser: IUserData | null,
+    setDisplayedUser: React.Dispatch<React.SetStateAction<IUserData | null>>
 }
 
 export const ClubContext = createContext<ClubContextType>({} as ClubContextType);
@@ -16,9 +18,10 @@ export const AppWrapper = ({
     children: React.ReactNode;
   }>) => {
     const [displayedClub, setDisplayedClub] = useState<IClubs | null>(null); 
+    const [displayedUser, setDisplayedUser] = useState<IUserData | null>(null); 
 
     return (
-        <ClubContext.Provider value={{displayedClub, setDisplayedClub}}>
+        <ClubContext.Provider value={{displayedClub, setDisplayedClub, displayedUser, setDisplayedUser}}>
             {children}
         </ClubContext.Provider>
     )

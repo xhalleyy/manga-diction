@@ -5,7 +5,7 @@ export interface IUserData {
     lastName: string
     age: number
     password: string
-    picture: string
+    profilePic: string
 }
 
 export interface ILoginUserInfo {

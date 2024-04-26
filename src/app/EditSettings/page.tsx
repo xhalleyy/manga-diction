@@ -8,117 +8,115 @@ import { Button, Label, TextInput } from 'flowbite-react'
 import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useRouter } from 'next/navigation'
+import { useClubContext } from '@/context/ClubContext'
 
 const EditSettings = () => {
 
-    const [userData, setUserData] = useState<IUserData>({
-        id: 0,
-        username: "",
-        firstName: "",
-        lastName: "",
-        age: 0,
-        password: "",
-        picture: ""
-    }
-    );
+    const {displayedUser, setDisplayedUser} = useClubContext();
     const [changePic, setChangePic] = useState<boolean>(true);
-
-    const [username, setUsername] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-
-    const [id, setId] = useState<number>(0);
-    const [firstN, setFirstN] = useState<string>("");
-    const [lastN, setLastN] = useState<string>("");
-    const [age, setAge] = useState<number>(0);
-    const [profilePic, setProfilePic] = useState<any>("");
+    const [profilePic, setProfilePic] = useState<string | null>(null);
 
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
-
-    const router = useRouter();
 
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
-            setUserData(user);
+            setDisplayedUser(user);
+        };
+    
+        if (success) {
+            fetchedUser();
         }
-        fetchedUser();
-    }, [])
+    }, [success, setDisplayedUser]);
 
 
-    const customInput = {
-        "field": {
-            "input": {
-                "sizes": {
-                    "post": "py-1 px-2 text-lg font-mainFont"
-                }
-            }
-        }
-    }
-
+    
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        setUserData(prevUserData => ({
-            ...prevUserData,
-            username: value
+        setDisplayedUser((prevUser: IUserData | null) => ({
+          ...prevUser!,
+          username: value
         }));
-    };
+      };
 
     const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        setUserData(prevUserData => ({
-            ...prevUserData,
+        setDisplayedUser((prevUserData: IUserData | null) => ({
+            ...prevUserData!,
             firstName: value
         }))
     };
-
+    
     const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        setUserData(prevUserData => ({
-            ...prevUserData,
+        setDisplayedUser((prevUserData: IUserData | null) => ({
+            ...prevUserData!,
             lastName: value
         }))
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
-        setUserData(prevUserData => ({
-            ...prevUserData,
+        setDisplayedUser((prevUserData: IUserData | null) => ({
+            ...prevUserData!,
             password: value
         }))
     };
 
     const handlePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        let reader = new FileReader();
         const file = e.target.files && e.target.files[0];
         if (file) {
+            const reader = new FileReader();
             reader.onload = () => {
-                const picData = reader.result as string;
-                setUserData(prevUserData => ({
-                    ...prevUserData,
-                    profilePic: picData
-                }))
-                setProfilePic(picData);
+                const imageData = reader.result as string;
+                setProfilePic(imageData); // Store image data temporarily
+                console.log("New profile picture data:", imageData);
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file); // Read file as base64-encoded string
         }
-    }
+    };
 
+    useEffect(() => {
+        console.log("Profile Picture Updated:", profilePic);
+    }, [profilePic]);
 
     const updateUserInfo = async () => {
         try {
-            await updateUser(userData)
-            
-
-            setSuccess(true);
-
+            if (displayedUser) {
+                // Ensure profilePic is always a string
+                const updatedProfilePic = profilePic || displayedUser.profilePic || '';
+    
+                // Update displayedUser with new picture
+                setDisplayedUser((prevUser) => ({
+                    ...prevUser!,
+                    profilePic: updatedProfilePic,
+                }));
+        
+                // Call updateUser with displayedUser
+                const updatedUser = { ...displayedUser, profilePic: updatedProfilePic };
+                await updateUser(updatedUser);
+                setSuccess(true);
+            } else {
+                console.error('Cannot update user: displayedUser is null');
+                setSuccess(false);
+            }
         } catch (error) {
-            console.error('Failed to update:', error)
-            setSuccess(false)
+            console.error('Failed to update:', error);
+            setSuccess(false);
         }
-    }
-
-    console.log(userData);
+    };
+    
+      
+      const customInput = {
+          "field": {
+              "input": {
+                  "sizes": {
+                      "post": "py-1 px-2 text-lg font-mainFont"
+                  }
+              }
+          }
+      }
 
     return (
         <div className='bg-offwhite h-screen'>
@@ -139,8 +137,8 @@ const EditSettings = () => {
                 <h1 className='text-darkbrown font-mainFont text-4xl ps-4 pb-2'>Account Settings</h1>
                 <div className='bg-paleblue p-8 rounded-xl grid grid-cols-2'>
                     <div className='col-span-1 flex justify-center'>
-                        <Image
-                            src={userData.picture ? userData.picture : '/dummyImg.png'}
+                        <img
+                            src={displayedUser?.profilePic || '/dummyImg.png'}
                             onMouseEnter={() => setChangePic(true)}
                             onMouseLeave={() => setChangePic(false)}
                             alt='profile image'

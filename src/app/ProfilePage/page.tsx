@@ -14,7 +14,7 @@ import { useUserContext } from '@/context/UserContext';
 
 const ProfilePage = (props: any) => {
 
-    const clubData = useClubContext();
+    const info = useClubContext();
     const [clubs, setClubs] = useState<IClubs[]>([]);
 
     const userContext = useUserContext();
@@ -44,7 +44,7 @@ const ProfilePage = (props: any) => {
     const handleClubCardClick = async (club: IClubs) => {
         try {
             const clubDisplayedInfo = await specifiedClub(club.id);
-            clubData.setDisplayedClub(clubDisplayedInfo);
+            info.setDisplayedClub(clubDisplayedInfo);
         } catch (error) {
             alert("Error fetching club information");
             console.error(error);
@@ -56,14 +56,14 @@ const ProfilePage = (props: any) => {
         let userId = Number(localStorage.getItem("UserId"));
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
-            setUserData(user);
+            info.setDisplayedUser(user);
             console.log("User data updated:", user); 
         };
         fetchedUser();
 
     }, []);
 
-    console.log(userContext.displayedUser?.picture)
+    console.log(userContext.displayedUser?.profilePic)
 
 
     const fetchUserClubs = async (userId: number | undefined) => {
@@ -96,7 +96,7 @@ const ProfilePage = (props: any) => {
                         <div className='flex flex-col justify-center mb-10'>
                             <div className='flex justify-center'>
                                 <Image
-                                    src={userContext.displayedUser?.picture ? userContext.displayedUser?.picture : '/dummyImg.png'}
+                                    src={info.displayedUser?.profilePic || '/dummyImg.png'}
                                     alt='profile image'
                                     width={150}
                                     height={150}
@@ -104,8 +104,8 @@ const ProfilePage = (props: any) => {
                                 />
                             </div>
                             <div className='text-center mt-5'>
-                                <h1 className='text-[28px] font-mainFont font-bold'>{userData?.username}</h1>
-                                <h2 className='text-[22px] font-mainFont'>{`${userData?.firstName} ${userData?.lastName}`}</h2>
+                                <h1 className='text-[28px] font-mainFont font-bold'>{info.displayedUser?.username}</h1>
+                                <h2 className='text-[22px] font-mainFont'>{`${info.displayedUser?.firstName} ${info.displayedUser?.lastName}`}</h2>
                                 <div className='mt-3'>
                                     {!isMyProfile &&
                                         <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />

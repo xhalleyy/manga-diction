@@ -219,7 +219,7 @@ const ClubPage = () => {
                 <div className='grid grid-cols-5 px-8 justify-center py-2'>
                   {members.map((member) => (
                     <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
-                      <img src={member.picture || '/dummyImg.png'} alt="Member" className="member-img" />
+                      <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
                       <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
                       <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
                     </div>

@@ -8,9 +8,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DrawerComponent from "./DrawerComponent";
 import { profile } from "console";
+import { useClubContext } from "@/context/ClubContext";
 
 export function NavbarComponent() {
 
+  const info = useClubContext();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [profilePic, setProfilePic] = useState<string>("");
   const [userData, setUserData] = useState<IUserData>();
@@ -19,7 +21,7 @@ export function NavbarComponent() {
     let userId = Number(localStorage.getItem("UserId"));
     const fetchedUser = async () => {
         const user = await getUserInfo(userId);
-        setUserData(user);
+        info.setDisplayedUser(user);
     }
     fetchedUser();
     
@@ -79,7 +81,7 @@ export function NavbarComponent() {
         {/* onClick={() => {router.push('/ProfilePage')} */}
 
         <div className="flex gap-2.5">
-          <img src={userData?.picture ? userData.picture : '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-10 h-10 rounded-3xl" onClick={() => router.push('/ProfilePage')} />
+          <img src={info.displayedUser?.profilePic || '/dummyImg.png'} alt="Profile Picture" className="cursor-pointer w-11 h-11 shadow-lg rounded-3xl" onClick={() => router.push('/ProfilePage')} />
 
           <div className="mt-3">
             <Dropdown className="border-8 border-offwhite rounded-xl w-56"
