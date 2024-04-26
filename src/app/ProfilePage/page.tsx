@@ -9,14 +9,23 @@ import { IClubs, IUserData } from '@/Interfaces/Interfaces';
 import { getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
+import { useClubContext } from '@/context/ClubContext';
+import { useUserContext } from '@/context/UserContext';
 
 const ProfilePage = (props: any) => {
+
+    const clubData = useClubContext();
+    const [clubs, setClubs] = useState<IClubs[]>([]);
+
+    const userContext = useUserContext();
 
     const [showClubs, setShowClubs] = useState<boolean>(true);
     const [userData, setUserData] = useState<IUserData>();
     const [isMyProfile, setIsMyProfile] = useState<boolean>(true);
-    const [profilePic, setProfilePic] = useState<string>("");
+    const [picture, setPicture] = useState<string>("");
     const router = useRouter();
+
+
 
     const clubox: string = 'grid grid-cols-3 gap-5'
     const noClubox: string = 'grid grid-cols-3 gap-5 hidden'
@@ -32,81 +41,76 @@ const ProfilePage = (props: any) => {
         setShowClubs(false);
     }
 
-    const [clubs, setClubs] = useState<IClubs[]>([]);
+    const handleClubCardClick = async (club: IClubs) => {
+        try {
+            const clubDisplayedInfo = await specifiedClub(club.id);
+            clubData.setDisplayedClub(clubDisplayedInfo);
+        } catch (error) {
+            alert("Error fetching club information");
+            console.error(error);
+        }
+    };
 
-    // This displays user's information by gettint the user's ID from local storage
+
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
-            // console.log(user.picture)
-            const storedPicData = localStorage.getItem(`profilePic_${userId}`);
-            if (storedPicData) {
-                setProfilePic(storedPicData);
-            } setUserData(user);
-        }
+            setUserData(user);
+            console.log("User data updated:", user); 
+        };
         fetchedUser();
+
     }, []);
+
+    console.log(userContext.displayedUser?.picture)
+
 
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
-          const memberIds = await getUserClubs(userId);
-          const promises = memberIds.map((clubId: number) => specifiedClub(clubId));
-          const usersInfo = await Promise.all(promises);
-          setClubs(usersInfo);
+            const memberIds = await getUserClubs(userId);
+            const promises = memberIds.map((clubId: number) => specifiedClub(clubId));
+            const usersInfo = await Promise.all(promises);
+            setClubs(usersInfo);
         } catch (error) {
-          console.error('Error fetching club members:', error);
+            console.error('Error fetching club members:', error);
         }
-      };
+    };
 
-    useEffect(()=> {
+    useEffect(() => {
         if (showClubs) {
             let userId = Number(localStorage.getItem("UserId"));
             fetchUserClubs(userId);
-          }
+        }
     }, [showClubs])
-    
-    // const handlePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = e.target.files && e.target.files[0];
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = () => {
-    //             const picData = reader.result as string;
-    //             localStorage.setItem('profilePic', picData)
-    //             setProfilePic(picData)
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-
-    // }
 
     return (
         <div className='bg-offwhite h-screen'>
 
             <NavbarComponent />
 
-            <div className="px-[70px]">
+            <div className="px-[70px] my-4">
                 <div className="grid grid-cols-4 gap-1">
                     <div className="col-span-1 mt-8">
                         {/* username, name, add btn, friends section */}
                         <div className='flex flex-col justify-center mb-10'>
                             <div className='flex justify-center'>
-                            <Image
-                            src={profilePic || '/dummyImg.png'}
-                            alt='profile image'
-                            width={150}
-                            height={150}
-                            className='pfp shadow-md'
-                        />
+                                <Image
+                                    src={userContext.displayedUser?.picture ? userContext.displayedUser?.picture : '/dummyImg.png'}
+                                    alt='profile image'
+                                    width={150}
+                                    height={150}
+                                    className='pfp shadow-md'
+                                />
                             </div>
                             <div className='text-center mt-5'>
                                 <h1 className='text-[28px] font-mainFont font-bold'>{userData?.username}</h1>
                                 <h2 className='text-[22px] font-mainFont'>{`${userData?.firstName} ${userData?.lastName}`}</h2>
                                 <div className='mt-3'>
-                                    {!isMyProfile && 
-                                    <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />
-                                        
-                                    </button>}
+                                    {!isMyProfile &&
+                                        <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />
+
+                                        </button>}
                                 </div>
                             </div>
                         </div>
@@ -176,7 +180,7 @@ const ProfilePage = (props: any) => {
                         <div className='mt-4'>
                             <div className={showClubs ? clubox : noClubox}>
                                 {clubs.length !== 0 ? clubs.map((club, idx) => (
-                                    <div key={idx} className='col-span-1 mx-2'>
+                                    <div key={idx} className='col-span-1 mx-2' onClick={() => handleClubCardClick(club)}>
                                         <CardComponent
                                             id={club.id}
                                             leaderId={club.leaderId}
@@ -188,10 +192,10 @@ const ProfilePage = (props: any) => {
                                             isDeleted={club.isDeleted}
                                         />
                                     </div>
-                                )) :  
-                                <div className='col-span-3'>
-                                    <h1 className='pt-20 text-center font-poppinsMed text-2xl text-darkbrown'>You are not in any clubs. <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
-                                </div>
+                                )) :
+                                    <div className='col-span-3'>
+                                        <h1 className='pt-20 text-center font-poppinsMed text-2xl text-darkbrown'>You are not in any clubs. <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
+                                    </div>
                                 }
                             </div>
 

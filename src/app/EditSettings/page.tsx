@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { Button, Label, TextInput } from 'flowbite-react'
 import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
+import { useRouter } from 'next/navigation'
 
 const EditSettings = () => {
 
@@ -29,24 +30,21 @@ const EditSettings = () => {
     const [firstN, setFirstN] = useState<string>("");
     const [lastN, setLastN] = useState<string>("");
     const [age, setAge] = useState<number>(0);
-    const [profilePic, setProfilePic] = useState<string>("");
+    const [profilePic, setProfilePic] = useState<any>("");
 
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
-    const [pictureSuccess, setPictureSuccess] = useState<boolean | undefined>(undefined);
+
+    const router = useRouter();
 
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
-            console.log(user.picture)
-            const storedPicData = localStorage.getItem(`profilePic_${userId}`);
-            if (storedPicData) {
-                setProfilePic(storedPicData);
-            } setUserData(user);
+            setUserData(user);
         }
         fetchedUser();
     }, [])
-    
+
 
     const customInput = {
         "field": {
@@ -91,47 +89,36 @@ const EditSettings = () => {
     };
 
     const handlePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        let reader = new FileReader();
         const file = e.target.files && e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = async () => {
+            reader.onload = () => {
                 const picData = reader.result as string;
                 setUserData(prevUserData => ({
                     ...prevUserData,
-                    picture: picData
-                }));
-
-                try {
-                    const userId = Number(localStorage.getItem("UserId"));
-                    const userInfo = await getUserInfo(userId);
-
-                    const updatedUserInfo = { ...userInfo, picture: picData }
-                    await updateUser(updatedUserInfo);
-
-                    localStorage.setItem(`profilePic_${userId}`, picData);
-                } catch (error) {
-                    console.error("Error updating profile picture:", error)
-                }
+                    profilePic: picData
+                }))
+                setProfilePic(picData);
             };
             reader.readAsDataURL(file);
         }
-        setPictureSuccess(true);
     }
 
 
-    const updateUserInfo = () => {
+    const updateUserInfo = async () => {
         try {
-            const changeInfo = async () => {
-                const user = await updateUser(userData)
-                return user;
-            }
-            changeInfo();
+            await updateUser(userData)
+            
+
             setSuccess(true);
+
         } catch (error) {
             console.error('Failed to update:', error)
             setSuccess(false)
         }
     }
+
+    console.log(userData);
 
     return (
         <div className='bg-offwhite h-screen'>
@@ -149,21 +136,11 @@ const EditSettings = () => {
                     )}
                 </div>
 
-                <div className="w-full relative flex justify-end items-end -mt-[px]">
-                    {pictureSuccess && (
-                        <div className="w-72">
-                            <Alert severity="success">
-                                <AlertTitle>Success</AlertTitle>
-                                Profile Picture Updated!
-                            </Alert>
-                        </div>
-                    )}
-                </div>
                 <h1 className='text-darkbrown font-mainFont text-4xl ps-4 pb-2'>Account Settings</h1>
                 <div className='bg-paleblue p-8 rounded-xl grid grid-cols-2'>
                     <div className='col-span-1 flex justify-center'>
                         <Image
-                            src={profilePic || '/dummyImg.png'}
+                            src={userData.picture ? userData.picture : '/dummyImg.png'}
                             onMouseEnter={() => setChangePic(true)}
                             onMouseLeave={() => setChangePic(false)}
                             alt='profile image'

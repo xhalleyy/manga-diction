@@ -49,3 +49,33 @@ export interface IMemberToClubAssociation {
     userId: number,
     clubId: number
 }
+
+export interface IManga {
+    data: {
+        id: string,
+        type: string,
+        attributes: {
+            altTitles: [{}],
+            createdAt: string,
+            lastChapter: string,
+            lastVolume: string,
+            publicationDemographic: string,
+            state: string,
+            status: string,
+            tags: [{}],
+            title: {
+                en: string
+            },
+            year: number
+        },
+        relationships: [{
+            id: string,
+            type: string
+            attributes: {
+                volume: string,
+                fileName: string
+            }
+        }]
+    },
+    result: string
+}

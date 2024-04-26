@@ -17,7 +17,9 @@ const config: Config = {
     },
     fontFamily: {
       mainFont: ['mainFont'],
-      poppinsMed: ['poppinsMed']
+      poppinsMed: ['poppinsMed'],
+      poppinsBold: ['poppinsBold'],
+      poppinsExtra: ['poppinsExtra']
     },
     extend: {
       backgroundImage: theme => ({

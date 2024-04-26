@@ -22,6 +22,7 @@ const ClubPage = () => {
   const [seeMembers, setSeeMembers] = useState<boolean>(false);
   const [members, setMembers] = useState<IUserData[]>([]);
 
+  let userId = Number(localStorage.getItem("UserId"));
 
 
   const fetchClubMembers = async (clubId: number | undefined) => {
@@ -73,6 +74,24 @@ const ClubPage = () => {
       console.log(getPosts);
     }
     fetchedData(1);
+
+    const checkJoined = async(clubId: number | undefined)=> {
+      try {
+        if (clubId === undefined) {
+          console.error('clubId is undefined');
+          return; 
+        }
+    
+        const memberIds = await getClubMembers(clubId);
+        if (memberIds.includes(Number(localStorage.getItem("UserId")) ?? 0)) {
+          setJoined(true);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    checkJoined(displayedClub?.id)
   }, [])
 
   const customInput = {

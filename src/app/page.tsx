@@ -268,7 +268,7 @@ export default function Home() {
             <div>
               {/* remember password? buttons */}
             </div>
-            <button className=" h-12 w-full mt-14 text-3xl text-white darkBeige rounded-md font-mainFont">Sign In</button>
+            <button onClick={handleSignUp} className=" h-12 w-full mt-14 text-3xl text-white darkBeige rounded-md font-mainFont">{logsign ? 'Sign In' : 'Sign Up'}</button>
           </form>
         </div>
       </div>

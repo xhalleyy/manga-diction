@@ -10,6 +10,7 @@ import ArrowCircleRightTwoToneIcon from '@mui/icons-material/ArrowCircleRightTwo
 import { Card } from "flowbite-react";
 import { getPostsByClubId } from '@/utils/DataServices'
 import { IPosts } from '@/Interfaces/Interfaces'
+import DrawerComponent from '../components/DrawerComponent'
 
 const Dashboard = () => {
 
@@ -19,7 +20,7 @@ const Dashboard = () => {
     const fetchedData = async(clubId: number)=> {
       const getPosts = await getPostsByClubId(clubId);
       setPosts(getPosts);
-      console.log(getPosts);
+      // console.log(getPosts);
     }
     fetchedData(1);
   },[])
