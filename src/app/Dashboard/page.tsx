@@ -20,7 +20,7 @@ const Dashboard = () => {
     const fetchedData = async(clubId: number)=> {
       const getPosts = await getPostsByClubId(clubId);
       setPosts(getPosts);
-      console.log(getPosts);
+      // console.log(getPosts);
     }
     fetchedData(1);
   },[])

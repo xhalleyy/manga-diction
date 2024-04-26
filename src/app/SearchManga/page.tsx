@@ -77,7 +77,7 @@ const SearchManga = () => {
             <NavbarComponent />
 
             <div className='mt-5'>
-                <h1 className='px-16 text-3xl font-mainFont text-darkbrown font-bold'>Manga Results for &apos;{ }&apos;</h1>
+                <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown '>Manga Results for &apos;{ }&apos;</h1>
 
                 <div className="grid grid-cols-5 px-[70px] mt-8">
                     {/* search results, 5 per 'row' */}

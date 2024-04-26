@@ -1,20 +1,26 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button, CustomFlowbiteTheme, TextInput } from "flowbite-react";
 import ClubModalComponent from "../components/ClubModalComponent";
 import { CarouselComponent } from "../components/CarouselComponent";
 import CardComponent from "../components/CardComponent";
-import { publicClubsApi, specifiedClub } from "@/utils/DataServices";
+import { getClubsByName, publicClubsApi, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import { Tabs } from "flowbite-react";
+import { useRouter } from "next/navigation";
+import { MouseEventHandler } from 'react';
 
 const BrowseClubs = () => {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
+  const [searchInput, setSearchInput] = useState<string>("");
+  const router = useRouter();
+  // useRef: used for accessing and persiting mutable values; doesn't cause a re-render when value is changed
+  const inputRef = useRef<HTMLInputElement>(null); 
 
   useEffect(() => {
     const fetchedData = async () => {
@@ -23,6 +29,29 @@ const BrowseClubs = () => {
     };
     fetchedData();
   }, []);
+
+  // const handleClubSearch = async () => {
+  //   try {
+  //     const searchQuery = inputRef.current?.value || '';
+  //     const fetchedClubsByName = await getClubsByName(searchQuery);
+  //     console.log('Fetched Clubs:', fetchedClubsByName);
+
+  //     // const queryString = `?clubs=${encodeURIComponent(JSON.stringify(fetchedClubsByName))}`;
+  //     // const route = `/SearchClub${queryString}`;
+  //     await router.push('/SearchClub');
+  //   } catch (error) {
+  //     console.error('Error fetching clubs:', error);
+  //   }
+  // };
+
+  // const handleClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
+  //   try {
+  //     event.preventDefault();
+  //     await handleClubSearch();
+  //   } catch (error) {
+  //     console.error('Error handling click event:', error);
+  //   }
+  // };
 
   const handleClubCardClick = async (club: IClubs) => {
     try {
@@ -34,23 +63,24 @@ const BrowseClubs = () => {
     }
   };
 
+
   const shuffledClubs = clubs.sort(() => Math.random() - 0.5);
   const randomClubs = shuffledClubs.slice(0, 12);
   const recentClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
     const dateA = new Date(a.dateCreated);
     const dateB = new Date(b.dateCreated);
-    const comparisonResult = dateB.getTime() - dateA.getTime(); 
+    const comparisonResult = dateB.getTime() - dateA.getTime();
     return comparisonResult;
   });
   const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
     const dateA = new Date(a.dateCreated);
     const dateB = new Date(b.dateCreated);
-    const comparisonResult = dateA.getTime() - dateB.getTime(); 
+    const comparisonResult = dateA.getTime() - dateB.getTime();
     return comparisonResult;
   });
-  
+
   const slicedRecentClubs = recentClubs.slice(0, 12);
-  const slicedOldestClubs = oldestClubs.slice(0,12);
+  const slicedOldestClubs = oldestClubs.slice(0, 12);
   // console.log('Recent Clubs:', slicedRecentClubs);
 
   // CUSTOM FLOWBITE CLASSES
@@ -60,7 +90,6 @@ const BrowseClubs = () => {
       "base": "flex text-center",
       "styles": {
         "default": "flex-wrap border-b border-gray-200 dark:border-gray-700",
-        "underline": "-mb-px flex-wrap border-b border-gray-200 dark:border-gray-700",
         "pills": "flex-wrap space-x-4 text-sm font-medium text-gray-500 dark:text-gray-400",
         "fullWidth": "grid w-full grid-flow-col divide-x divide-gray-200 rounded-none text-sm font-medium shadow dark:divide-gray-700 dark:text-gray-400",
 
@@ -68,20 +97,6 @@ const BrowseClubs = () => {
       "tabitem": {
         "base": "flex rounded-t-lg py-1.5 px-3 text-sm font-mainFont first:ml-0 focus:outline-none focus:ring-4 focus:ring-paleblue disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
         "styles": {
-          "default": {
-            "base": "rounded-t-lg",
-            "active": {
-              "on": "bg-gray-100 text-cyan-600 dark:bg-gray-800 dark:text-cyan-500",
-              "off": "text-gray-500 hover:bg-gray-50 hover:text-gray-600 dark:text-gray-400 dark:hover:bg-gray-800  dark:hover:text-gray-300"
-            }
-          },
-          "underline": {
-            "base": "rounded-t-lg",
-            "active": {
-              "on": "active rounded-t-lg border-b-2 border-cyan-600 text-cyan-600 dark:border-cyan-500 dark:text-cyan-500",
-              "off": "border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
-            }
-          },
           "pills": {
             "base": "",
             "active": {
@@ -125,6 +140,7 @@ const BrowseClubs = () => {
         <div className="flex justify-end gap-5">
           <div className="relative ml-20">
             <TextInput
+              ref={inputRef}
               id="base"
               style={{
                 borderRightWidth: "50px",
@@ -135,11 +151,13 @@ const BrowseClubs = () => {
               placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
               className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
             />
+            
 
             <div className="absolute ml-80 inset-y-0 flex items-center">
               <Button
                 style={{ backgroundColor: "transparent" }}
                 className="bg-transparent focus:ring-0"
+                // onClick={handleClick}
               >
                 <SearchIcon className="text-4xl text-white" />
               </Button>{" "}
@@ -206,7 +224,7 @@ const BrowseClubs = () => {
               </div>
             </Tabs.Item>
             <Tabs.Item title="Least Recently Created">
-            <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
+              <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
                 {slicedOldestClubs.map((club, idx) => (
                   <div
                     key={idx}

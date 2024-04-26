@@ -12,6 +12,17 @@
         font-family: poppinsMed;
         src: url(../assets/Poppins/Poppins-Medium.ttf)
     }
+
+    @font-face {
+        font-family: poppinsBold;
+        src: url(../assets/Poppins/Poppins-Bold.ttf);
+    }
+
+    @font-face {
+        font-family: poppinsExtra;
+        src: url(../assets/Poppins/Poppins-ExtraBold.ttf);
+    }
+
   }
 
 .hidden{
