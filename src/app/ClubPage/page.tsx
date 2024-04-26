@@ -21,9 +21,8 @@ const ClubPage = () => {
   const [posts, setPosts] = useState<IPosts[]>([]);
   const [seeMembers, setSeeMembers] = useState<boolean>(false);
   const [members, setMembers] = useState<IUserData[]>([]);
-
+  
   let userId = Number(localStorage.getItem("UserId"));
-
 
   const fetchClubMembers = async (clubId: number | undefined) => {
     try {
@@ -40,7 +39,6 @@ const ClubPage = () => {
     try {
       if (typeof window !== 'undefined') {
         // Check if window is defined (i.e., we're in the browser)
-        let userId = Number(localStorage.getItem("UserId"));
         const joinUser = await AddUserToClub(userId, displayedClub?.id);
         setJoined(true);
       } else {
