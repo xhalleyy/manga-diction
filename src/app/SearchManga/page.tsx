@@ -9,9 +9,18 @@ import { IManga } from '@/Interfaces/Interfaces';
 
 const SearchManga = () => {
     const [manga, setManga] = useState<IManga>();
-    const [coverId, setCoverId] = useState<string>("");
     const [coverFile, setCoverFile] = useState<string>("");
-    let files: any = ''
+    const tempID: string = '304ceac3-8cdb-4fe7-acf7-2b6ff7a60613'
+
+    const findCoverArt = (manga: IManga): string | undefined => {
+        const relationships = manga.data.relationships;
+        const coverArt = relationships.find(rel => rel.type === 'cover_art');
+        if (coverArt) {
+            return coverArt.attributes.fileName;
+        } else {
+            return undefined;
+        }
+    };
 
     useEffect(() => {
         async function fetchData() {
@@ -20,7 +29,7 @@ const SearchManga = () => {
                 const fetchedTags = await getTags(includedTagNames);
                 const fetchedData = await mangaSearch('shingeki', '31e059c9-6040-4765-b7bd-40a16d657a94', fetchedTags.includedTagIDs, ['completed'], ['safe', 'suggestive', 'erotica']);
                 // shows the list of manga IDs in the console
-                // console.log(fetchedData);
+                console.log(fetchedData);
                 return fetchedData;
             } catch (error) {
                 // console.error('Error fetching data:', error);
@@ -30,46 +39,33 @@ const SearchManga = () => {
         async function getManga() {
             try {
                 const fetchedManga = await specificManga("304ceac3-8cdb-4fe7-acf7-2b6ff7a60613");
-                console.log(fetchedManga)
+                // console.log(fetchedManga)
                 setManga(fetchedManga);
             } catch (error) {
                 console.log("Error");
             }
         }
 
-        // filter through fetchedManga's relationships[] for type: "cover_art", id: and fileName: 
-        // inside relationships[] => IF type == "cover_art", then filter through that array and attributes object to grab id and fileName
-        // if relationships.includes("attributes") = true
-        // .includes() would work for checking if attributes is in the array since attributes is a value inside the object array
-        // *using relationships[] as base, function isCover(file) { return file.type }
-        
-        // .some() method to check if one or more of the values match what you're looking for, this will return true/false or a truthy/falsey value depending on if it is in the array or not
-
-        // ex: const isCover = relationshipArr.some(file => file.attributes) 
-        // since attributes is an object, maybe Object.values(attributes) (outputs the contents as an array)
-
-        // let relationshipArr = manga?.data.relationships
-        // const isCover = relationshipArr?.some(files => files.attributes) 
-
-        async function findCID() {
+        async function getCoverFile() {
             try {
-                let relationshipArr = manga?.data.relationships
-                const coverRelationships = relationshipArr?.find((relationship) => relationship.type === "cover_art");
-                if (coverRelationships && coverRelationships.attributes) {
-                    console.log(coverRelationships)
-                    return coverRelationships.attributes.fileName
+                const mangaData: IManga = await specificManga(tempID);
+                const coverFileName = findCoverArt(mangaData);
+                if (coverFileName) {
+                    console.log('Cover art file:', coverFileName);
+                    setCoverFile(coverFileName);
                 } else {
-                    console.log(undefined)
-                    return undefined
+                    console.log('no cover art here');
                 }
             } catch (error) {
-                console.log("Error")
+                console.log("big error")
             }
-        };
+        }
         fetchData();
         getManga();
-        findCID();
+        getCoverFile();
     }, []);
+
+    const coverArt = `https://uploads.mangadex.org/covers/${tempID}/${coverFile}`;
 
     return (
         <div className='bg-offwhite h-screen'>
@@ -96,7 +92,7 @@ const SearchManga = () => {
                     <div className='flex justify-center'>
                         <Link href='MangaInfo'>
                             <div className='px-0 mx-0'>
-                                <img src='/aot.png' alt='Title of Manga' className='w-[177px] h-64' />
+                                <img src={coverArt} alt='Title of Manga' className='w-[177px] h-64' />
                                 <h2 className='text-center text-xl font-semibold max-w-[170px] mt-2 text-darkbrown font-mainFont'>{manga?.data.attributes.title.en}</h2>
                             </div>
                         </Link>
