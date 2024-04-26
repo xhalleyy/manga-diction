@@ -180,7 +180,7 @@ const BrowseClubs = () => {
           <Tabs theme={customTabs} aria-label="Pills" style="pills">
 
             <Tabs.Item active title="Random">
-              <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
+              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]">
                 {randomClubs.map((club, idx) => (
                   <div
                     key={idx}
@@ -202,7 +202,7 @@ const BrowseClubs = () => {
               </div>
             </Tabs.Item>
             <Tabs.Item title="Most Recently Created">
-              <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
+              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
                 {slicedRecentClubs.map((club, idx) => (
                   <div
                     key={idx}
@@ -224,7 +224,7 @@ const BrowseClubs = () => {
               </div>
             </Tabs.Item>
             <Tabs.Item title="Least Recently Created">
-              <div className="grid grid-cols-4 gap-4 pb-8 mx-[-90px]">
+              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
                 {slicedOldestClubs.map((club, idx) => (
                   <div
                     key={idx}
