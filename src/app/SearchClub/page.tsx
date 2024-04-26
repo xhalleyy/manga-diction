@@ -1,37 +1,55 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
-import Link from "next/link";
+import SearchIcon from "@mui/icons-material/Search";
 import { useRouter } from "next/navigation";
 import { getClubsByName, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import CardComponent from "../components/CardComponent";
+import { TextInput, Button } from "flowbite-react";
+import ClubModalComponent from "../components/ClubModalComponent";
 
 const SearchClub = () => {
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null); 
+  const { searchClub, setSearchClub, setDisplayedClub } = useClubContext();
   const [fetchedClubs, setFetchedClubs] = useState<any>(null);
-
-  const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
 
-  // useEffect(() => {
-  //   const fetchClubs = async () => {
-  //     const clubsParam = router.query.clubs;
-  //     if (clubsParam && typeof clubsParam === "string") {
-  //       const parsedClubs = JSON.parse(clubsParam);
-  //       setFetchedClubs(parsedClubs);
-  //     }
-  //   };
+  // This useEffect gets Clubs by name, using the useContext where we saved the value from the input field
+  useEffect(() => {
+    const fetchedClubsData = async (clubName: string | null) => {
+      try {
+        const data = await getClubsByName(clubName);
+        setFetchedClubs(data); // Update the fetched clubs data
+      } catch (error) {
+        console.error("Error fetching clubs:", error);
+      }
+    };
+  
+    if (searchClub) {
+      fetchedClubsData(searchClub);
+    }
+  }, [searchClub]);
 
-  //   fetchClubs();
-  // }, [router.query.clubs]);
+  
+  const handleClick = () => {
+    if (inputRef.current) {
+      // Access the value of the input element using inputRef.current.value
+      const inputValue = inputRef.current.value;
+      setSearchClub(inputValue);
+      // router.push('/SearchClub');
+    } else {
+      console.log('Input element not found.');
+    }
+  }
 
   const handleClubCardClick = async (club: IClubs) => {
     try {
       const clubDisplayedInfo = await specifiedClub(club.id);
-      clubData.setDisplayedClub(clubDisplayedInfo);
+      setDisplayedClub(clubDisplayedInfo);
     } catch (error) {
       alert("Error fetching club information");
       console.error(error);
@@ -42,6 +60,44 @@ const SearchClub = () => {
     <div className="bg-offwhite h-screen">
       <div className="bg-offwhite h-full">
         <NavbarComponent />
+
+        <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
+        <div>
+        <h1 className='text-[26px] font-poppinsMed text-darkbrown'>Manga Results for &apos;{searchClub}&apos;</h1>
+        </div>
+
+        <div className="flex justify-end gap-5">
+          <div className="relative ml-20">
+            <TextInput
+              ref={inputRef}
+              id="base"
+              style={{
+                borderRightWidth: "50px",
+                borderColor: "rgba(207, 198, 183, 1)",
+                height: 30,
+              }}
+              type="text"
+              placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+              className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+            />
+            
+
+            <div className="absolute ml-80 inset-y-0 flex items-center">
+              <Button
+                style={{ backgroundColor: "transparent" }}
+                className="bg-transparent focus:ring-0"
+                onClick={handleClick}
+              >
+                <SearchIcon className="text-4xl text-white" />
+              </Button>{" "}
+            </div>
+          </div>
+
+          <div className="flex justify-end ">
+            <ClubModalComponent />
+          </div>
+        </div>
+      </div >
 
         <div className='mt-5'>
                 {/* <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown'>Club Results for &apos;{router.query.search}&apos;</h1> */}

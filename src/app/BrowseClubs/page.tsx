@@ -53,6 +53,18 @@ const BrowseClubs = () => {
   //   }
   // };
 
+  const handleClick = () => {
+    if (inputRef.current) {
+      // Access the value of the input element using inputRef.current.value
+      const inputValue = inputRef.current.value;
+      // Set the searchClub state with the input value
+      clubData.setSearchClub(inputValue);
+      router.push('/SearchClub');
+    } else {
+      console.log('Input element not found.');
+    }
+  }
+
   const handleClubCardClick = async (club: IClubs) => {
     try {
       const clubDisplayedInfo = await specifiedClub(club.id);
@@ -157,7 +169,7 @@ const BrowseClubs = () => {
               <Button
                 style={{ backgroundColor: "transparent" }}
                 className="bg-transparent focus:ring-0"
-                // onClick={handleClick}
+                onClick={handleClick}
               >
                 <SearchIcon className="text-4xl text-white" />
               </Button>{" "}
