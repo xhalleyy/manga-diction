@@ -117,6 +117,14 @@ export const publicClubsApi = async() => {
 export const specifiedClub = async(clubId: number) => {
     const promise = await fetch(url + '/Club/GetClubById/' + clubId);
     const data: IClubs = await promise.json();
+    // console.log(data);
+    return data;
+}
+
+// GET CLUB BY NAME
+export const getClubsByName = async(clubName: string) => {
+    const promise = await fetch(url + '/Club/GetClubsByName/' + clubName);
+    const data: IClubs[] = await promise.json();
     console.log(data);
     return data;
 }
@@ -191,7 +199,7 @@ export const getPostsByClubId = async( clubId: number) => {
 export const getUserInfo = async(userId: number) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
     const data: IUserData = await res.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -219,7 +227,7 @@ export const updateUser = async(User: IUserData) => {
 export const getUserClubs = async(userId: number | undefined ) => {
     const res = await fetch(url + '/Member/GetUserClubs/' + userId);
     const data: number[] = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -227,7 +235,7 @@ export const getUserClubs = async(userId: number | undefined ) => {
 export const getClubMembers = async(clubId: number | undefined) => {
     const res = await fetch(url + '/Member/GetClubMembers/' + clubId);
     const data: number[] = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
