@@ -38,18 +38,18 @@ export default function DrawerComponent() {
   const list = (anchor: Anchor) => (
     <Box
     
-      sx={{ backgroundColor: 'ivory'}}
+      sx={{ backgroundColor: 'rgba(207, 198, 183, 1)'}}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <List className='text-darkbrown pr-20 pl-8  mt-48 bg-ivory'>
+      <List className='text-darkbrown pr-20 pl-10 pb-96 pt-52 mb-48 mt-4 bg-ivory'>
         {['Home', 'Browse Clubs', 'Search Manga', 'Notifications', 'Profile'].map((text) => (
           <ListItem className='font-mainFont text-3xl bg-ivory' key={text} sx={{ fontSize: '30px', backgroundColor: 'ivory'}} disablePadding>
             <ListItemButton>
               <ListItemText primary={text} primaryTypographyProps={{
                   variant: 'body1',
-                  style: { fontSize: '1.5rem', fontFamily: 'mainFont', fontWeight: 'bold' }
+                  style: { fontSize: '1.5rem', fontFamily: 'mainFont', fontWeight: 'bold', marginBottom: 5 }
                 }} />
             </ListItemButton>
           </ListItem>

@@ -1,7 +1,5 @@
-import React from 'react';
 import ArrowCircleLeftTwoToneIcon from '@mui/icons-material/ArrowCircleLeftTwoTone';
 import ArrowCircleRightTwoToneIcon from '@mui/icons-material/ArrowCircleRightTwoTone';
-
 
 interface Props {
     previous: () => void;

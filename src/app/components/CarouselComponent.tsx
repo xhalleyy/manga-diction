@@ -13,6 +13,8 @@ import { useClubContext } from "@/context/ClubContext";
 export function CarouselComponent(props: any) {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
+  const [pageSize, setPageSize] = useState<boolean>(true);
+
 
   useEffect(() => {
     const fetchedData = async () => {
@@ -20,6 +22,17 @@ export function CarouselComponent(props: any) {
       setClubs(getClubs);
     };
     fetchedData();
+
+    // handling window resize 
+    const handleResize = () => {
+      setPageSize(window.innerWidth > 768)
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
   }, []);
 
   const handleClubCardClick = async (club: IClubs) => {
@@ -28,7 +41,7 @@ export function CarouselComponent(props: any) {
       clubData.setDisplayedClub(clubDisplayedInfo);
     } catch (error) {
       alert("Error fetching club information");
-      console.error(error); 
+      console.error(error);
     }
   };
 
@@ -56,12 +69,13 @@ export function CarouselComponent(props: any) {
       <Carousel
         additionalTransfrom={0}
         arrows={false}
-        autoPlaySpeed={3000}
+        autoPlay={pageSize ? false : true}
+        autoPlaySpeed={4000}
         centerMode={false}
         className="w-full"
         containerClass="container-with-dots "
         dotListClass=""
-        customButtonGroup={<CarouselButtonsComponent previous={() => { }} next={() => { }} />}
+        customButtonGroup={pageSize ? <CarouselButtonsComponent previous={() => { }} next={() => { }} /> : null}
         draggable
         focusOnSelect={false}
         infinite
