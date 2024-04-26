@@ -122,7 +122,7 @@ export const specifiedClub = async(clubId: number) => {
 }
 
 // GET CLUB BY NAME
-export const getClubsByName = async(clubName: string) => {
+export const getClubsByName = async(clubName: string | null) => {
     const promise = await fetch(url + '/Club/GetClubsByName/' + clubName);
     const data: IClubs[] = await promise.json();
     console.log(data);
