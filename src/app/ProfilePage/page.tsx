@@ -10,15 +10,12 @@ import { getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/util
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
-import { useUserContext } from '@/context/UserContext';
 import NavbarLayout from '../navbarlayout';
 
 const ProfilePage = (props: any) => {
 
     const info = useClubContext();
     const [clubs, setClubs] = useState<IClubs[]>([]);
-
-    const userContext = useUserContext();
 
     const [showClubs, setShowClubs] = useState<boolean>(true);
     const [userData, setUserData] = useState<IUserData>();
@@ -63,8 +60,6 @@ const ProfilePage = (props: any) => {
         fetchedUser();
 
     }, []);
-
-    console.log(userContext.displayedUser?.profilePic)
 
 
     const fetchUserClubs = async (userId: number | undefined) => {

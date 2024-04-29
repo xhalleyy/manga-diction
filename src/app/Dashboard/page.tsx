@@ -54,7 +54,7 @@ const Dashboard = () => {
       <div className='bg-offwhite h-full pb-10'>
 
         <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] py-4" : "px-[70px] py-4"}>
-          <p className={pageSize ? 'font-mainFont text-lg mt-2' : 'font-mainFont text-2xl text-darkbrown text-center font-bold'}>{pageSize ? 'Popular Public Clubs:' : 'Popular Public Clubs'}</p>
+          <p className={pageSize ? 'font-mainFont text-lg mt-2 px-[30px]' : 'font-mainFont text-2xl text-darkbrown text-center font-bold'}>Popular Public Clubs</p>
           <div className={pageSize ? '' : 'hidden'}>
             <ClubModalComponent />
           </div>
@@ -91,6 +91,7 @@ const Dashboard = () => {
                     dateCreated={post.dateCreated}
                     dateUpdated={post.dateUpdated}
                     isDeleted={post.isDeleted}
+                    displayClubName={true}
                   />
                 </div>
               ))}

@@ -253,3 +253,17 @@ export const AddUserToClub = async(userId: number | undefined, clubId: number | 
     console.log(data);
     return data;
 }
+
+// DELETE USER IN CLUB
+export const RemoveMember = async(userId: number | undefined, clubId: number | undefined) => {
+    const res = await fetch(`${url}Member/RemoveMemberFromClub?userId=${userId}&clubId=${clubId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    const data = res.text();
+    console.log(data);
+    return data;
+}

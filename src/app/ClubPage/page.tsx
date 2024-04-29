@@ -5,11 +5,12 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
-import { TextInput, Label, Dropdown } from 'flowbite-react';
+import { TextInput, Label, Dropdown, Button, Modal } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { AddUserToClub, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
+import { AddUserToClub, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 import Image from 'next/image';
 import NavbarLayout from '../navbarlayout';
 
@@ -22,7 +23,9 @@ const ClubPage = () => {
   const [posts, setPosts] = useState<IPosts[]>([]);
   const [seeMembers, setSeeMembers] = useState<boolean>(false);
   const [members, setMembers] = useState<IUserData[]>([]);
-  
+  const [isLeader, setIsLeader] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState(false);
+
   // let userId = Number(localStorage.getItem("UserId"));
 
   const fetchClubMembers = async (clubId: number | undefined) => {
@@ -61,6 +64,18 @@ const ClubPage = () => {
 
   }
 
+  // function to handle leaving and/or deleting club!!
+  const handleLeave = async () => {
+    let userId = Number(localStorage.getItem("UserId"));
+    if (!isLeader) {
+      const removeMember = await RemoveMember(userId, displayedClub?.id);
+      setOpenModal(false);
+      setJoined(false);
+    } else {
+      // STILL NEED TO WORK ON THIS
+    }
+  }
+
   useEffect(() => {
     if (seeMembers) {
       fetchClubMembers(displayedClub?.id);
@@ -68,6 +83,15 @@ const ClubPage = () => {
   }, [seeMembers])
 
   useEffect(() => {
+
+    let userId = Number(localStorage.getItem("UserId"));
+
+    if (displayedClub?.leaderId === userId) {
+      setIsLeader(true);
+    }
+    console.log(displayedClub?.leaderId)
+    console.log(userId)
+
     const fetchedData = async (clubId: number) => {
       const getPosts = await getPostsByClubId(clubId);
       setPosts(getPosts);
@@ -75,13 +99,13 @@ const ClubPage = () => {
     }
     fetchedData(1);
 
-    const checkJoined = async(clubId: number | undefined)=> {
+    const checkJoined = async (clubId: number | undefined) => {
       try {
         if (clubId === undefined) {
           console.error('clubId is undefined');
-          return; 
+          return;
         }
-    
+
         const memberIds = await getClubMembers(clubId);
         if (memberIds.includes(Number(localStorage.getItem("UserId")) ?? 0)) {
           setJoined(true);
@@ -92,7 +116,7 @@ const ClubPage = () => {
     }
 
     checkJoined(displayedClub?.id)
-  }, [])
+  }, [displayedClub?.id])
 
   const customInput = {
     "field": {
@@ -206,6 +230,7 @@ const ClubPage = () => {
                       dateCreated={post.dateCreated}
                       dateUpdated={post.dateUpdated}
                       isDeleted={post.isDeleted}
+                      displayClubName={false}
                     />
                   </div>
                 ))}
@@ -239,12 +264,41 @@ const ClubPage = () => {
             </div>
 
             <div>
-              <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button>
+              {isLeader ? <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button> : null}
               <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'>All Members</button>
-              <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg'>Delete Club</button>
+              {isLeader ? (
+                <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Delete Club</button>
+              ) : joined ? (
+                <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Leave Club</button>
+              ) : null}
             </div>
           </div>
         </div>
+
+        <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
+          <Modal.Header />
+          <Modal.Body>
+            <div className="text-center">
+              <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                {isLeader ?
+                  <div>
+                    Are you sure you want to delete <br /> {displayedClub?.clubName}?
+                  </div>
+                  : <div>
+                    Are you sure you want to leave <br /> {displayedClub?.clubName}?
+                  </div>}
+              </h3>
+              <div className="flex justify-center gap-4">
+                <Button color="failure" onClick={handleLeave}>
+                  {"Yes, I'm sure"}
+                </Button>
+                <Button color="gray" onClick={() => setOpenModal(false)}>
+                  No, cancel
+                </Button>
+              </div>
+            </div>
+          </Modal.Body>
+        </Modal>
 
       </div>
     </div>

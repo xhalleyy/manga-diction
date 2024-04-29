@@ -18,10 +18,10 @@ import NavbarLayout from "../navbarlayout";
 const BrowseClubs = () => {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
-  const [searchInput, setSearchInput] = useState<string>("");
+  // const [searchInput, setSearchInput] = useState<string>("");
   const router = useRouter();
   // useRef: used for accessing and persiting mutable values; doesn't cause a re-render when value is changed
-  const inputRef = useRef<HTMLInputElement>(null); 
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchedData = async () => {
@@ -31,28 +31,6 @@ const BrowseClubs = () => {
     fetchedData();
   }, []);
 
-  // const handleClubSearch = async () => {
-  //   try {
-  //     const searchQuery = inputRef.current?.value || '';
-  //     const fetchedClubsByName = await getClubsByName(searchQuery);
-  //     console.log('Fetched Clubs:', fetchedClubsByName);
-
-  //     // const queryString = `?clubs=${encodeURIComponent(JSON.stringify(fetchedClubsByName))}`;
-  //     // const route = `/SearchClub${queryString}`;
-  //     await router.push('/SearchClub');
-  //   } catch (error) {
-  //     console.error('Error fetching clubs:', error);
-  //   }
-  // };
-
-  // const handleClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
-  //   try {
-  //     event.preventDefault();
-  //     await handleClubSearch();
-  //   } catch (error) {
-  //     console.error('Error handling click event:', error);
-  //   }
-  // };
 
   const handleClick = () => {
     if (inputRef.current) {
@@ -98,7 +76,7 @@ const BrowseClubs = () => {
 
   // CUSTOM FLOWBITE CLASSES
   const customTabs: CustomFlowbiteTheme['tabs'] = {
-    "base": "flex flex-col gap-3 mt-[-2px]",
+    "base": "flex flex-col gap-3 mt-[-2px] w-full",
     "tablist": {
       "base": "flex text-center",
       "styles": {
@@ -142,125 +120,127 @@ const BrowseClubs = () => {
 
   return (
     <NavbarLayout>
-    <div className="bg-offwhite font-mainFont" >
+    <div className="bg-offwhite h-screen font-mainFont" >
+      <div className=" bg-offwhite">
+        {/* header , search, create clubs modal start */}
+        <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
+          <div>
+            <p className="text-3xl text-darkbrown font-bold">Popular Public Clubs </p>
+          </div>
 
-      {/* header , search, create clubs modal start */}
-      <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
-        <div>
-          <p className="text-3xl text-darkbrown font-bold">Popular Public Clubs </p>
-        </div>
+          <div className="flex justify-end gap-5">
+            <div className="relative ml-20">
+              <TextInput
+                ref={inputRef}
+                id="base"
+                style={{
+                  borderRightWidth: "50px",
+                  borderColor: "rgba(207, 198, 183, 1)",
+                  height: 30,
+                }}
+                type="text"
+                placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+                className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+              />
 
-        <div className="flex justify-end gap-5">
-          <div className="relative ml-20">
-            <TextInput
-              ref={inputRef}
-              id="base"
-              style={{
-                borderRightWidth: "50px",
-                borderColor: "rgba(207, 198, 183, 1)",
-                height: 30,
-              }}
-              type="text"
-              placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
-              className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
-            />
-            
 
-            <div className="absolute ml-80 inset-y-0 flex items-center">
-              <Button
-                style={{ backgroundColor: "transparent" }}
-                className="bg-transparent focus:ring-0"
-                onClick={handleClick}
-              >
-                <SearchIcon className="text-4xl text-white" />
-              </Button>{" "}
+              <div className="absolute ml-80 inset-y-0 flex items-center">
+                <Button
+                  style={{ backgroundColor: "transparent" }}
+                  className="bg-transparent focus:ring-0"
+                  onClick={handleClick}
+                >
+                  <SearchIcon className="text-4xl text-white" />
+                </Button>{" "}
+              </div>
+            </div>
+
+            <div className="flex justify-end ">
+              <ClubModalComponent />
             </div>
           </div>
+        </div >
 
-          <div className="flex justify-end ">
-            <ClubModalComponent />
+        <div className="px-[130px] mb-2">
+          <CarouselComponent />
+        </div>
+
+        <div className="flex pt-8 pb-3 min-w-full">
+          <h1 className="font-mainFont text-lg text-darkbrown me-5 ps-16 text-nowrap">More Public Clubs:</h1>
+          <div className="flex justify-start w-full">
+            <Tabs theme={customTabs} aria-label="Pills" style="pills">
+
+              <Tabs.Item active title="Random">
+                <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[140px] 2xl:mx-[-90px]">
+                  {randomClubs.map((club, idx) => (
+                    <div
+                      key={idx}
+                      className="col-span-1"
+                      onClick={() => handleClubCardClick(club)}
+                    >
+                      <CardComponent
+                        id={club.id}
+                        leaderId={club.leaderId}
+                        description={club.description}
+                        dateCreated={club.dateCreated}
+                        image={club.image}
+                        isPublic={club.isPublic}
+                        clubName={club.clubName}
+                        isDeleted={club.isDeleted}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Tabs.Item>
+              <Tabs.Item title="Most Recently Created">
+                <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
+                  {slicedRecentClubs.map((club, idx) => (
+                    <div
+                      key={idx}
+                      className="col-span-1"
+                      onClick={() => handleClubCardClick(club)}
+                    >
+                      <CardComponent
+                        id={club.id}
+                        leaderId={club.leaderId}
+                        description={club.description}
+                        dateCreated={club.dateCreated}
+                        image={club.image}
+                        isPublic={club.isPublic}
+                        clubName={club.clubName}
+                        isDeleted={club.isDeleted}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Tabs.Item>
+              <Tabs.Item title="Least Recently Created">
+                <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
+                  {slicedOldestClubs.map((club, idx) => (
+                    <div
+                      key={idx}
+                      className="col-span-1"
+                      onClick={() => handleClubCardClick(club)}
+                    >
+                      <CardComponent
+                        id={club.id}
+                        leaderId={club.leaderId}
+                        description={club.description}
+                        dateCreated={club.dateCreated}
+                        image={club.image}
+                        isPublic={club.isPublic}
+                        clubName={club.clubName}
+                        isDeleted={club.isDeleted}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Tabs.Item>
+            </Tabs>
           </div>
         </div>
-      </div >
-
-      <div className="px-[130px] mb-2">
-        <CarouselComponent />
       </div>
 
-      <div className="flex pt-8 pb-3 min-w-full">
-        <h1 className="font-mainFont text-lg text-darkbrown me-5 ps-16 text-nowrap">More Public Clubs:</h1>
-        <div className="flex justify-start w-full">
-          <Tabs theme={customTabs} aria-label="Pills" style="pills">
-
-            <Tabs.Item active title="Random">
-              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]">
-                {randomClubs.map((club, idx) => (
-                  <div
-                    key={idx}
-                    className="col-span-1"
-                    onClick={() => handleClubCardClick(club)}
-                  >
-                    <CardComponent
-                      id={club.id}
-                      leaderId={club.leaderId}
-                      description={club.description}
-                      dateCreated={club.dateCreated}
-                      image={club.image}
-                      isPublic={club.isPublic}
-                      clubName={club.clubName}
-                      isDeleted={club.isDeleted}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Tabs.Item>
-            <Tabs.Item title="Most Recently Created">
-              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
-                {slicedRecentClubs.map((club, idx) => (
-                  <div
-                    key={idx}
-                    className="col-span-1"
-                    onClick={() => handleClubCardClick(club)}
-                  >
-                    <CardComponent
-                      id={club.id}
-                      leaderId={club.leaderId}
-                      description={club.description}
-                      dateCreated={club.dateCreated}
-                      image={club.image}
-                      isPublic={club.isPublic}
-                      clubName={club.clubName}
-                      isDeleted={club.isDeleted}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Tabs.Item>
-            <Tabs.Item title="Least Recently Created">
-              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
-                {slicedOldestClubs.map((club, idx) => (
-                  <div
-                    key={idx}
-                    className="col-span-1"
-                    onClick={() => handleClubCardClick(club)}
-                  >
-                    <CardComponent
-                      id={club.id}
-                      leaderId={club.leaderId}
-                      description={club.description}
-                      dateCreated={club.dateCreated}
-                      image={club.image}
-                      isPublic={club.isPublic}
-                      clubName={club.clubName}
-                      isDeleted={club.isDeleted}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Tabs.Item>
-          </Tabs>
-        </div>
-      </div>
     </div >
     </NavbarLayout>
   );
