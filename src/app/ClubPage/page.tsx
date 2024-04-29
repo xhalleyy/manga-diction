@@ -11,6 +11,7 @@ import { AddUserToClub, getClubMembers, getPostsByClubId, getUserInfo } from '@/
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image';
+import NavbarLayout from '../navbarlayout';
 
 const ClubPage = () => {
 
@@ -126,9 +127,9 @@ const ClubPage = () => {
   }
 
   return (
-
+    <NavbarLayout>
     <div className='min-h-screen bg-offwhite'>
-\      <div className='px-16'>
+      <div className='px-16'>
         <div className='flex pt-4'>
           <div className='flex-1 items-end pt-3'>
             <h1 className='font-poppinsMed text-3xl text-darkbrown'>{displayedClub?.clubName}</h1>
@@ -247,6 +248,7 @@ const ClubPage = () => {
 
       </div>
     </div>
+    </NavbarLayout>
 
   )
 }

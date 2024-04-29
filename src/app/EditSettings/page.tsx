@@ -9,6 +9,7 @@ import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useRouter } from 'next/navigation'
 import { useClubContext } from '@/context/ClubContext'
+import NavbarLayout from '../navbarlayout'
 
 const EditSettings = () => {
 
@@ -119,6 +120,7 @@ const EditSettings = () => {
       }
 
     return (
+        <NavbarLayout>
         <div className='bg-offwhite h-screen'>
 
             <div className='mx-40 my-8'>
@@ -188,6 +190,7 @@ const EditSettings = () => {
                 </div>
             </div>
         </div>
+        </NavbarLayout>
     )
 }
 

@@ -12,6 +12,7 @@ import { getPostsByClubId } from '@/utils/DataServices'
 import { IPosts } from '@/Interfaces/Interfaces'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from "next/navigation";
+import NavbarLayout from '../navbarlayout'
 
 const Dashboard = () => {
 
@@ -46,12 +47,9 @@ const Dashboard = () => {
 
 
   return (
+    <NavbarLayout>
     <div className='bg-offWhite h-screen'>
       <div className='bg-offwhite h-full pb-10'>
-
-        
-
-
 
         <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] py-4" : "px-[70px] py-4"}>
           <p className={pageSize ? 'font-mainFont text-lg mt-2' : 'font-mainFont text-2xl text-darkbrown text-center font-bold'}>{pageSize ? 'Popular Public Clubs:' : 'Popular Public Clubs'}</p>
@@ -126,8 +124,8 @@ const Dashboard = () => {
         </div>
 
       </div>
-
     </div>
+    </NavbarLayout>
   )
 }
 

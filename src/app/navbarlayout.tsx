@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 //   description: "Join the Manga Community",
 // };
 
-export default function NoNavbarLayout({
+export default function NavbarLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -22,6 +22,7 @@ export default function NoNavbarLayout({
     <html lang="en">
       <body className={inter.className}>
         <AppWrapper>
+            <NavbarComponent/>
           {children}
         </AppWrapper>
       </body>

@@ -10,6 +10,7 @@ import { useClubContext } from "@/context/ClubContext";
 import CardComponent from "../components/CardComponent";
 import { TextInput, Button } from "flowbite-react";
 import ClubModalComponent from "../components/ClubModalComponent";
+import NavbarLayout from "../navbarlayout";
 
 const SearchClub = () => {
   const router = useRouter();
@@ -57,6 +58,7 @@ const SearchClub = () => {
   };
 
   return (
+    <NavbarLayout>
     <div className="bg-offwhite h-screen">
       <div className="bg-offwhite h-full">
 
@@ -130,6 +132,7 @@ const SearchClub = () => {
             </div>
       </div>
     </div>
+    </NavbarLayout>
   );
 };
 
