@@ -20,9 +20,12 @@ export default function NavbarLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        
+      </head>
+      <body>
         <AppWrapper>
-            <NavbarComponent/>
+          <NavbarComponent />
           {children}
         </AppWrapper>
       </body>

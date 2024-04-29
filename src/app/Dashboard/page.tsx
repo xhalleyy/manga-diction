@@ -18,6 +18,7 @@ const Dashboard = () => {
 
   const [posts, setPosts] = useState<IPosts[]>([]);
   const [pageSize, setPageSize] = useState<boolean>(true);
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -42,8 +43,9 @@ const Dashboard = () => {
   }, [])
 
 
-
-
+  const handleBrowseClubs = () => {
+    router.push('/BrowseClubs')
+  }
 
 
   return (
@@ -64,7 +66,7 @@ const Dashboard = () => {
 
         <div className={pageSize ? 'hidden' : 'contents'}>
           <div className='flex justify-center mt-5'>
-            <Badge style={{fontSize: 18}} className='rounded-full font-mainFont bg-ivory border-2 border-darkbrown text-darkbrown'>
+            <Badge onClick={handleBrowseClubs} style={{fontSize: 18}} className='rounded-full font-mainFont bg-ivory border-2 border-darkbrown text-darkbrown'>
               browse more clubs <ArrowForwardIcon className='text-base'/>
             </Badge>
           </div>
