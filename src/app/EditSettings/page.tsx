@@ -120,7 +120,6 @@ const EditSettings = () => {
 
     return (
         <div className='bg-offwhite h-screen'>
-            <NavbarComponent />
 
             <div className='mx-40 my-8'>
                 <div className="w-full relative flex justify-end items-end -mt-[px]">

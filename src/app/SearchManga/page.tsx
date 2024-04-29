@@ -70,7 +70,6 @@ const SearchManga = () => {
     return (
         <div className='bg-offwhite h-screen'>
 
-            <NavbarComponent />
 
             <div className='mt-5'>
                 <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown '>Manga Results for &apos;{ }&apos;</h1>

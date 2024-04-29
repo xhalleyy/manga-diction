@@ -141,7 +141,6 @@ const BrowseClubs = () => {
 
   return (
     <div className="bg-offwhite font-mainFont" >
-      <NavbarComponent />
 
       {/* header , search, create clubs modal start */}
       <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >

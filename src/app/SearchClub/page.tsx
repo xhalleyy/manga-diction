@@ -59,7 +59,6 @@ const SearchClub = () => {
   return (
     <div className="bg-offwhite h-screen">
       <div className="bg-offwhite h-full">
-        <NavbarComponent />
 
         <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
         <div>

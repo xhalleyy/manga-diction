@@ -128,8 +128,7 @@ const ClubPage = () => {
   return (
 
     <div className='min-h-screen bg-offwhite'>
-      <NavbarComponent />
-      <div className='px-16'>
+\      <div className='px-16'>
         <div className='flex pt-4'>
           <div className='flex-1 items-end pt-3'>
             <h1 className='font-poppinsMed text-3xl text-darkbrown'>{displayedClub?.clubName}</h1>

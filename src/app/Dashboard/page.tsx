@@ -7,15 +7,17 @@ import ClubModalComponent from '../components/ClubModalComponent'
 import { CarouselComponent } from '../components/CarouselComponent'
 import ArrowCircleLeftTwoToneIcon from '@mui/icons-material/ArrowCircleLeftTwoTone';
 import ArrowCircleRightTwoToneIcon from '@mui/icons-material/ArrowCircleRightTwoTone';
-import { Card } from "flowbite-react";
+import { Badge, Button, Card } from "flowbite-react";
 import { getPostsByClubId } from '@/utils/DataServices'
 import { IPosts } from '@/Interfaces/Interfaces'
-import DrawerComponent from '../components/DrawerComponent'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
 
   const [posts, setPosts] = useState<IPosts[]>([]);
   const [pageSize, setPageSize] = useState<boolean>(true);
+
 
   useEffect(() => {
     const fetchedData = async (clubId: number) => {
@@ -47,21 +49,27 @@ const Dashboard = () => {
     <div className='bg-offWhite h-screen'>
       <div className='bg-offwhite h-full pb-10'>
 
-        <div className={pageSize ? 'contents' : 'sticky top-0'}>
-          <NavbarComponent />
-        </div>
+        
 
 
 
-        <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] my-4" : "px-[70px] my-4"}>
+        <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] py-4" : "px-[70px] py-4"}>
           <p className={pageSize ? 'font-mainFont text-lg mt-2' : 'font-mainFont text-2xl text-darkbrown text-center font-bold'}>{pageSize ? 'Popular Public Clubs:' : 'Popular Public Clubs'}</p>
           <div className={pageSize ? '' : 'hidden'}>
             <ClubModalComponent />
           </div>
         </div>
 
-        <div className={pageSize ? 'px-[130px] mb-2 ' : 'px-[20px] mb-2 '}>
+        <div className={pageSize ? 'px-[130px] mb-2 ' : 'px-[20px] mb-2'}>
           <CarouselComponent />
+        </div>
+
+        <div className={pageSize ? 'hidden' : 'contents'}>
+          <div className='flex justify-center mt-5'>
+            <Badge style={{fontSize: 18}} className='rounded-full font-mainFont bg-ivory border-2 border-darkbrown text-darkbrown'>
+              browse more clubs <ArrowForwardIcon className='text-base'/>
+            </Badge>
+          </div>
         </div>
 
         <div className='px-[70px] grid grid-cols-4 gap-12'>

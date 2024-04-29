@@ -7,7 +7,6 @@ const MangaInfo = () => {
     return (
         <div className='bg-offwhite h-screen'>
 
-            <NavbarComponent />
 
             <div className='flex'>
 

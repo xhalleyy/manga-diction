@@ -86,29 +86,28 @@ const ProfilePage = (props: any) => {
 
     return (
         <div className='bg-offwhite h-screen'>
-            <div className='bg-offwhite h-full'>
-                <NavbarComponent />
 
-                <div className="px-[70px] my-4">
-                    <div className="grid grid-cols-4 gap-1">
-                        <div className="col-span-1 mt-8">
-                            {/* username, name, add btn, friends section */}
-                            <div className='flex flex-col justify-center mb-10'>
-                                <div className='flex justify-center'>
-                                    <Image
-                                        src={info.displayedUser?.profilePic || '/dummyImg.png'}
-                                        alt='profile image'
-                                        width={150}
-                                        height={150}
-                                        className='pfp shadow-md'
-                                    />
-                                </div>
-                                <div className='text-center mt-5'>
-                                    <h1 className='text-[28px] font-mainFont font-bold'>{info.displayedUser?.username}</h1>
-                                    <h2 className='text-[22px] font-mainFont'>{`${info.displayedUser?.firstName} ${info.displayedUser?.lastName}`}</h2>
-                                    <div className='mt-3'>
-                                        {!isMyProfile &&
-                                            <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />
+
+            <div className="px-[70px] py-4">
+                <div className="grid grid-cols-4 gap-1">
+                    <div className="col-span-1 mt-8">
+                        {/* username, name, add btn, friends section */}
+                        <div className='flex flex-col justify-center mb-10'>
+                            <div className='flex justify-center'>
+                                <Image
+                                    src={info.displayedUser?.profilePic || '/dummyImg.png'}
+                                    alt='profile image'
+                                    width={150}
+                                    height={150}
+                                    className='pfp shadow-md'
+                                />
+                            </div>
+                            <div className='text-center mt-5'>
+                                <h1 className='text-[28px] font-mainFont font-bold'>{info.displayedUser?.username}</h1>
+                                <h2 className='text-[22px] font-mainFont'>{`${info.displayedUser?.firstName} ${info.displayedUser?.lastName}`}</h2>
+                                <div className='mt-3'>
+                                    {!isMyProfile &&
+                                        <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />
 
                                             </button>}
                                     </div>
@@ -224,7 +223,6 @@ const ProfilePage = (props: any) => {
             </div>
 
 
-        </div>
     )
 }
 
