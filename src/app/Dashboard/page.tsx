@@ -45,7 +45,7 @@ const Dashboard = () => {
 
   return (
     <div className='bg-offWhite min-h-screen'>
-      <div className='bg-offwhite pb-10'>
+      <div className='bg-offwhite h-full pb-10'>
 
         <div className={pageSize ? 'contents' : 'sticky top-0'}>
           <NavbarComponent />
