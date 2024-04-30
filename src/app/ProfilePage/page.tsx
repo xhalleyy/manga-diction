@@ -10,7 +10,6 @@ import { getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/util
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
-import NavbarLayout from '../navbarlayout';
 
 const ProfilePage = (props: any) => {
 
@@ -81,9 +80,10 @@ const ProfilePage = (props: any) => {
     }, [showClubs])
 
     return (
-        <NavbarLayout>
+        <>
         <div className='bg-offwhite h-screen'>
 
+            <NavbarComponent/>
 
             <div className="px-[70px] py-4">
                 <div className="grid grid-cols-4 gap-1">
@@ -218,7 +218,7 @@ const ProfilePage = (props: any) => {
                 </div>
 
             </div>
-        </NavbarLayout>
+        </>
 
     )
 }
