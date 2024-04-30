@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 //   description: "Join the Manga Community",
 // };
 
-export default function NoNavbarLayout({
+export default function No({
   children,
 }: Readonly<{
   children: React.ReactNode;

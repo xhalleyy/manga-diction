@@ -12,7 +12,8 @@ import { getPostsByClubId } from '@/utils/DataServices'
 import { IPosts } from '@/Interfaces/Interfaces'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from "next/navigation";
-import NavbarLayout from '../navbarlayout'
+import LatestUpdatesComponent from '../components/LatestUpdatesComponent'
+
 
 const Dashboard = () => {
 
@@ -33,7 +34,6 @@ const Dashboard = () => {
     const handleResize = () => {
       setPageSize(window.innerWidth > 768)
     }
-
     window.addEventListener('resize', handleResize)
 
     return () => {
@@ -49,8 +49,11 @@ const Dashboard = () => {
 
 
   return (
-    <NavbarLayout>
-    <div className='bg-offWhite h-screen'>
+    <>
+    <div className='bg-offWhite h-full'>
+
+      <NavbarComponent/>
+
       <div className='bg-offwhite h-full pb-10'>
 
         <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] py-4" : "px-[70px] py-4"}>
@@ -72,9 +75,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className='px-[70px] grid grid-cols-4 gap-12'>
+        <div className={pageSize ? 'px-[70px] grid grid-cols-4 gap-12' : 'px-4'}>
           <div className='col-span-3'>
-            <p className='font-mainFont text-lg mt-2 mb-3'>Recent Posts:</p>
+            <p className={pageSize ? 'font-mainFont text-lg mt-2 mb-3' : 'font-mainFont text-3xl font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
             <div className='bg-paleblue px-5 py-3 rounded-lg'>
               {posts.map((post, idx) => (
                 <div key={idx} className='col-span-1 py-2'>
@@ -97,37 +100,20 @@ const Dashboard = () => {
               {/* <PostsComponent /> */}
             </div>
           </div>
-          <div className='col-span-1'>
-            <p className='font-mainFont text-lg mt-2 mb-3'>Latest Updates:</p>
+          <div className={pageSize ? 'col-span-1' : ''}>
+            <p className={pageSize ? 'font-mainFont text-lg mt-2 mb-3' : 'font-mainFont text-3xl font-bold text-darkbrown text-center my-5' }>Latest Updates:</p>
             {/* latest updates component */}
             <div className='bg-ivory rounded-lg p-5'>
-              <div className='flex flex-row pb-3'>
-                <Card className="w-full object-fit h-36" imgSrc="/mangaexample.png" horizontal>
-                  <div className=''>
-                    <h5 className="text-2xl font-poppinsMed text-gray-900 justify-start text-start">
-                      Dreaming Freedom
-                    </h5>
-                    <p className='text-md font-mainFont'>Chapter 103</p>
-                  </div>
-                </Card>
-              </div>
-              <div className='flex flex-row'>
-                <Card className="w-full object-fit h-36" imgSrc="/mangaexample.png" horizontal>
-                  <div>
-                    <h5 className="text-2xl font-poppinsMed tracking-tight text-gray-900 justify-start text-start">
-                      Dreaming Freedom
-                    </h5>
-                    <p className='text-md font-mainFont'>Chapter 103</p>
-                  </div>
-                </Card>
-              </div>
+              
+              <LatestUpdatesComponent/>
+
             </div>
           </div>
         </div>
 
       </div>
     </div>
-    </NavbarLayout>
+    </>
   )
 }
 

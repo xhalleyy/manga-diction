@@ -2,13 +2,14 @@
 import React from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Badge, Button } from 'flowbite-react'
-import NavbarLayout from '../navbarlayout'
+
 
 const MangaInfo = () => {
     return (
-        <NavbarLayout>
+        <>
         <div className='bg-offwhite h-screen'>
 
+            <NavbarComponent/>
 
             <div className='flex'>
 
@@ -83,7 +84,7 @@ const MangaInfo = () => {
 
 
         </div>
-        </NavbarLayout>
+        </>
     )
 }
 

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import axios from 'axios';
 import { getTags, mangaSearch, specificManga } from '@/utils/DataServices';
 import { IManga } from '@/Interfaces/Interfaces';
-import NavbarLayout from '../navbarlayout';
+;
 
 
 const SearchManga = () => {
@@ -69,11 +69,13 @@ const SearchManga = () => {
     const coverArt = `https://uploads.mangadex.org/covers/${tempID}/${coverFile}`;
 
     return (
-        <NavbarLayout>
+        <>
         <div className='bg-offwhite h-screen'>
 
+            <NavbarComponent/>
 
-            <div className='mt-5'>
+
+            <div className='pt-5'>
                 <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown '>Manga Results for &apos;{ }&apos;</h1>
 
                 <div className="grid grid-cols-5 px-[70px] mt-8">
@@ -117,7 +119,7 @@ const SearchManga = () => {
 
 
         </div>
-        </NavbarLayout>
+        </>
     )
 }
 

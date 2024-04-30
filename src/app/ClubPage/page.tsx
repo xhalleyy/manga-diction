@@ -5,13 +5,13 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
-import { TextInput, Label, Dropdown } from 'flowbite-react';
+import { TextInput, Label, Dropdown, Navbar } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
 import { AddUserToClub, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image';
-import NavbarLayout from '../navbarlayout';
+;
 
 const ClubPage = () => {
 
@@ -127,8 +127,11 @@ const ClubPage = () => {
   }
 
   return (
-    <NavbarLayout>
+    <>
     <div className='min-h-screen bg-offwhite'>
+      
+      <NavbarComponent/>
+
       <div className='px-16'>
         <div className='flex pt-4'>
           <div className='flex-1 items-end pt-3'>
@@ -248,7 +251,7 @@ const ClubPage = () => {
 
       </div>
     </div>
-    </NavbarLayout>
+    </>
 
   )
 }

@@ -13,7 +13,6 @@ import { useClubContext } from "@/context/ClubContext";
 import { Tabs } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { MouseEventHandler } from 'react';
-import NavbarLayout from "../navbarlayout";
 
 const BrowseClubs = () => {
   const clubData = useClubContext();
@@ -141,8 +140,9 @@ const BrowseClubs = () => {
   }
 
   return (
-    <NavbarLayout>
+    <>
     <div className="bg-offwhite font-mainFont" >
+      <NavbarComponent/>
 
       {/* header , search, create clubs modal start */}
       <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
@@ -262,7 +262,7 @@ const BrowseClubs = () => {
         </div>
       </div>
     </div >
-    </NavbarLayout>
+    </>
   );
 };
 
