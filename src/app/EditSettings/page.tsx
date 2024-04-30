@@ -9,7 +9,7 @@ import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useRouter } from 'next/navigation'
 import { useClubContext } from '@/context/ClubContext'
-import NavbarLayout from '../navbarlayout'
+
 
 const EditSettings = () => {
 
@@ -120,10 +120,12 @@ const EditSettings = () => {
       }
 
     return (
-        <NavbarLayout>
+        <>
         <div className='bg-offwhite h-screen'>
 
-            <div className='mx-40 my-8'>
+            <NavbarComponent/>
+
+            <div className='mx-40 py-8'>
                 <div className="w-full relative flex justify-end items-end -mt-[px]">
                     {success && (
                         <div className="w-72">
@@ -190,7 +192,7 @@ const EditSettings = () => {
                 </div>
             </div>
         </div>
-        </NavbarLayout>
+        </>
     )
 }
 
