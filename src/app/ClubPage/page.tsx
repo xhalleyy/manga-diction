@@ -5,7 +5,7 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
-import { TextInput, Label, Dropdown, Navbar } from 'flowbite-react';
+import { TextInput, Label, Dropdown, Navbar, Modal, Button } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
 import { AddUserToClub, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
@@ -89,8 +89,8 @@ const ClubPage = () => {
     if (displayedClub?.leaderId === userId) {
       setIsLeader(true);
     }
-    console.log(displayedClub?.leaderId)
-    console.log(userId)
+    // console.log(displayedClub?.leaderId)
+    // console.log(userId)
 
     const fetchedData = async (clubId: number) => {
       const getPosts = await getPostsByClubId(clubId);

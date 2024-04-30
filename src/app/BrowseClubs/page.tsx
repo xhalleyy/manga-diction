@@ -119,14 +119,14 @@ const BrowseClubs = () => {
 
   return (
     <>
-    <div className="bg-offwhite font-mainFont" >
-      <NavbarComponent/>
+      <div className="bg-offwhite font-mainFont" >
+        <NavbarComponent />
 
-      {/* header , search, create clubs modal start */}
-      <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
-        <div>
-          <p className="text-3xl text-darkbrown font-bold">Popular Public Clubs </p>
-        </div>
+        {/* header , search, create clubs modal start */}
+        <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
+          <div>
+            <p className="text-3xl text-darkbrown font-bold">Popular Public Clubs </p>
+          </div>
 
           <div className="flex justify-end gap-5">
             <div className="relative ml-20">
@@ -240,8 +240,6 @@ const BrowseClubs = () => {
           </div>
         </div>
       </div>
-
-    </div >
     </>
   );
 };
