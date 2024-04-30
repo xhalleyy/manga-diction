@@ -187,7 +187,7 @@ export const specificManga = async(mangaId: string) => {
 
 // ------------------------ POST API FETCHES -----------------------
 // GET POSTS BY CLUB ID 
-export const getPostsByClubId = async( clubId: number) => {
+export const getPostsByClubId = async( clubId: number | undefined) => {
     const res = await fetch(url + 'Post/GetAllPostsInClub/' + clubId)
     const data: IPosts[] = await res.json();
     // console.log(data);

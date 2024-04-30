@@ -50,7 +50,7 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className='bg-offWhite h-screen'>
+    <div className='bg-offWhite'>
 
       <NavbarComponent/>
 
@@ -84,7 +84,9 @@ const Dashboard = () => {
                   <PostsComponent
                     id={post.id}
                     userId={post.userId}
+                    username={post.username}
                     clubId={post.clubId}
+                    clubName={post.clubName}
                     title={post.title}
                     category={post.category}
                     tags={post.tags}

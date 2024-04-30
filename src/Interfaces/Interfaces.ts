@@ -32,7 +32,9 @@ export interface IClubs {
 export interface IPosts {
     id: number,
     userId: number,
+    username: string,
     clubId: number,
+    clubName: string,
     title: string,
     category: string,
     tags: string,

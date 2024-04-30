@@ -8,25 +8,28 @@ import { Category } from '@mui/icons-material';
 
 
 interface PostsProps {
-    id: number;
-    userId: number;
-    clubId: number;
-    title: string;
-    category: string;
-    tags: string;
-    description: string;
-    image: string;
-    likes: number;
-    dateCreated: string;
-    dateUpdated: string;
-    isDeleted: boolean;
-    displayClubName: boolean; // Define displayClubName as a prop
+    id: number
+    userId: number
+    username: string
+    clubName: string
+    clubId: number
+    title: string
+    category: string
+    tags: string
+    description: string
+    image: string
+    likes: number
+    dateCreated: string
+    dateUpdated: string
+    isDeleted: boolean
+    displayClubName: boolean // Define displayClubName as a prop
   }
 
-const PostsComponent = ({id, userId, clubId, title, category, tags, description, image, likes, dateCreated, dateUpdated, isDeleted, displayClubName}: PostsProps) => {
+const PostsComponent = ({id, userId, username, clubId, clubName, title, category, tags, description, image, likes, dateCreated, dateUpdated, isDeleted, displayClubName}: PostsProps) => {
 
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
         "root" : {
+            "rounded": "rounded-full shadow-lg",
             "size": {
                 "md": "h-14 w-14"
             }
@@ -37,17 +40,17 @@ const PostsComponent = ({id, userId, clubId, title, category, tags, description,
         <div className='font-mainFont w-full bg-white rounded-lg'>
 
             <div className='pl-8 pt-2'>
-                {displayClubName && (<p className='text-2xl'>Jujutsu Lovers&lt;3</p>)}
+                {displayClubName && (<p className='text-2xl'>{clubName}</p>)}
             </div>
 
             <div className='flex'>
 
             <div style={{ width: '10%' }} className='flex flex-col place-content-center mt-[-35px]'>
-                <Avatar rounded theme={customAvatar} size="md" />
+                <Avatar img={image} rounded theme={customAvatar} size="md" />
             </div>
 
             <div style={{ width: '90%' }} className='flex-col mt-1.5'>
-                <p className='text-xl'> gegehater_xD </p>
+                <p className='text-xl'>{username}</p>
 
                 <div className='inline-flex'>
                     <Badge className='bg-darkblue rounded-lg text-white px-2 mr-1'>{category}</Badge>
@@ -61,13 +64,13 @@ const PostsComponent = ({id, userId, clubId, title, category, tags, description,
                 <div className='inline-flex gap-1 mb-2'>
                     <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
                             <ThumbUpOutlinedIcon sx={{fontSize: '16px'}}/>
-                            <div>0</div>
+                            <div>{likes}</div>
                     </div>
                     
 
                     <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
                         <ModeCommentOutlinedIcon sx={{fontSize: '16px'}}/>
-                        <p>likes</p>
+                        <p>comments</p>
                     </div>
                 </div>
 

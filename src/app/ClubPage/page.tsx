@@ -25,6 +25,7 @@ const ClubPage = () => {
   const [members, setMembers] = useState<IUserData[]>([]);
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState(false);
+  const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
 
   // let userId = Number(localStorage.getItem("UserId"));
 
@@ -41,14 +42,9 @@ const ClubPage = () => {
 
   const handleJoinBtn = async () => {
     try {
-      if (typeof window !== 'undefined') {
-        // Check if window is defined (i.e., we're in the browser)
-        let userId = Number(localStorage.getItem("UserId"));
-        const joinUser = await AddUserToClub(userId, displayedClub?.id);
-        setJoined(true);
-      } else {
-        console.error('localStorage is not available in this environment.');
-      }
+      let userId = Number(localStorage.getItem("UserId"));
+      const joinUser = await AddUserToClub(userId, displayedClub?.id);
+      setJoined(true);
     } catch (error) {
       alert('Unable to Join Club at this moment');
       console.log(error);
@@ -76,6 +72,7 @@ const ClubPage = () => {
     }
   }
 
+  // if seeMembers is true, then we fetch the club members based on club's id and it rerenders when seeMembers is changed
   useEffect(() => {
     if (seeMembers) {
       fetchClubMembers(displayedClub?.id);
@@ -89,15 +86,37 @@ const ClubPage = () => {
     if (displayedClub?.leaderId === userId) {
       setIsLeader(true);
     }
-    // console.log(displayedClub?.leaderId)
-    // console.log(userId)
 
-    const fetchedData = async (clubId: number) => {
-      const getPosts = await getPostsByClubId(clubId);
-      setPosts(getPosts);
-      console.log(getPosts);
-    }
-    fetchedData(1);
+    const fetchedData = async (clubId: number | undefined) => {
+      try {
+        if (clubId !== undefined) {
+          const getPosts = await getPostsByClubId(clubId);
+          console.log('Fetched Posts:', getPosts);
+          setPosts(getPosts);
+
+          const memberIds = getPosts.map((post) => post.userId);
+          console.log('Member IDs:', memberIds);
+
+          const membersInfo = await Promise.all(
+            memberIds.map(async (memberId) => {
+              const member = await getUserInfo(memberId);
+              return [memberId, member] as const;
+            })
+          );
+
+          const usersMap = new Map<number, IUserData>(membersInfo);
+          console.log('Users Map:', usersMap); 
+          setUsersMap(usersMap);
+        } else {
+          // Handle the case when clubId is undefined
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+
+    fetchedData(displayedClub?.id);
 
     const checkJoined = async (clubId: number | undefined) => {
       try {
@@ -152,159 +171,161 @@ const ClubPage = () => {
 
   return (
     <>
-    <div className='min-h-screen bg-offwhite'>
-      
-      <NavbarComponent/>
+      <div className='min-h-screen bg-offwhite'>
 
-      <div className='px-16'>
-        <div className='flex pt-4'>
-          <div className='flex-1 items-end pt-3'>
-            <h1 className='font-poppinsMed text-3xl text-darkbrown'>{displayedClub?.clubName}</h1>
-          </div>
-          <div className='flex flex-row gap-3'>
-            {!joined ?
-              <div onClick={handleJoinBtn} className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
-                <h1 className='font-poppinsMed text-xl text-white py-2'>Join Club</h1>
-                <AddIcon sx={{ fontSize: 30, color: grey[50] }} />
-              </div>
-              :
-              <>
-                <div onClick={handleCreatePost} className={createPost ? 'bg-brown items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer' : 'bg-ivory items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer'}>
-                  <h1 className='font-poppinsMed text-xl text-darkbrown py-2'>Create Post</h1>
-                  <AddIcon sx={{ fontSize: 30, color: brown[800] }} />
-                </div>
-                <div className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
-                  <h1 className='font-poppinsMed text-xl text-white py-2'>Joined</h1>
-                  <CheckIcon sx={{ fontSize: 25, color: grey[50] }} />
-                </div>
-              </>
-            }
-          </div>
-        </div>
+        <NavbarComponent />
 
-        <div className='py-1.5'>
-          <div className='bg-ivory inline-block rounded-xl'>
-            <p className='text-lg font-mainFont text-darkbrown px-4'>{displayedClub?.isPublic ? 'Public' : 'Private'}</p>
-          </div>
-        </div>
-
-        <div className='grid grid-cols-7 pt-3 gap-5'>
-          {!seeMembers ? <div className='col-span-5'>
-            {createPost && joined ?
-              <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
-                <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                  <Label htmlFor="base" value="Title:" className='col-span-1 text-lg' />
-                  <TextInput theme={customInput} id="base" type="text" sizing="post" className='col-span-11 w-7/12' />
+        <div className='px-16'>
+          <div className='flex pt-4'>
+            <div className='flex-1 items-end pt-3'>
+              <h1 className='font-poppinsMed text-3xl text-darkbrown'>{displayedClub?.clubName}</h1>
+            </div>
+            <div className='flex flex-row gap-3'>
+              {!joined ?
+                <div onClick={handleJoinBtn} className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
+                  <h1 className='font-poppinsMed text-xl text-white py-2'>Join Club</h1>
+                  <AddIcon sx={{ fontSize: 30, color: grey[50] }} />
                 </div>
-                <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                  <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg' />
-                  <TextInput theme={customInput} id="base2" type="text" sizing="post" className='col-span-11 w-4/12' />
-                </div>
-                <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                  <Label htmlFor="base3" value="Post:" className='col-span-1 text-lg' />
-                  <TextInput theme={customInput} id="base3" type="text" sizing="post" className='col-span-11 w-full' />
-                </div>
-              </div> : null
-            }
-
-            <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
-              <div className='flex justify-end items-center'>
-                <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
-                  <Dropdown.Item>Popular</Dropdown.Item>
-                  <Dropdown.Item>Newest</Dropdown.Item>
-                  <Dropdown.Item>Oldest</Dropdown.Item>
-                  <Dropdown.Item>Recently Updated</Dropdown.Item>
-                  <Dropdown.Item>Least Recently Updated</Dropdown.Item>
-                </Dropdown>
-              </div>
-              <div className='opacity-90 py-3'>
-                {posts.map((post, idx) => (
-                  <div key={idx} className='col-span-1 py-2'>
-                    <PostsComponent
-                      id={post.id}
-                      userId={post.userId}
-                      clubId={post.clubId}
-                      title={post.title}
-                      category={post.category}
-                      tags={post.tags}
-                      description={post.description}
-                      image={post.image}
-                      likes={post.likes}
-                      dateCreated={post.dateCreated}
-                      dateUpdated={post.dateUpdated}
-                      isDeleted={post.isDeleted}
-                      displayClubName={false}
-                    />
+                :
+                <>
+                  <div onClick={handleCreatePost} className={createPost ? 'bg-brown items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer' : 'bg-ivory items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer'}>
+                    <h1 className='font-poppinsMed text-xl text-darkbrown py-2'>Create Post</h1>
+                    <AddIcon sx={{ fontSize: 30, color: brown[800] }} />
                   </div>
-                ))}
-              </div>
+                  <div className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
+                    <h1 className='font-poppinsMed text-xl text-white py-2'>Joined</h1>
+                    <CheckIcon sx={{ fontSize: 25, color: grey[50] }} />
+                  </div>
+                </>
+              }
             </div>
           </div>
-            :
-            <div className='col-span-5'>
-              <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl'>
-                <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon /></h1>
-                <div className='grid grid-cols-5 px-8 justify-center py-2'>
-                  {members.map((member) => (
-                    <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
-                      <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
-                      <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
-                      <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
+
+          <div className='py-1.5'>
+            <div className='bg-ivory inline-block rounded-xl'>
+              <p className='text-lg font-mainFont text-darkbrown px-4'>{displayedClub?.isPublic ? 'Public' : 'Private'}</p>
+            </div>
+          </div>
+
+          <div className='grid grid-cols-7 pt-3 gap-5'>
+            {!seeMembers ? <div className='col-span-5'>
+              {createPost && joined ?
+                <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
+                  <div className='grid grid-cols-12 items-center gap-3 py-1'>
+                    <Label htmlFor="base" value="Title:" className='col-span-1 text-lg' />
+                    <TextInput theme={customInput} id="base" type="text" sizing="post" className='col-span-11 w-7/12' />
+                  </div>
+                  <div className='grid grid-cols-12 items-center gap-3 py-1'>
+                    <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg' />
+                    <TextInput theme={customInput} id="base2" type="text" sizing="post" className='col-span-11 w-4/12' />
+                  </div>
+                  <div className='grid grid-cols-12 items-center gap-3 py-1'>
+                    <Label htmlFor="base3" value="Post:" className='col-span-1 text-lg' />
+                    <TextInput theme={customInput} id="base3" type="text" sizing="post" className='col-span-11 w-full' />
+                  </div>
+                </div> : null
+              }
+
+              <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
+                <div className='flex justify-end items-center'>
+                  <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
+                    <Dropdown.Item>Popular</Dropdown.Item>
+                    <Dropdown.Item>Newest</Dropdown.Item>
+                    <Dropdown.Item>Oldest</Dropdown.Item>
+                    <Dropdown.Item>Recently Updated</Dropdown.Item>
+                    <Dropdown.Item>Least Recently Updated</Dropdown.Item>
+                  </Dropdown>
+                </div>
+                <div className='opacity-90 py-3'>
+                  {posts.map((post, idx) => (
+                    <div key={idx} className='col-span-1 py-2'>
+                      <PostsComponent
+                        id={post.id}
+                        userId={post.userId}
+                        username={usersMap.get(post.userId)?.username || "Unknown User"}
+                        clubId={post.clubId}
+                        clubName={post.clubName || "Default Club Name"} // Provide a default value
+                        title={post.title}
+                        category={post.category}
+                        tags={post.tags}
+                        description={post.description}
+                        image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                        likes={post.likes}
+                        dateCreated={post.dateCreated}
+                        dateUpdated={post.dateUpdated}
+                        isDeleted={post.isDeleted}
+                        displayClubName={false}
+                      />
                     </div>
                   ))}
                 </div>
               </div>
-            </div>}
-          <div className='col-span-2'>
-            <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
-            <div className='bg-white/80 border-8 border-ivory rounded-xl'>
-              <img
-                src={displayedClub?.image}
-                alt='profile image'
-                className='object-fit w-full shadow-lg'
-              />
-              <p className='p-2.5 font-poppinsMed text-darkbrown text-lg mt-1'>{displayedClub?.description}</p>
             </div>
-
-            <div>
-              {isLeader ? <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button> : null}
-              <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'>All Members</button>
-              {isLeader ? (
-                <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Delete Club</button>
-              ) : joined ? (
-                <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Leave Club</button>
-              ) : null}
-            </div>
-          </div>
-        </div>
-
-        <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
-          <Modal.Header />
-          <Modal.Body>
-            <div className="text-center">
-              <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                {isLeader ?
-                  <div>
-                    Are you sure you want to delete <br /> {displayedClub?.clubName}?
+              :
+              <div className='col-span-5'>
+                <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl'>
+                  <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon /></h1>
+                  <div className='grid grid-cols-5 px-8 justify-center py-2'>
+                    {members.map((member) => (
+                      <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
+                        <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                        <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
+                        <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
+                      </div>
+                    ))}
                   </div>
-                  : <div>
-                    Are you sure you want to leave <br /> {displayedClub?.clubName}?
-                  </div>}
-              </h3>
-              <div className="flex justify-center gap-4">
-                <Button color="failure" onClick={handleLeave}>
-                  {"Yes, I'm sure"}
-                </Button>
-                <Button color="gray" onClick={() => setOpenModal(false)}>
-                  No, cancel
-                </Button>
+                </div>
+              </div>}
+            <div className='col-span-2'>
+              <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
+              <div className='bg-white/80 border-8 border-ivory rounded-xl'>
+                <img
+                  src={displayedClub?.image}
+                  alt='profile image'
+                  className='object-fit w-full shadow-lg'
+                />
+                <p className='p-2.5 font-poppinsMed text-darkbrown text-lg mt-1'>{displayedClub?.description}</p>
+              </div>
+
+              <div>
+                {isLeader ? <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button> : null}
+                <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'>All Members</button>
+                {isLeader ? (
+                  <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Delete Club</button>
+                ) : joined ? (
+                  <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Leave Club</button>
+                ) : null}
               </div>
             </div>
-          </Modal.Body>
-        </Modal>
+          </div>
 
+          <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
+            <Modal.Header />
+            <Modal.Body>
+              <div className="text-center">
+                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                  {isLeader ?
+                    <div>
+                      Are you sure you want to delete <br /> {displayedClub?.clubName}?
+                    </div>
+                    : <div>
+                      Are you sure you want to leave <br /> {displayedClub?.clubName}?
+                    </div>}
+                </h3>
+                <div className="flex justify-center gap-4">
+                  <Button color="failure" onClick={handleLeave}>
+                    {"Yes, I'm sure"}
+                  </Button>
+                  <Button color="gray" onClick={() => setOpenModal(false)}>
+                    No, cancel
+                  </Button>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
+
+        </div>
       </div>
-    </div>
     </>
 
   )
