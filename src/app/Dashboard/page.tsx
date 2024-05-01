@@ -21,7 +21,6 @@ const Dashboard = () => {
   const [pageSize, setPageSize] = useState<boolean>(false);
   const router = useRouter();
 
-  console.log('testing')
 
   useEffect(() => {
     const fetchedData = async (clubId: number) => {
