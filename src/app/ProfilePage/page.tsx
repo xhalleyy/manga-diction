@@ -85,7 +85,7 @@ const ProfilePage = (props: any) => {
 
             <NavbarComponent/>
 
-            <div className="px-[70px] py-4">
+            <div className="px-[70px] py-4 bg-offwhite">
                 <div className="grid grid-cols-4 gap-1">
                     <div className="col-span-1 mt-8">
                         {/* username, name, add btn, friends section */}

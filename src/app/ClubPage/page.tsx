@@ -10,9 +10,8 @@ import PostsComponent from '../components/PostsComponent';
 import { AddUserToClub, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
-import { HiOutlineExclamationCircle } from "react-icons/hi";
-import Image from 'next/image';
-;
+import Image from 'next/image'
+  ;
 
 const ClubPage = () => {
 
@@ -23,6 +22,7 @@ const ClubPage = () => {
   const [posts, setPosts] = useState<IPosts[]>([]);
   const [seeMembers, setSeeMembers] = useState<boolean>(false);
   const [members, setMembers] = useState<IUserData[]>([]);
+  const [leader, setLeader] = useState<IUserData | null>(null);
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState(false);
   const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
@@ -31,12 +31,18 @@ const ClubPage = () => {
 
   const fetchClubMembers = async (clubId: number | undefined) => {
     try {
-      const memberIds = await getClubMembers(clubId);
+      const [leaderInfo, memberIds] = await Promise.all([
+        getUserInfo(displayedClub?.leaderId),
+        getClubMembers(clubId),
+      ]);
+
+      setLeader(leaderInfo);
+
       const promises = memberIds.map((userId: number) => getUserInfo(userId));
       const usersInfo = await Promise.all(promises);
       setMembers(usersInfo);
     } catch (error) {
-      console.error('Error fetching club members:', error);
+      console.error('Error fetching club data:', error);
     }
   };
 
@@ -88,31 +94,31 @@ const ClubPage = () => {
     }
 
     const fetchedData = async (clubId: number | undefined) => {
-      try {
-        if (clubId !== undefined) {
-          const getPosts = await getPostsByClubId(clubId);
-          console.log('Fetched Posts:', getPosts);
-          setPosts(getPosts);
+      // try {
+      //   if (clubId !== undefined) {
+      //     const getPosts = await getPostsByClubId(clubId);
+      //     console.log('Fetched Posts:', getPosts);
+      //     setPosts(getPosts);
 
-          const memberIds = getPosts.map((post) => post.userId);
-          console.log('Member IDs:', memberIds);
+      //     const memberIds = getPosts.map((post) => post.userId);
+      //     console.log('Member IDs:', memberIds);
 
-          const membersInfo = await Promise.all(
-            memberIds.map(async (memberId) => {
-              const member = await getUserInfo(memberId);
-              return [memberId, member] as const;
-            })
-          );
+      //     const membersInfo = await Promise.all(
+      //       memberIds.map(async (memberId) => {
+      //         const member = await getUserInfo(memberId);
+      //         return [memberId, member] as const;
+      //       })
+      //     );
 
-          const usersMap = new Map<number, IUserData>(membersInfo);
-          console.log('Users Map:', usersMap); 
-          setUsersMap(usersMap);
-        } else {
-          // Handle the case when clubId is undefined
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
+      //     const usersMap = new Map<number, IUserData>(membersInfo);
+      //     console.log('Users Map:', usersMap); 
+      //     setUsersMap(usersMap);
+      //   } else {
+      //     // Handle the case when clubId is undefined
+      //   }
+      // } catch (error) {
+      //   console.error('Error fetching data:', error);
+      // }
     };
 
 
@@ -181,22 +187,27 @@ const ClubPage = () => {
               <h1 className='font-poppinsMed text-3xl text-darkbrown'>{displayedClub?.clubName}</h1>
             </div>
             <div className='flex flex-row gap-3'>
-              {!joined ?
-                <div onClick={handleJoinBtn} className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
-                  <h1 className='font-poppinsMed text-xl text-white py-2'>Join Club</h1>
-                  <AddIcon sx={{ fontSize: 30, color: grey[50] }} />
+              {isLeader ?
+                <div onClick={handleCreatePost} className={createPost ? 'bg-brown items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer' : 'bg-ivory items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer'}>
+                  <h1 className='font-poppinsMed text-xl text-darkbrown py-2'>Create Post</h1>
+                  <AddIcon sx={{ fontSize: 30, color: brown[800] }} />
                 </div>
-                :
-                <>
-                  <div onClick={handleCreatePost} className={createPost ? 'bg-brown items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer' : 'bg-ivory items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer'}>
-                    <h1 className='font-poppinsMed text-xl text-darkbrown py-2'>Create Post</h1>
-                    <AddIcon sx={{ fontSize: 30, color: brown[800] }} />
+                : !joined ?
+                  <div onClick={handleJoinBtn} className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
+                    <h1 className='font-poppinsMed text-xl text-white py-2'>Join Club</h1>
+                    <AddIcon sx={{ fontSize: 30, color: grey[50] }} />
                   </div>
-                  <div className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
-                    <h1 className='font-poppinsMed text-xl text-white py-2'>Joined</h1>
-                    <CheckIcon sx={{ fontSize: 25, color: grey[50] }} />
-                  </div>
-                </>
+                  :
+                  <>
+                    <div onClick={handleCreatePost} className={createPost ? 'bg-brown items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer' : 'bg-ivory items-center rounded-2xl flex flex-row px-3.5 gap-2 cursor-pointer'}>
+                      <h1 className='font-poppinsMed text-xl text-darkbrown py-2'>Create Post</h1>
+                      <AddIcon sx={{ fontSize: 30, color: brown[800] }} />
+                    </div>
+                    <div className='bg-darkblue items-center rounded-2xl flex flex-row px-3 gap-2 cursor-pointer'>
+                      <h1 className='font-poppinsMed text-xl text-white py-2'>Joined</h1>
+                      <CheckIcon sx={{ fontSize: 25, color: grey[50] }} />
+                    </div>
+                  </>
               }
             </div>
           </div>
@@ -262,10 +273,22 @@ const ClubPage = () => {
               </div>
             </div>
               :
-              <div className='col-span-5'>
-                <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl'>
+              <div className='col-span-5 overflow-hidden'>
+                <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl overflow-y-auto'>
                   <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon /></h1>
-                  <div className='grid grid-cols-5 px-8 justify-center py-2'>
+                  <div className='grid grid-cols-5 px-8 justify-center py-4'>
+                    <div className="col-span-1 flex flex-col justify-center items-center">
+                      <div className='relative'>
+                        <img src={leader?.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                        <Image src="/crown.gif"
+                          width={200}
+                          height={200}
+                          alt="Club Leader"
+                          className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
+                      </div>
+                      <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
+                      <p className="font-mainFont text-darkbrown text-sm">{`${leader?.firstName} ${leader?.lastName}`}</p>
+                    </div>
                     {members.map((member) => (
                       <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
                         <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />

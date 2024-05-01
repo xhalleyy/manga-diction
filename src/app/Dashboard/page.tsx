@@ -23,12 +23,12 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    const fetchedData = async (clubId: number) => {
-      const getPosts = await getPostsByClubId(clubId);
-      setPosts(getPosts);
-      // console.log(getPosts);
-    }
-    fetchedData(1);
+    // const fetchedData = async (clubId: number) => {
+    //   const getPosts = await getPostsByClubId(clubId);
+    //   setPosts(getPosts);
+    //   // console.log(getPosts);
+    // }
+    // fetchedData(1);
 
     // handling window resize 
     // typeof returns a string indicating the type of the operand's value

@@ -196,7 +196,7 @@ export const getPostsByClubId = async( clubId: number | undefined) => {
 
 // ---------------------- USERS API FETCHES ------------
 // GET USER INFO
-export const getUserInfo = async(userId: number) => {
+export const getUserInfo = async(userId: number | undefined) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
     const data: IUserData = await res.json();
     // console.log(data)
