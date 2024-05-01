@@ -9,21 +9,25 @@ import { useEffect, useState } from "react";
 function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
   
   const router = useRouter();
-  const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768)
+  const [pageSize, setPageSize] = useState<boolean>(false)
   
   const goToClub = () => {
     router.push('/ClubPage');
   }
 
   useEffect(() => {
-    const handleResize = () => {
-        setPageSize(window.innerWidth > 768)
-      }
-      window.addEventListener('resize', handleResize)
-  
-      return () => {
-        window.removeEventListener('resize', handleResize)
-      }
+    // handling window resize 
+    // typeof returns a string indicating the type of the operand's value
+    if (typeof window !== 'undefined') {
+      setPageSize(window.innerWidth > 768);
+
+      const handleResize = () => {
+        setPageSize(window.innerWidth > 768);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   })
 
   const customCard: CustomFlowbiteTheme["card"] = {

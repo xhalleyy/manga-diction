@@ -34,7 +34,6 @@ export default function Home() {
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
   const [logsign, setLogsign] = useState<boolean>(true);
-  const isLoginPage: boolean = true;
 
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
   const [visibility, setVisibility] = useState<boolean>(false);

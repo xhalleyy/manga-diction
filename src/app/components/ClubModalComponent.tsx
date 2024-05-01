@@ -15,7 +15,7 @@ function ClubModalComponent() {
     const [openModal, setOpenModal] = useState(false);
     const [clubItems, setClubItems] = useState<IClubs[]>([]);
     const clubData = useClubContext();
-    const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
+    const [pageSize, setPageSize] = useState<boolean>(false);
 
     const [id, setId] = useState<number>(0);
     const [clubName, setClubName] = useState<string>("");
@@ -75,10 +75,10 @@ function ClubModalComponent() {
     // formatting date for clubs 
     const date = new Date();
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
-    const day = date.getDate().toString().padStart(2, '0'); 
-    
-    const formattedDate = `${year}-${month}-${day}`;     
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day}`;
 
     const handleCreateClub = async () => {
         let userId = Number(localStorage.getItem("UserId"));
@@ -108,14 +108,18 @@ function ClubModalComponent() {
     }
 
     useEffect(() => {
-        const handleResize = () => {
-            setPageSize(window.innerWidth > 768)
-          }
-          window.addEventListener('resize', handleResize)
-      
-          return () => {
-            window.removeEventListener('resize', handleResize)
-          }
+        // handling window resize 
+        // typeof returns a string indicating the type of the operand's value
+        if (typeof window !== 'undefined') {
+            setPageSize(window.innerWidth > 768);
+
+            const handleResize = () => {
+                setPageSize(window.innerWidth > 768);
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
     }, [])
 
     return (
@@ -123,7 +127,7 @@ function ClubModalComponent() {
             <Button className="darkBlue rounded-xl enabled:hover:bg-darkerblue focus:ring-0" onClick={() => setOpenModal(true)}>
                 <span className="font-mainFont text-[22px]">{pageSize ? "Create Club" : ''}</span>
                 {/* <img alt="plus sign" src={AddIcon} /> */}
-                <AddIcon className={pageSize ? "ms-2" : ""}/>
+                <AddIcon className={pageSize ? "ms-2" : ""} />
             </Button>
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
 
