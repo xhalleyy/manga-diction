@@ -13,22 +13,35 @@ import { useClubContext } from "@/context/ClubContext";
 import { Tabs } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { MouseEventHandler } from 'react';
+import CardComponent2 from "../components/CardComponent2";
 
 const BrowseClubs = () => {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
+  const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
+
   const router = useRouter();
   // useRef: used for accessing and persiting mutable values; doesn't cause a re-render when value is changed
-  const inputRef = useRef<HTMLInputElement>(null); 
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    console
     const fetchedData = async () => {
       const getClubs = await publicClubsApi();
       setClubs(getClubs);
     };
     fetchedData();
-  }, []);
+
+    const handleResize = () => {
+      setPageSize(window.innerWidth > 768)
+    }
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [pageSize]);
 
   // const handleClubSearch = async () => {
   //   try {
@@ -141,127 +154,190 @@ const BrowseClubs = () => {
 
   return (
     <>
-    <div className="bg-offwhite font-mainFont" >
-      <NavbarComponent/>
+      <div className="bg-offwhite h-full font-mainFont" >
 
-      {/* header , search, create clubs modal start */}
-      <div className="grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" >
-        <div>
-          <p className="text-3xl text-darkbrown font-bold">Popular Public Clubs </p>
-        </div>
+        <NavbarComponent />
 
-        <div className="flex justify-end gap-5">
-          <div className="relative ml-20">
-            <TextInput
-              ref={inputRef}
-              id="base"
-              style={{
-                borderRightWidth: "50px",
-                borderColor: "rgba(207, 198, 183, 1)",
-                height: 30,
-              }}
-              type="text"
-              placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
-              className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
-            />
-            
+        {/* header , search, create clubs modal start */}
+        <div className={pageSize ? "grid grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" : "grid grid-cols-1"}>
 
-            <div className="absolute ml-80 inset-y-0 flex items-center">
-              <Button
-                style={{ backgroundColor: "transparent" }}
-                className="bg-transparent focus:ring-0"
-                onClick={handleClick}
-              >
-                <SearchIcon className="text-4xl text-white" />
-              </Button>{" "}
+          {/* search bar hidden on lg, visible on mobile */}
+          <div className={pageSize ? "hidden" : "inline-flex pt-5"}>
+            <div className={pageSize ? "hidden" : " px-3"}>
+              <TextInput
+                ref={inputRef}
+                id="base"
+                style={{
+                  borderRightWidth: "50px",
+                  borderColor: "rgba(207, 198, 183, 1)",
+                  height: 30,
+                  width: '317px'
+                }}
+                type="text"
+                placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+                className="border-ivory font-mainFont border-8 rounded-2xl focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+              />
+
+
+              <div style={{marginLeft: '270px'}} className="absolute inset-y-28">
+                <Button
+                  style={{ backgroundColor: "transparent" }}
+                  className="bg-transparent focus:ring-0"
+                  onClick={handleClick}
+                >
+                  <SearchIcon className="text-4xl text-white" />
+                </Button>{" "}
+              </div>
+              </div>
+
+              <div className={pageSize ? "hidden" : ""}>
+                <ClubModalComponent />
+              </div>
+
+          </div>
+
+          <div>
+            <p className={pageSize ? "text-3xl text-darkbrown font-bold" : "text-center py-5 text-2xl text-darkbrown font-bold"}>Popular Public Clubs </p>
+          </div>
+
+          {/* search bar visible on lg, hidden on mobile */}
+          <div className={pageSize ? "flex justify-end gap-5" : ""}>
+            <div className={pageSize ? "relative ml-20" : "hidden"}>
+              <TextInput
+                ref={inputRef}
+                id="base"
+                style={{
+                  borderRightWidth: "50px",
+                  borderColor: "rgba(207, 198, 183, 1)",
+                  height: 30,
+                }}
+                type="text"
+                placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+                className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+              />
+
+
+              <div className="absolute ml-80 inset-y-0 flex items-center">
+                <Button
+                  style={{ backgroundColor: "transparent" }}
+                  className="bg-transparent focus:ring-0"
+                  onClick={handleClick}
+                >
+                  <SearchIcon className="text-4xl text-white" />
+                </Button>{" "}
+              </div>
+            </div>
+
+            <div className={pageSize ? "flex justify-end " : "hidden"}>
+              <ClubModalComponent />
             </div>
           </div>
+        </div >
 
-          <div className="flex justify-end ">
-            <ClubModalComponent />
+        <div className={pageSize ? 'px-[130px] mb-2 ' : 'px-[20px] mb-2'}>
+          <CarouselComponent />
+        </div>
+
+        <h1 className={pageSize ? "hidden": "font-mainFont text-darkbrown text-center font-bold pt-2 text-2xl"}> More Public Clubs </h1>
+
+        <div className={pageSize ? "flex pt-8 pb-3 min-w-full" : "flex pb-3 min-w-full"}>
+          <h1 className={pageSize ? "font-mainFont text-lg text-darkbrown me-5 ps-16 text-nowrap" : "hidden" }>More Public Clubs:</h1>
+
+          <div className={pageSize ? "flex justify-start w-full" : "hidden" }>
+            <Tabs theme={customTabs} aria-label="Pills" style="pills">
+
+              <Tabs.Item  active title="Random">
+                <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]">
+                  {randomClubs.map((club, idx) => (
+                    <div
+                      key={idx}
+                      className="col-span-1"
+                      onClick={() => handleClubCardClick(club)}
+                    >
+                      <CardComponent
+                        id={club.id}
+                        leaderId={club.leaderId}
+                        description={club.description}
+                        dateCreated={club.dateCreated}
+                        image={club.image}
+                        isPublic={club.isPublic}
+                        clubName={club.clubName}
+                        isDeleted={club.isDeleted}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Tabs.Item>
+              <Tabs.Item title="Most Recently Created">
+                <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
+                  {slicedRecentClubs.map((club, idx) => (
+                    <div
+                      key={idx}
+                      className="col-span-1"
+                      onClick={() => handleClubCardClick(club)}
+                    >
+                      <CardComponent
+                        id={club.id}
+                        leaderId={club.leaderId}
+                        description={club.description}
+                        dateCreated={club.dateCreated}
+                        image={club.image}
+                        isPublic={club.isPublic}
+                        clubName={club.clubName}
+                        isDeleted={club.isDeleted}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Tabs.Item>
+              <Tabs.Item title="Least Recently Created">
+                <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
+                  {slicedOldestClubs.map((club, idx) => (
+                    <div
+                      key={idx}
+                      className="col-span-1"
+                      onClick={() => handleClubCardClick(club)}
+                    >
+                      <CardComponent
+                        id={club.id}
+                        leaderId={club.leaderId}
+                        description={club.description}
+                        dateCreated={club.dateCreated}
+                        image={club.image}
+                        isPublic={club.isPublic}
+                        clubName={club.clubName}
+                        isDeleted={club.isDeleted}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Tabs.Item>
+            </Tabs>
           </div>
         </div>
+
+        {/* more public clubs mobile */}
+        <div className={pageSize ? "hidden" : "grid grid-cols-1 rounded-xl p-5 bg-ivory m-4"}>
+                  {slicedRecentClubs.map((club, idx) => (
+                    <div
+                      key={idx}
+                      className="col-span-1 py-1 border-0"
+                      onClick={() => handleClubCardClick(club)}
+                    >
+                      <CardComponent2
+                        id={club.id}
+                        leaderId={club.leaderId}
+                        description={club.description}
+                        dateCreated={club.dateCreated}
+                        image={club.image}
+                        isPublic={club.isPublic}
+                        clubName={club.clubName}
+                        isDeleted={club.isDeleted}
+                      />
+                    </div>
+                  ))}
+                </div>
       </div >
-
-      <div className="px-[130px] mb-2">
-        <CarouselComponent />
-      </div>
-
-      <div className="flex pt-8 pb-3 min-w-full">
-        <h1 className="font-mainFont text-lg text-darkbrown me-5 ps-16 text-nowrap">More Public Clubs:</h1>
-        <div className="flex justify-start w-full">
-          <Tabs theme={customTabs} aria-label="Pills" style="pills">
-
-            <Tabs.Item active title="Random">
-              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]">
-                {randomClubs.map((club, idx) => (
-                  <div
-                    key={idx}
-                    className="col-span-1"
-                    onClick={() => handleClubCardClick(club)}
-                  >
-                    <CardComponent
-                      id={club.id}
-                      leaderId={club.leaderId}
-                      description={club.description}
-                      dateCreated={club.dateCreated}
-                      image={club.image}
-                      isPublic={club.isPublic}
-                      clubName={club.clubName}
-                      isDeleted={club.isDeleted}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Tabs.Item>
-            <Tabs.Item title="Most Recently Created">
-              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
-                {slicedRecentClubs.map((club, idx) => (
-                  <div
-                    key={idx}
-                    className="col-span-1"
-                    onClick={() => handleClubCardClick(club)}
-                  >
-                    <CardComponent
-                      id={club.id}
-                      leaderId={club.leaderId}
-                      description={club.description}
-                      dateCreated={club.dateCreated}
-                      image={club.image}
-                      isPublic={club.isPublic}
-                      clubName={club.clubName}
-                      isDeleted={club.isDeleted}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Tabs.Item>
-            <Tabs.Item title="Least Recently Created">
-              <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] 2xl:mx-[-90px]]">
-                {slicedOldestClubs.map((club, idx) => (
-                  <div
-                    key={idx}
-                    className="col-span-1"
-                    onClick={() => handleClubCardClick(club)}
-                  >
-                    <CardComponent
-                      id={club.id}
-                      leaderId={club.leaderId}
-                      description={club.description}
-                      dateCreated={club.dateCreated}
-                      image={club.image}
-                      isPublic={club.isPublic}
-                      clubName={club.clubName}
-                      isDeleted={club.isDeleted}
-                    />
-                  </div>
-                ))}
-              </div>
-            </Tabs.Item>
-          </Tabs>
-        </div>
-      </div>
-    </div >
     </>
   );
 };

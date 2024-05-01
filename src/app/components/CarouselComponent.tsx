@@ -13,7 +13,7 @@ import { useClubContext } from "@/context/ClubContext";
 export function CarouselComponent(props: any) {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
-  const [pageSize, setPageSize] = useState<boolean>(true);
+  const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
 
 
   useEffect(() => {

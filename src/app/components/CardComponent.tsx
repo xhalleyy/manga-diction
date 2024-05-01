@@ -39,7 +39,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
       imgAlt={prop.description}
       imgSrc={prop.image}
       theme={customCard}
-      
+
     >
       <div>
         <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">{prop.isPublic ? "Public" : "Private"}</p>
