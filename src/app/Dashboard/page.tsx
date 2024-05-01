@@ -18,7 +18,7 @@ import LatestUpdatesComponent from '../components/LatestUpdatesComponent'
 const Dashboard = () => {
 
   const [posts, setPosts] = useState<IPosts[]>([]);
-  const [pageSize, setPageSize] = useState<boolean>(true);
+  const [pageSize, setPageSize] = useState<boolean>(false);
   const router = useRouter();
 
 
@@ -31,13 +31,16 @@ const Dashboard = () => {
     fetchedData(1);
 
     // handling window resize 
-    const handleResize = () => {
-      setPageSize(window.innerWidth > 768)
-    }
-    window.addEventListener('resize', handleResize)
+    // typeof returns a string indicating the type of the operand's value
+    if (typeof window !== 'undefined') {
+      setPageSize(window.innerWidth > 768);
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
+      const handleResize = () => {
+        setPageSize(window.innerWidth > 768);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
 
   }, [])
@@ -54,11 +57,12 @@ const Dashboard = () => {
 
       <NavbarComponent/>
 
-      <div className='bg-offwhite h-full'>
+
+      <div className='bg-offwhite h-full pb-10'>
 
         <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] py-4" : "px-[70px] py-4"}>
-          <p className={pageSize ? 'font-mainFont text-lg mt-2 px-[30px]' : 'font-mainFont text-2xl text-darkbrown text-center font-bold'}>Popular Public Clubs</p>
-          <div className={pageSize ? '' : 'hidden'}>
+          <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 ml-8 ' : 'font-mainFont text-darkbrown pt-4 text-center font-bold'}>{pageSize ? 'Popular Public Clubs:' : 'Popular Public Clubs'}</p>
+          <div className={pageSize ? 'mr-8' : 'hidden'}>
             <ClubModalComponent />
           </div>
         </div>
@@ -77,7 +81,7 @@ const Dashboard = () => {
 
         <div className={pageSize ? 'px-[70px] grid grid-cols-4 gap-12' : 'px-4'}>
           <div className='col-span-3'>
-            <p className={pageSize ? 'font-mainFont text-lg mt-2 mb-3' : 'font-mainFont text-3xl font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
+            <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
             <div className='bg-paleblue px-5 py-3 rounded-lg'>
               {posts.map((post, idx) => (
                 <div key={idx} className='col-span-1 py-2'>
@@ -104,10 +108,11 @@ const Dashboard = () => {
             </div>
           </div>
           <div className={pageSize ? 'col-span-1' : ''}>
-            <p className={pageSize ? 'font-mainFont text-lg mt-2 mb-3' : 'font-mainFont text-3xl font-bold text-darkbrown text-center my-5' }>Latest Updates:</p>
+            <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5' }>Latest Updates:</p>
             {/* latest updates component */}
-            <div className='bg-ivory rounded-lg p-5'>
+            <div className='bg-ivory rounded-lg p-3'>
               
+              <LatestUpdatesComponent/>
               <LatestUpdatesComponent/>
 
             </div>

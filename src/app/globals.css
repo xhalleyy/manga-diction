@@ -148,3 +148,23 @@
 .tabActive:active{
     color: #391C0B;
 }
+
+.cardTxt > .p-6 {
+    padding: 10px !important;
+}
+
+.cardImg > .p-6 {
+    padding: 0 !important;
+}
+
+.css-1l742km-MuiListItem-root {
+    background-color: rgba(207, 198, 183, 1) !important;
+}
+
+.deskTxt {
+    font-size: 18px;
+}
+
+.mobTxt {
+    font-size: 26px;
+}
