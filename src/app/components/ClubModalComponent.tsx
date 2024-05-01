@@ -176,7 +176,7 @@ function ClubModalComponent() {
                             <label className="mt-1 font-mainFont text-lg">Privacy Settings: </label>
                             {/* dropdown, 2 options (public, private) */}
                             <div className="rounded-xl dropdownBtn flex justify-center ms-3">
-                                <select required className="rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none">
+                                <select required className={pageSize ? "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none" : "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none ml-10"}>
                                     <option value="public" className="font-mainFont" onClick={publicSettingOn}>Public</option>
                                     <option value="priv" onClick={privateSettingOn}>Private</option>
                                 </select>

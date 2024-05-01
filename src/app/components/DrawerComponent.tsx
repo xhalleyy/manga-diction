@@ -25,21 +25,21 @@ export default function DrawerComponent() {
   });
 
   const toggleDrawer =
-  (anchor: Anchor, open: boolean) =>
-  (event: React.KeyboardEvent | React.MouseEvent<Element, MouseEvent>) => {
-    console.log('Toggling drawer:', open);
-  
-    if (
+    (anchor: Anchor, open: boolean) =>
+      (event: React.KeyboardEvent | React.MouseEvent<Element, MouseEvent>) => {
+        console.log('Toggling drawer:', open);
+
+        if (
           event.type === 'keydown' &&
           ((event as React.KeyboardEvent).key === 'Tab' ||
-              (event as React.KeyboardEvent).key === 'Shift')
-              
-      ) {
-          return;
-      }
+            (event as React.KeyboardEvent).key === 'Shift')
 
-      setState({ ...state, [anchor]: open });
-  };
+        ) {
+          return;
+        }
+
+        setState({ ...state, [anchor]: open });
+      };
 
   const handlePageChange = (page: string) => {
     if (page === 'Home') {
@@ -48,10 +48,16 @@ export default function DrawerComponent() {
       router.push('/BrowseClubs');
     } else if (page === 'Search Manga') {
       setOpenModal(true);
-    } else if(page === 'Profile'){
+    } else if (page === 'Profile') {
       router.push('/ProfilePage');
+    } else if (page === 'Edit Settings') {
+      router.push('/EditSettings')
+    } else if (page === 'Sign Out') {
+      localStorage.removeItem("Token");
+      localStorage.removeItem("UserId");
+      router.push('/');
     } else {
-      console.log('Cannot find page:', Error)
+      console.log('Cannot find page:', Error);
     }
   };
 
@@ -64,7 +70,7 @@ export default function DrawerComponent() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List className=''>
-        {['Home', 'Browse Clubs', 'Search Manga', 'Notifications', 'Profile'].map((text) => (
+        {['Home', 'Browse Clubs', 'Search Manga', 'Notifications', 'Profile', 'Edit Settings', 'Sign Out'].map((text) => (
           <ListItem onClick={() => handlePageChange(text)} className='font-mainFont' key={text} sx={{ fontSize: '30px', backgroundColor: 'ivory' }} disablePadding>
             <ListItemButton>
               <ListItemText
@@ -81,10 +87,10 @@ export default function DrawerComponent() {
   );
 
   return (
-    <div className='bg-offwhite rounded-full w-14'>
+    <div className='bg-offwhite rounded-xl w-14'>
       {(['right'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button className='' onClick={toggleDrawer(anchor, true)}><DehazeIcon style={{fontSize: 40}} className='text-darkbrown mr-5' /></Button>
+          <Button className='' onClick={toggleDrawer(anchor, true)}><DehazeIcon style={{ fontSize: 35 }} className='text-darkbrown mr-2' /></Button>
           <Drawer
             anchor={anchor}
             open={state[anchor]}
@@ -95,8 +101,8 @@ export default function DrawerComponent() {
         </React.Fragment>
       ))}
 
-      <SearchMangaModalComponent open={openModal} setOpen={setOpenModal}/>
-      
+      <SearchMangaModalComponent open={openModal} setOpen={setOpenModal} />
+
     </div>
   );
 }

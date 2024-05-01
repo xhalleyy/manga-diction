@@ -166,7 +166,7 @@ const BrowseClubs = () => {
         <div className={pageSize ? "grid grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" : "grid grid-cols-1"}>
 
           {/* search bar hidden on lg, visible on mobile */}
-          <div className={pageSize ? "hidden" : "inline-flex pt-5"}>
+          <div className={pageSize ? "hidden" : "inline-flex pt-6"}>
             <div className={pageSize ? "hidden" : " px-3"}>
               <TextInput
                 ref={inputRef}

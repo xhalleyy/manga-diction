@@ -161,10 +161,6 @@
     background-color: rgba(207, 198, 183, 1) !important;
 }
 
-.deskTxt {
-    font-size: 18px;
-}
-
-.mobTxt {
-    font-size: 26px;
+.tabsFont {
+    font-family: 'mainFont' !important;
 }

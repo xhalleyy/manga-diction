@@ -2,15 +2,30 @@
 
 import { Button, Modal } from 'flowbite-react'
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface SearchMangaModalProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-//   React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
+// React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
 const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
+
+    const [pageSize, setPageSize] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setPageSize(window.innerWidth > 768);
+
+            const handleResize = () => {
+                setPageSize(window.innerWidth > 768);
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, [])
 
     return (
         <div>
@@ -44,22 +59,22 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                                 <input className="opaqueWhite rounded-xl w-[100%] h-14" />
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 pt-5 rounded-xl  ">
+                        <div className={pageSize ? "grid grid-cols-3 rounded-xl  " : "grid grid-cols-2"}>
 
                             {/* dropdown, 2 options (public, private) */}
-                            <div className="">
+                            <div className={pageSize ? "col-span-1" : ""}>
                                 <select className="rounded-xl w-36 text-sm opaqueWhite font-mainFont h-10  border-none">
                                     <option value="public" className="font-mainFont">Sort By</option>
                                 </select>
                             </div>
 
-                            <div className="">
+                            <div className={pageSize ? "col-span-1" : ""}>
                                 <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
                                     <option value="public" className="font-mainFont">Demographics</option>
                                 </select>
                             </div>
 
-                            <div>
+                            <div className={pageSize ? "col-span-1" : "pt-3"}>
                                 <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
                                     <option value="public" className="font-mainFont">Publication Status</option>
                                 </select>

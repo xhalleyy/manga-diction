@@ -6,15 +6,10 @@ import { useEffect, useState } from "react";
 
 
 
-function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
+function CardProfPgComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
   
   const router = useRouter();
   const [pageSize, setPageSize] = useState<boolean>(false)
-  const [pageChange, setPageChange] = useState<boolean>(true)
-
-  const clubPg = ('/ClubPage');
-  const profPg = ('/ProfilePage')
-
   
   const goToClub = () => {
     router.push('/ClubPage');
@@ -39,7 +34,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
   
   const customCard: CustomFlowbiteTheme["card"] = {
     "root": {
-      "base": `flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 h-28`,
+      "base": `flex rounded-lg bg-white bg-opacity-70 shadow-md  dark:bg-gray-800 h-28`,
       "children": "flex flex-col justify-start gap-3 items-start !h-20",
       "horizontal": {
         "off": "flex-col",
@@ -84,4 +79,4 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
     </Card>
   );
 }
-export default CardComponent
+export default CardProfPgComponent

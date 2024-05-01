@@ -16,7 +16,7 @@ const EditSettings = () => {
     const {displayedUser, setDisplayedUser} = useClubContext();
     const [changePic, setChangePic] = useState<boolean>(true);
     const [profilePic, setProfilePic] = useState<string | null>(null);
-
+    
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
 
     useEffect(() => {

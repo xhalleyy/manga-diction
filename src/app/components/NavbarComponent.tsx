@@ -122,7 +122,7 @@ export function NavbarComponent() {
 
       </Navbar.Collapse>
 
-      <div className={pageSize ? "hidden" : ""}>
+      <div className={pageSize ? "hidden" : "ml-9 p-0"}>
           <DrawerComponent />
         </div>
 
