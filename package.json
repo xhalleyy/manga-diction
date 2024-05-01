@@ -16,9 +16,12 @@
     "axios": "^1.6.8",
     "flowbite-react": "^0.7.8",
     "next": "14.1.4",
+    "next-query-params": "^5.0.0",
+    "primereact": "^10.6.4",
     "react": "^18",
     "react-dom": "^18",
-    "react-multi-carousel": "^2.8.5"
+    "react-multi-carousel": "^2.8.5",
+    "use-query-params": "^2.2.1"
   },
   "devDependencies": {
     "@types/node": "^20",
