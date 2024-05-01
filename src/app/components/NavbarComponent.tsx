@@ -17,7 +17,7 @@ export function NavbarComponent() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [profilePic, setProfilePic] = useState<string>("");
   const [userData, setUserData] = useState<IUserData>();
-  const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
+  const [pageSize, setPageSize] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -28,13 +28,17 @@ export function NavbarComponent() {
     }
     fetchedUser();
 
-    const handleResize = () => {
-      setPageSize(window.innerWidth > 768)
-    }
-    window.addEventListener('resize', handleResize)
+    // handling window resize 
+    // typeof returns a string indicating the type of the operand's value
+    if (typeof window !== 'undefined') {
+      setPageSize(window.innerWidth > 768);
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
+      const handleResize = () => {
+        setPageSize(window.innerWidth > 768);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
     
 }, []);

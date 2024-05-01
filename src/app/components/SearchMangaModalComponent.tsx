@@ -7,10 +7,10 @@ import React, { useState } from 'react'
 interface SearchMangaModalProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  }
+}
 
 //   React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
-  const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
+const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
 
     return (
         <div>

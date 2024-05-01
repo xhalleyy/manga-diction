@@ -19,7 +19,7 @@ const BrowseClubs = () => {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
-  const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
+  const [pageSize, setPageSize] = useState<boolean>(false);
 
   const router = useRouter();
   // useRef: used for accessing and persiting mutable values; doesn't cause a re-render when value is changed
@@ -33,13 +33,17 @@ const BrowseClubs = () => {
     };
     fetchedData();
 
-    const handleResize = () => {
-      setPageSize(window.innerWidth > 768)
-    }
-    window.addEventListener('resize', handleResize)
+    // handling window resize 
+    // typeof returns a string indicating the type of the operand's value
+    if (typeof window !== 'undefined') {
+      setPageSize(window.innerWidth > 768);
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
+      const handleResize = () => {
+        setPageSize(window.innerWidth > 768);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
   }, [pageSize]);
 

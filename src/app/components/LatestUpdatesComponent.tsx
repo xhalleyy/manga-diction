@@ -2,19 +2,6 @@ import { Card } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 
 const LatestUpdatesComponent = () => {
-    const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
-
-    useEffect(() => {
-        // handling window resize 
-        const handleResize = () => {
-            setPageSize(window.innerWidth > 768)
-        }
-        window.addEventListener('resize', handleResize)
-
-        return () => {
-            window.removeEventListener('resize', handleResize)
-        }
-    }, [])
 
     return (
         <div>

@@ -13,13 +13,12 @@ import { IPosts } from '@/Interfaces/Interfaces'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useRouter } from "next/navigation";
 import LatestUpdatesComponent from '../components/LatestUpdatesComponent'
-import { NavbarTestComponent } from '../components/NavbarTestComponent'
 
 
 const Dashboard = () => {
 
   const [posts, setPosts] = useState<IPosts[]>([]);
-  const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
+  const [pageSize, setPageSize] = useState<boolean>(false);
   const router = useRouter();
 
   console.log('testing')
@@ -33,13 +32,16 @@ const Dashboard = () => {
     fetchedData(1);
 
     // handling window resize 
-    const handleResize = () => {
-      setPageSize(window.innerWidth > 768)
-    }
-    window.addEventListener('resize', handleResize)
+    // typeof returns a string indicating the type of the operand's value
+    if (typeof window !== 'undefined') {
+      setPageSize(window.innerWidth > 768);
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
+      const handleResize = () => {
+        setPageSize(window.innerWidth > 768);
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
 
   }, [])

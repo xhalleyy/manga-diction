@@ -13,7 +13,7 @@ import { useClubContext } from "@/context/ClubContext";
 export function CarouselComponent(props: any) {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
-  const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
+  const [pageSize, setPageSize] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -24,14 +24,16 @@ export function CarouselComponent(props: any) {
     fetchedData();
 
     // handling window resize 
-    const handleResize = () => {
-      setPageSize(window.innerWidth > 768)
-    }
+    // typeof returns a string indicating the type of the operand's value
+    if (typeof window !== 'undefined') {
+      setPageSize(window.innerWidth > 768);
 
-    window.addEventListener('resize', handleResize)
+      const handleResize = () => {
+        setPageSize(window.innerWidth > 768);
+      };
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
 
