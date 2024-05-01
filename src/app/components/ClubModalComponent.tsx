@@ -15,6 +15,7 @@ function ClubModalComponent() {
     const [openModal, setOpenModal] = useState(false);
     const [clubItems, setClubItems] = useState<IClubs[]>([]);
     const clubData = useClubContext();
+    const [pageSize, setPageSize] = useState<boolean>(window.innerWidth > 768);
 
     const [id, setId] = useState<number>(0);
     const [clubName, setClubName] = useState<string>("");
@@ -106,12 +107,23 @@ function ClubModalComponent() {
 
     }
 
+    useEffect(() => {
+        const handleResize = () => {
+            setPageSize(window.innerWidth > 768)
+          }
+          window.addEventListener('resize', handleResize)
+      
+          return () => {
+            window.removeEventListener('resize', handleResize)
+          }
+    }, [])
+
     return (
         <>
             <Button className="darkBlue rounded-xl enabled:hover:bg-darkerblue focus:ring-0" onClick={() => setOpenModal(true)}>
-                <span className="font-mainFont text-[22px]">Create Club</span>
+                <span className="font-mainFont text-[22px]">{pageSize ? "Create Club" : ''}</span>
                 {/* <img alt="plus sign" src={AddIcon} /> */}
-                <AddIcon className="ms-2" />
+                <AddIcon className={pageSize ? "ms-2" : ""}/>
             </Button>
             <Modal show={openModal} onClose={() => setOpenModal(false)}>
 

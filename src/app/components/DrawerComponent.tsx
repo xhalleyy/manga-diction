@@ -8,14 +8,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import DehazeIcon from '@mui/icons-material/Dehaze';
-import { Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import SearchMangaModalComponent from './SearchMangaModalComponent';
 
 type Anchor = 'right';
 
 export default function DrawerComponent() {
 
   const router = useRouter();
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
 
   const [state, setState] = React.useState({
     right: false,
@@ -39,36 +42,32 @@ export default function DrawerComponent() {
   };
 
   const handlePageChange = (page: string) => {
-    console.log('Page clicked:', page); // Debug statement
     if (page === 'Home') {
-      console.log('Navigating to /Dashboard'); // Debug statement
       router.push('/Dashboard');
     } else if (page === 'Browse Clubs') {
-      console.log('Navigating to /BrowseClubs'); // Debug statement
       router.push('/BrowseClubs');
     } else if (page === 'Search Manga') {
-      console.log('Navigating to /SearchManga'); // Debug statement
-      router.push('/SearchManga');
+      setOpenModal(true);
+    } else if(page === 'Profile'){
+      router.push('/ProfilePage');
     } else {
-      console.log('Navigating to:', page); // Debug statement
-      router.push(`${page}`);
+      console.log('Cannot find page:', Error)
     }
   };
 
   const list = (anchor: Anchor) => (
     <Box
 
-      sx={{ backgroundColor: 'rgba(207, 198, 183, 1)' }}
+      sx={{ backgroundColor: 'rgba(207, 198, 183, 1)', padding: 5, paddingTop: 30, height: '100%' }}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <List className='text-darkbrown pr-20 pl-10 pb-96 pt-52 mb-48 mt-4 bg-ivory'>
+      <List className=''>
         {['Home', 'Browse Clubs', 'Search Manga', 'Notifications', 'Profile'].map((text) => (
-          <ListItem className='font-mainFont text-3xl bg-ivory' key={text} sx={{ fontSize: '30px', backgroundColor: 'ivory' }} disablePadding>
+          <ListItem onClick={() => handlePageChange(text)} className='font-mainFont' key={text} sx={{ fontSize: '30px', backgroundColor: 'ivory' }} disablePadding>
             <ListItemButton>
               <ListItemText
-              onClick={() => handlePageChange(text)}
                 primary={text}
                 primaryTypographyProps={{
                   variant: 'body1',
@@ -82,10 +81,10 @@ export default function DrawerComponent() {
   );
 
   return (
-    <div className=''>
+    <div className='bg-offwhite rounded-full w-14'>
       {(['right'] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button onClick={toggleDrawer(anchor, true)}><DehazeIcon className='text-3xl text-darkbrown bg-offwhite rounded-xl w-10 h-10 p-1' /></Button>
+          <Button className='' onClick={toggleDrawer(anchor, true)}><DehazeIcon style={{fontSize: 40}} className='text-darkbrown mr-5' /></Button>
           <Drawer
             anchor={anchor}
             open={state[anchor]}
@@ -95,6 +94,9 @@ export default function DrawerComponent() {
           </Drawer>
         </React.Fragment>
       ))}
+
+      <SearchMangaModalComponent open={openModal} setOpen={setOpenModal}/>
+      
     </div>
   );
 }
