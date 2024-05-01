@@ -3,6 +3,7 @@
 import { Button, Modal } from 'flowbite-react'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
+import {Chips} from 'primereact/chips'
 
 interface SearchMangaModalProps {
     open: boolean;
@@ -12,6 +13,13 @@ interface SearchMangaModalProps {
 // React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
 const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
 
+    const [titleInput, setTitleInput] = useState<string>('');
+    const [authorInput, setAuthorInput] = useState<string>('');
+    const [tagsInput, setTagsInput] = useState<string>('');
+    const [sortOrder, setSortOrder] = useState<string>('');
+    const [demographicOptions, setDemographicOptions] = useState<string>('');
+    const [publishStatus, setPublishStatus] = useState<string>('');
+    const [value, setValue] = useState<any>([]);
     const [pageSize, setPageSize] = useState<boolean>(false);
 
     useEffect(() => {
@@ -43,40 +51,44 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Search Manga</label>
                             <div>
-                                <input className="opaqueWhite rounded-xl w-[50%] h-8" id="titleSearch" />
+                                <input className="opaqueWhite rounded-xl w-[50%] h-8" id="titleSearch" onChange={(e) => setTitleInput(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Author Name</label>
                             <div>
-                                <input className="opaqueWhite rounded-xl w-[50%] h-8" />
+                                <input className="opaqueWhite rounded-xl w-[50%] h-8" onChange={(e) => setAuthorInput(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Tags</label>
                             <div>
                                 {/* wider + taller than club name input */}
-                                <input className="opaqueWhite rounded-xl w-[100%] h-14" />
+                                {/* <input className="opaqueWhite rounded-xl w-[100%] h-14" onChange={(e) => setTagsInput(e.target.value)} /> */}
+                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14" value={value} onChange={(e) => setValue(e.value)} separator="," />
                             </div>
                         </div>
-                        <div className={pageSize ? "grid grid-cols-3 rounded-xl  " : "grid grid-cols-2"}>
+                        <div className={pageSize ? "grid grid-cols-2 rounded-xl  " : "grid grid-cols-2"}>
 
                             {/* dropdown, 2 options (public, private) */}
-                            <div className={pageSize ? "col-span-1" : ""}>
-                                <select className="rounded-xl w-36 text-sm opaqueWhite font-mainFont h-10  border-none">
-                                    <option value="public" className="font-mainFont">Sort By</option>
-                                </select>
-                            </div>
 
                             <div className={pageSize ? "col-span-1" : ""}>
                                 <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
                                     <option value="public" className="font-mainFont">Demographics</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("shounen")}>Shounen</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("shoujo")}>Shoujo</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("josei")}>Josei</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("seinen")}>Seinen</option>
                                 </select>
                             </div>
 
                             <div className={pageSize ? "col-span-1" : "pt-3"}>
                                 <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
                                     <option value="public" className="font-mainFont">Publication Status</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("ongoing")}>Ongoing</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("hiatus")}>Hiatus</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("completed")}>Completed</option>
+                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("cancelled")}>Cancelled</option>
                                 </select>
                             </div>
 
