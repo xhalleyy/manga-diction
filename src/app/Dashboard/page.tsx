@@ -23,12 +23,12 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    const fetchedData = async (clubId: number) => {
-      const getPosts = await getPostsByClubId(clubId);
-      setPosts(getPosts);
-      // console.log(getPosts);
-    }
-    fetchedData(1);
+    // const fetchedData = async (clubId: number) => {
+    //   const getPosts = await getPostsByClubId(clubId);
+    //   setPosts(getPosts);
+    //   // console.log(getPosts);
+    // }
+    // fetchedData(1);
 
     // handling window resize 
     // typeof returns a string indicating the type of the operand's value
@@ -53,7 +53,7 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className='bg-offWhite h-screen'>
+    <div className='bg-offWhite flex flex-col flex-1 h-screen bg-cover bg-no-repeat'>
 
       <NavbarComponent/>
 
@@ -88,7 +88,9 @@ const Dashboard = () => {
                   <PostsComponent
                     id={post.id}
                     userId={post.userId}
+                    username={post.username}
                     clubId={post.clubId}
+                    clubName={post.clubName}
                     title={post.title}
                     category={post.category}
                     tags={post.tags}

@@ -156,7 +156,7 @@ const ProfilePage = (props: any) => {
 
     return (
         <>
-            <div className='bg-offwhite h-screen'>
+            <div className='bg-offwhite h-screen flex flex-col'>
 
                 <NavbarComponent />
 
