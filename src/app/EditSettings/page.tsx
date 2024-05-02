@@ -109,7 +109,11 @@ const EditSettings = () => {
                 // Call updateUser with displayedUser
                 const updatedUser = { ...displayedUser, profilePic: updatedProfilePic };
                 await updateUser(updatedUser);
+                
                 setSuccess(true);
+                setTimeout(() => {
+                    setSuccess(undefined);
+                }, 5000);
             } else {
                 console.error('Cannot update user: displayedUser is null');
                 setSuccess(false);
