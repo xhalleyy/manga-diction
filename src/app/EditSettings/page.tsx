@@ -16,7 +16,7 @@ const EditSettings = () => {
     const {displayedUser, setDisplayedUser} = useClubContext();
     const [changePic, setChangePic] = useState<boolean>(true);
     const [profilePic, setProfilePic] = useState<string | null>(null);
-    
+    const [pageSize, setPageSize] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
 
     useEffect(() => {
@@ -31,6 +31,18 @@ const EditSettings = () => {
         }
     }, [success, setDisplayedUser]);
 
+    useEffect(() => {
+        if(typeof window !== 'undefined'){
+            setPageSize(window.innerWidth > 768)
+        }
+
+        const handleResize = () => {
+            setPageSize(window.innerWidth > 768)
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    })
 
     
     const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,11 +133,11 @@ const EditSettings = () => {
 
     return (
         <>
-        <div className='bg-offwhite h-screen'>
+        <div className='bg-offwhite  min-h-screen'>
 
             <NavbarComponent/>
 
-            <div className='mx-40 py-8'>
+            <div className={pageSize ? 'mx-40 py-8' : 'pt-5 mx-5'}>
                 <div className="w-full relative flex justify-end items-end -mt-[px]">
                     {success && (
                         <div className="w-72">
@@ -137,8 +149,8 @@ const EditSettings = () => {
                     )}
                 </div>
 
-                <h1 className='text-darkbrown font-mainFont text-4xl ps-4 pb-2'>Account Settings</h1>
-                <div className='bg-paleblue p-8 rounded-xl grid grid-cols-2'>
+                <h1 className={pageSize ? 'text-darkbrown font-mainFont text-4xl ps-4 pb-2' : 'text-center text-darkbrown font-mainFont text-4xl py-5'}>Account Settings</h1>
+                <div className={pageSize ? 'bg-paleblue p-8 rounded-xl grid grid-cols-2' : 'bg-paleblue p-8 rounded-xl grid grid-cols-1'}>
                     <div className='col-span-1 flex justify-center'>
                         <img
                             src={displayedUser?.profilePic || '/dummyImg.png'}
@@ -169,11 +181,12 @@ const EditSettings = () => {
                                 <Label htmlFor="base" value="Password:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
                                 <TextInput onChange={handlePasswordChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
                             </div>
-                            <div className='flex items-center gap-2 py-2'>
-                                <div className="flex">
+                            <div className={pageSize ? 'flex items-center gap-2 py-2' : "grid grid-cols-1"}>
+                                <div className={pageSize ? "flex" : "col-span-1 text-center"}>
                                     <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right' />
                                 </div>
                                 <input
+                                    className={pageSize ? "flex" : "mt-3 col-span-1 flex justify-center"}
                                     id="picture"
                                     name="picture"
                                     type="file"

@@ -156,7 +156,7 @@ const ProfilePage = (props: any) => {
 
     return (
         <>
-            <div className='bg-offwhite h-screen flex flex-col'>
+            <div className='bg-offwhite min-h-screen flex flex-col'>
 
                 <NavbarComponent />
 
@@ -222,7 +222,7 @@ const ProfilePage = (props: any) => {
                             </div>
 
                             {/* clubs and favorited manga tabs */}
-                            <div className='items-center mt-2'>
+                            <div className={pageSize ? 'hidden' : 'items-center mt-2'}>
                                 <Tabs theme={customTabs} aria-label='Tabs with underline' style='underline'>
 
                                     {/* tabs item for clubs */}

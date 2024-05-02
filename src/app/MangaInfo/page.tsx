@@ -7,7 +7,7 @@ import { Badge, Button } from 'flowbite-react'
 const MangaInfo = () => {
     return (
         <>
-        <div className='bg-offwhite h-screen'>
+        <div className='bg-offwhite  min-h-screen'>
 
             <NavbarComponent/>
 
