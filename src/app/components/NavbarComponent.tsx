@@ -64,11 +64,11 @@ export function NavbarComponent() {
   }
 
   return (
-    <Navbar className="xl:bg-offwhite lg:bg-offwhite md:bg-offwhite sm:bg-ivory font-mainFont text-darkbrown !pt-6 !px-8 " fluid rounded>
+    <Navbar className={pageSize ? " bg-offwhite font-mainFont text-darkbrown !pt-6 !px-8 " : 'font-mainFont bg-ivory !pt-6 text-darkbrown drop-shadow-md'} fluid rounded>
       <Navbar.Brand onClick={homePage} className="cursor-pointer">
         <div className="flex items-center sm:grid-cols-3">
-          <img className="w-14 h-14" src='./logo.png' alt="Logo" />
-          <span style={pageSize ? {fontSize: '30px'} : {fontSize: '27px'}} className={pageSize ? "self-center whitespace-nowrap font-semibold dark:text-white pl-4" : "self-center whitespace-nowrap font-semibold dark:text-white pl-4"}>MangaDiction!</span>
+          <img className={pageSize ? "w-14 h-14" : "w-10 h-10"} src='./logo.png' alt="Logo" />
+          <span style={pageSize ? {fontSize: '30px'} : {fontSize: '27px'}} className={pageSize ? "self-center whitespace-nowrap font-semibold dark:text-white pl-4" : "self-center whitespace-nowrap font-semibold dark:text-white pl-2"}>MangaDiction!</span>
         </div>
 
        
@@ -122,7 +122,7 @@ export function NavbarComponent() {
 
       </Navbar.Collapse>
 
-      <div className={pageSize ? "hidden" : "ml-9 p-0"}>
+      <div className={pageSize ? "hidden" : "ml-auto"}>
           <DrawerComponent />
         </div>
 

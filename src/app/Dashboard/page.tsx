@@ -53,7 +53,7 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className='bg-offWhite flex flex-col flex-1 h-screen bg-cover bg-no-repeat'>
+    <div className='bg-offWhite flex flex-col flex-1  min-h-screen bg-cover bg-no-repeat'>
 
       <NavbarComponent/>
 
