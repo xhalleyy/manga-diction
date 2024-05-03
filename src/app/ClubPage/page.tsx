@@ -544,7 +544,7 @@ const ClubPage = () => {
                       </div>
                     ))
                   ) : (
-                    <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts <br /><span >Click Above to create a post!</span></h1>
+                    <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts ):</h1>
                   )}
                 </div>
               </div>
