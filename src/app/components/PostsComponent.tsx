@@ -15,17 +15,16 @@ interface PostsProps {
     clubId: number
     title: string
     category: string
-    tags: string
+    tags: string[] | null
     description: string
     image: string
-    likes: number
     dateCreated: string
     dateUpdated: string
     isDeleted: boolean
     displayClubName: boolean // Define displayClubName as a prop
   }
 
-const PostsComponent = ({id, userId, username, clubId, clubName, title, category, tags, description, image, likes, dateCreated, dateUpdated, isDeleted, displayClubName}: PostsProps) => {
+const PostsComponent = ({id, userId, username, clubId, clubName, title, category, tags, description, image, dateCreated, dateUpdated, isDeleted, displayClubName}: PostsProps) => {
 
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
         "root" : {
@@ -54,17 +53,19 @@ const PostsComponent = ({id, userId, username, clubId, clubName, title, category
 
                 <div className='inline-flex'>
                     <Badge className='bg-darkblue rounded-lg text-white px-2 mr-1'>{category}</Badge>
-                    {/* <Badge className='bg-darkblue rounded-lg text-white'>{Post.tags}</Badge> */}
+                    {
+                        tags && tags.map((tag,idx) => <Badge key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge> )
+                    }
                 </div>
 
                 <div>
-                    <p className='font-bold text-lg mb-1'> {title} <span className='ps-1 font-normal text-md'>{description} (see more)</span></p>
+                    <p className='font-bold text-lg mb-1'> {title} <span className='ps-1 font-normal text-md'> { description && (description.length < 150 ? description :  `${description.substring(0, 150)} (see more)`)}</span></p>
                 </div>
 
                 <div className='inline-flex gap-1 mb-2'>
                     <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
                             <ThumbUpOutlinedIcon sx={{fontSize: '16px'}}/>
-                            <div>{likes}</div>
+                            <div></div>
                     </div>
                     
 
