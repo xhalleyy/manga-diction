@@ -59,18 +59,37 @@ function ClubModalComponent() {
     }
 
     const handleClubImg = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let reader = new FileReader();
         const file = e.target.files?.[0];
-
-        if (file) {
-            reader.onload = () => {
-                setClubImg(reader.result)
-                // console.log(reader.result);
-            }
-            reader.readAsDataURL(file);
+    
+        // Check if a file is selected
+        if (!file) {
+            alert("Please select a file.");
+            return;
         }
-
-    }
+    
+        // Check file size (limit to 5MB)
+        const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSizeInBytes) {
+            alert("File size exceeds the limit. Please choose a smaller file.");
+            e.target.value = ''; // Clear the input value
+            return;
+        }
+    
+        // Check file type (accept only PNG and JPEG)
+        const acceptedTypes = ["image/png", "image/jpeg", "image/jpg"];
+        if (!acceptedTypes.includes(file.type)) {
+            alert("Please select a PNG or JPEG file.");
+            e.target.value = ''; // Clear the input value
+            return;
+        }
+    
+        let reader = new FileReader();
+        reader.onload = () => {
+            setClubImg(reader.result as string);
+            // console.log(reader.result);
+        }
+        reader.readAsDataURL(file);
+    };
 
     // formatting date for clubs 
     const date = new Date();

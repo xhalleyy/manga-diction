@@ -65,7 +65,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             <div>
                                 {/* wider + taller than club name input */}
                                 {/* <input className="opaqueWhite rounded-xl w-[100%] h-14" onChange={(e) => setTagsInput(e.target.value)} /> */}
-                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14" value={value} onChange={(e) => setValue(e.value)} separator="," />
+                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={value} onChange={(e) => setValue(e.value)} separator="," />
                             </div>
                         </div>
                         <div className={pageSize ? "grid grid-cols-2 rounded-xl  " : "grid grid-cols-2"}>

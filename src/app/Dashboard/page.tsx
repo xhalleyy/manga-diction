@@ -58,7 +58,7 @@ const Dashboard = () => {
       <NavbarComponent/>
 
 
-      <div className='bg-offwhite h-full pb-10'>
+      <div className='bg-offwhite flex flex-col flex-1 pb-10'>
 
         <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] py-4" : "px-[70px] py-4"}>
           <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 ml-8 ' : 'font-mainFont text-darkbrown pt-4 text-center font-bold'}>{pageSize ? 'Popular Public Clubs:' : 'Popular Public Clubs'}</p>
