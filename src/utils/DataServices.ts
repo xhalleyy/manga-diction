@@ -1,4 +1,4 @@
-import { IClubs, ILoginUserInfo, IMemberToClubAssociation, IPosts, IToken, IUserData } from "@/Interfaces/Interfaces";
+import { IClubs, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUserData } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -115,7 +115,7 @@ export const publicClubsApi = async() => {
 
 // GET CLUB BY ID
 export const specifiedClub = async(clubId: number) => {
-    const promise = await fetch(url + '/Club/GetClubById/' + clubId);
+    const promise = await fetch(url + 'Club/GetClubById/' + clubId);
     const data: IClubs = await promise.json();
     // console.log(data);
     return data;
@@ -123,10 +123,26 @@ export const specifiedClub = async(clubId: number) => {
 
 // GET CLUB BY NAME
 export const getClubsByName = async(clubName: string | null) => {
-    const promise = await fetch(url + '/Club/GetClubsByName/' + clubName);
+    const promise = await fetch(url + 'Club/GetClubsByName/' + clubName);
     const data: IClubs[] = await promise.json();
     console.log(data);
     return data;
+}
+
+// GET CLUB BY LEADER
+export const getClubsByLeader = async (userId: number) => {
+    try {
+        const res = await fetch(url + 'Club/GetClubsByLeader/' + userId)
+        if (!res.ok) {
+            throw new Error('Failed to fetch clubs by leader');
+        }
+        const data: IClubs[] = await res.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error('Error fetching clubs by leader:', error);
+        return []; // Return an empty array in case of error to ensure clubs is iterable
+    }
 }
 
 publicClubsApi();
@@ -193,6 +209,27 @@ export const getPostsByClubId = async( clubId: number | undefined) => {
     // console.log(data);
     return data;
 }
+
+// CREATE POST IN CLUB
+export const createPost = async (postData: IPostData) => {
+    const clubId = postData.clubId;
+    const res = await fetch(`${url}Post/CreateNewPostInClub/${clubId}`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postData)
+    });
+  
+    if (!res.ok) {
+      const message = 'An error has occured: ' + res.status;
+      throw new Error(message);
+    }
+  
+    const data = await res.json();
+    console.log(data);
+    return data;
+  };
 
 // ---------------------- USERS API FETCHES ------------
 // GET USER INFO

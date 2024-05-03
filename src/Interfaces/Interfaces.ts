@@ -29,6 +29,20 @@ export interface IClubs {
     isDeleted: boolean;
 }
 
+export interface IPostData {
+    id: number,
+    userId: number,
+    clubId: number,
+    title: string,
+    category: string,
+    tags: string | null,
+    description: string,
+    image: string | null,
+    dateCreated?: string,
+    dateUpdated: string | null,
+    isDeleted: boolean 
+}
+
 export interface IPosts {
     id: number,
     userId: number,
@@ -40,7 +54,6 @@ export interface IPosts {
     tags: string,
     description: string,
     image: string,
-    likes: number,
     dateCreated: string,
     dateUpdated: string,
     isDeleted: boolean

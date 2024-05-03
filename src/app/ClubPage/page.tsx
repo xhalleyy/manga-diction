@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FormEventHandler, useEffect, useState } from 'react'
+import React, { FormEventHandler, useEffect, useState, useRef } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
@@ -9,13 +9,15 @@ import { TextInput, Label, Dropdown, Navbar, Modal, Button, CustomFlowbiteTheme,
 import PostsComponent from '../components/PostsComponent';
 import { AddUserToClub, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
+import { Chips } from 'primereact/chips'
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
-  ;
+import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
+import CreatePostComponent from '../components/CreatePostComponent';
+;
 
 const ClubPage = () => {
-
-  // const {id, leaderId, clubName, image, description, dateCreated, isPublic, isDeleted} = useClubContext();
+  ;
   const { displayedClub } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
@@ -26,11 +28,19 @@ const ClubPage = () => {
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState(false);
   const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
-
+  // const [value, setValue] = useState<any>([]);
+  // const [expandValue, setExpandValue] = useState("");
+  // const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  // New state to track whether members section is visible
+  const [membersVisible, setMembersVisible] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<boolean>(false)
-  const [membersVisible, setMembersVisible] = useState<boolean>(false); // New state to track whether members section is visible
 
-  // let userId = Number(localStorage.getItem("UserId"));
+  // useAutosizeTextArea(textAreaRef.current, expandValue);
+  // const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   const val = evt.target?.value;
+
+  //   setExpandValue(val);
+  // };
 
   const fetchClubMembers = async (clubId: number | undefined) => {
     try {
@@ -134,31 +144,31 @@ const ClubPage = () => {
     }
 
     const fetchedData = async (clubId: number | undefined) => {
-      // try {
-      //   if (clubId !== undefined) {
-      //     const getPosts = await getPostsByClubId(clubId);
-      //     console.log('Fetched Posts:', getPosts);
-      //     setPosts(getPosts);
+      try {
+        if (clubId !== undefined) {
+          const getPosts = await getPostsByClubId(clubId);
+          console.log('Fetched Posts:', getPosts);
+          setPosts(getPosts);
 
-      //     const memberIds = getPosts.map((post) => post.userId);
-      //     console.log('Member IDs:', memberIds);
+          const memberIds = getPosts.map((post) => post.userId);
+          // console.log('Member IDs:', memberIds);
 
-      //     const membersInfo = await Promise.all(
-      //       memberIds.map(async (memberId) => {
-      //         const member = await getUserInfo(memberId);
-      //         return [memberId, member] as const;
-      //       })
-      //     );
+          const membersInfo = await Promise.all(
+            memberIds.map(async (memberId) => {
+              const member = await getUserInfo(memberId);
+              return [memberId, member] as const;
+            })
+          );
 
-      //     const usersMap = new Map<number, IUserData>(membersInfo);
-      //     console.log('Users Map:', usersMap); 
-      //     setUsersMap(usersMap);
-      //   } else {
-      //     // Handle the case when clubId is undefined
-      //   }
-      // } catch (error) {
-      //   console.error('Error fetching data:', error);
-      // }
+          const usersMap = new Map<number, IUserData>(membersInfo);
+          // console.log('Users Map:', usersMap);
+          setUsersMap(usersMap);
+        } else {
+          // Handle the case when clubId is undefined
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
 
@@ -187,10 +197,39 @@ const ClubPage = () => {
     "field": {
       "input": {
         "sizes": {
-          "post": "py-1 px-2 text-lg font-mainFont"
+          "post": "py-1.5 px-2 text-[16px] font-mainFont"
         }
       }
     }
+  }
+
+  const handleSortingPost = (option: string) => {
+    let newOrder = posts;
+    if (option === "Popular") {
+
+    }
+    if (option === "Newest") {
+      newOrder.sort((a, b) => {
+        return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
+      })
+
+    }
+    if (option === "Oldest") {
+
+      newOrder.sort((a, b) => {
+        return new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime();
+      })
+
+
+    }
+    if (option === "Recently Updated") {
+
+    }
+    if (option === "Least Recently Updated") {
+
+    }
+    setPosts(newOrder)
+    console.log(posts)
   }
 
   const customDropdown = {
@@ -368,27 +407,31 @@ const ClubPage = () => {
                       </Dropdown>
                     </div>
                     <div className='opacity-90 py-3'>
-                      {posts.map((post, idx) => (
-                        <div key={idx} className='col-span-1 py-2'>
-                          <PostsComponent
-                            id={post.id}
-                            userId={post.userId}
-                            username={usersMap.get(post.userId)?.username || "Unknown User"}
-                            clubId={post.clubId}
-                            clubName={post.clubName || "Default Club Name"} // Provide a default value
-                            title={post.title}
-                            category={post.category}
-                            tags={post.tags}
-                            description={post.description}
-                            image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
-                            likes={post.likes}
-                            dateCreated={post.dateCreated}
-                            dateUpdated={post.dateUpdated}
-                            isDeleted={post.isDeleted}
-                            displayClubName={false}
-                          />
-                        </div>
-                      ))}
+                      {posts.map((post, idx) => {
+
+                        return (
+
+                          <div key={idx} className='col-span-1 py-2'>
+                            <PostsComponent
+                              id={post.id}
+                              userId={post.userId}
+                              username={usersMap.get(post.userId)?.username || "Unknown User"}
+                              clubId={post.clubId}
+                              clubName={post.clubName || "Default Club Name"}
+                              title={post.title}
+                              category={post.category}
+                              tags={post.tags ? post.tags.split(',') : null}
+                              description={post.description}
+                              image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                              dateCreated={post.dateCreated}
+                              dateUpdated={post.dateUpdated}
+                              isDeleted={post.isDeleted}
+                              displayClubName={false}
+                            />
+                          </div>
+                        )
+                      })
+                      }
                     </div>
                   </div>
 
@@ -465,55 +508,44 @@ const ClubPage = () => {
           {/* DESKTOP MEMBERS, DESCRIPTIONS, POSTS ETC */}
           <div className={pageSize ? 'grid grid-cols-7 pt-3 gap-5 pb-5' : 'hidden'}>
             {!seeMembers ? <div className='col-span-5'>
-              {createPost && joined ?
-                <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
-                  <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                    <Label htmlFor="base" value="Title:" className='col-span-1 text-lg' />
-                    <TextInput theme={customInput} id="base" type="text" sizing="post" className='col-span-11 w-7/12' />
-                  </div>
-                  <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                    <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg' />
-                    <TextInput theme={customInput} id="base2" type="text" sizing="post" className='col-span-11 w-4/12' />
-                  </div>
-                  <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                    <Label htmlFor="base3" value="Post:" className='col-span-1 text-lg' />
-                    <TextInput theme={customInput} id="base3" type="text" sizing="post" className='col-span-11 w-full' />
-                  </div>
-                </div> : null
-              }
-
+              {(createPost && joined) || (createPost && isLeader) && (
+                <CreatePostComponent setPosts={setPosts} />
+              )}
               <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                 <div className='flex justify-end items-center'>
                   <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
-                    <Dropdown.Item>Popular</Dropdown.Item>
-                    <Dropdown.Item>Newest</Dropdown.Item>
-                    <Dropdown.Item>Oldest</Dropdown.Item>
-                    <Dropdown.Item>Recently Updated</Dropdown.Item>
-                    <Dropdown.Item>Least Recently Updated</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSortingPost("Popular")}>Popular</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSortingPost("Newest")}>Newest</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSortingPost("Oldest")}>Oldest</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSortingPost("Recently Updated")}>Recently Updated</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSortingPost("Least Recently Updated")}>Least Recently Updated</Dropdown.Item>
                   </Dropdown>
                 </div>
                 <div className='opacity-90 py-3'>
-                  {posts.map((post, idx) => (
-                    <div key={idx} className='col-span-1 py-2'>
-                      <PostsComponent
-                        id={post.id}
-                        userId={post.userId}
-                        username={usersMap.get(post.userId)?.username || "Unknown User"}
-                        clubId={post.clubId}
-                        clubName={post.clubName || "Default Club Name"} // Provide a default value
-                        title={post.title}
-                        category={post.category}
-                        tags={post.tags}
-                        description={post.description}
-                        image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
-                        likes={post.likes}
-                        dateCreated={post.dateCreated}
-                        dateUpdated={post.dateUpdated}
-                        isDeleted={post.isDeleted}
-                        displayClubName={false}
-                      />
-                    </div>
-                  ))}
+                  {posts.length > 0 ? (
+                    posts.map((post, idx) => (
+                      <div key={idx} className='col-span-1 py-2'>
+                        <PostsComponent
+                          id={post.id}
+                          userId={post.userId}
+                          username={usersMap.get(post.userId)?.username || "Unknown User"}
+                          clubId={post.clubId}
+                          clubName={post.clubName || "Default Club Name"} // Provide a default value
+                          title={post.title}
+                          category={post.category}
+                          tags={post.tags ? post.tags.split(',') : null}
+                          description={post.description}
+                          image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                          dateCreated={post.dateCreated}
+                          dateUpdated={post.dateUpdated}
+                          isDeleted={post.isDeleted}
+                          displayClubName={false}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts <br /><span >Click Above to create a post!</span></h1>
+                  )}
                 </div>
               </div>
             </div>
@@ -557,10 +589,10 @@ const ClubPage = () => {
 
               <div>
                 {isLeader ? <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button> : null}
-                {seeMembers ? <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'> Posts </button> 
-                : 
-                <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'> All Members </button>}
-                
+                {seeMembers ? <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'> Posts </button>
+                  :
+                  <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'> All Members </button>}
+
                 {isLeader ? (
                   <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl mt-2.5 py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Delete Club</button>
                 ) : joined ? (

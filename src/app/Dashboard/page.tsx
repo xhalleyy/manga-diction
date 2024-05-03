@@ -23,12 +23,12 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    // const fetchedData = async (clubId: number) => {
-    //   const getPosts = await getPostsByClubId(clubId);
-    //   setPosts(getPosts);
-    //   // console.log(getPosts);
-    // }
-    // fetchedData(1);
+    const fetchedData = async (clubId: number) => {
+      const getPosts = await getPostsByClubId(clubId);
+      setPosts(getPosts);
+      // console.log(getPosts);
+    }
+    fetchedData(1);
 
     // handling window resize 
     // typeof returns a string indicating the type of the operand's value
@@ -53,7 +53,7 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className='bg-offWhite flex flex-col flex-1  min-h-screen bg-cover bg-no-repeat'>
+    <div className='bg-offWhite flex flex-col flex-1 h-screen bg-cover bg-no-repeat'>
 
       <NavbarComponent/>
 
@@ -83,7 +83,7 @@ const Dashboard = () => {
           <div className='col-span-3'>
             <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
             <div className='bg-paleblue px-5 py-3 rounded-lg'>
-              {posts.map((post, idx) => (
+              {posts.slice(0, 2).map((post, idx) => (
                 <div key={idx} className='col-span-1 py-2'>
                   <PostsComponent
                     id={post.id}
@@ -93,10 +93,10 @@ const Dashboard = () => {
                     clubName={post.clubName}
                     title={post.title}
                     category={post.category}
-                    tags={post.tags}
+                    tags={post.tags ? post.tags.split(',') : null}
                     description={post.description}
                     image={post.image}
-                    likes={post.likes}
+                    // likes={post.likes}
                     dateCreated={post.dateCreated}
                     dateUpdated={post.dateUpdated}
                     isDeleted={post.isDeleted}

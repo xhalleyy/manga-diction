@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
 import { IClubs, IUserData } from '@/Interfaces/Interfaces';
-import { getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
+import { getClubsByLeader, getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
@@ -139,11 +139,20 @@ const ProfilePage = (props: any) => {
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
             const memberIds = await getUserClubs(userId);
-            const promises = memberIds.map((clubId: number) => specifiedClub(clubId));
+            const promises = memberIds.map((clubId: number) => specifiedClub(clubId)); // Assuming specifiedClub returns club info
             const usersInfo = await Promise.all(promises);
-            setClubs(usersInfo);
+            setClubs(prevClubs => [...prevClubs, ...usersInfo]); // Merge usersInfo with existing clubs in state
         } catch (error) {
             console.error('Error fetching club members:', error);
+        }
+    };
+
+    const fetchClubsbyLeader = async (leaderId: number) => {
+        try {
+            const clubs = await getClubsByLeader(leaderId); 
+            setClubs(prevClubs => [...prevClubs, ...clubs]);
+        } catch (error) {
+            console.error('Error fetching clubs by leader:', error);
         }
     };
 
@@ -151,6 +160,7 @@ const ProfilePage = (props: any) => {
         if (showClubs) {
             let userId = Number(localStorage.getItem("UserId"));
             fetchUserClubs(userId);
+            fetchClubsbyLeader(userId);
         }
     }, [showClubs])
 
