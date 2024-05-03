@@ -141,28 +141,60 @@ const ProfilePage = (props: any) => {
             const memberIds = await getUserClubs(userId);
             const promises = memberIds.map((clubId: number) => specifiedClub(clubId)); // Assuming specifiedClub returns club info
             const usersInfo = await Promise.all(promises);
-            setClubs(prevClubs => [...prevClubs, ...usersInfo]); // Merge usersInfo with existing clubs in state
+            return usersInfo; // Return the fetched clubs
         } catch (error) {
             console.error('Error fetching club members:', error);
+            return []; // Return an empty array in case of an error
         }
     };
 
     const fetchClubsbyLeader = async (leaderId: number) => {
         try {
-            const clubs = await getClubsByLeader(leaderId); 
-            setClubs(prevClubs => [...prevClubs, ...clubs]);
+            return await getClubsByLeader(leaderId); // Return the fetched clubs
         } catch (error) {
             console.error('Error fetching clubs by leader:', error);
+            return []; // Return an empty array in case of an error
         }
     };
 
     useEffect(() => {
-        if (showClubs) {
-            let userId = Number(localStorage.getItem("UserId"));
-            fetchUserClubs(userId);
-            fetchClubsbyLeader(userId);
-        }
-    }, [showClubs])
+        const fetchData = async () => {
+            if (showClubs) {
+                try {
+                    const userId = Number(localStorage.getItem("UserId"));
+                    const userClubs = await fetchUserClubs(userId);
+                    const leaderClubs = await fetchClubsbyLeader(userId);
+    
+                    // Merge fetched clubs
+                    const allClubs = [...userClubs, ...leaderClubs];
+    
+                    // Deduplicate clubs
+                    const uniqueClubs = allClubs.filter(
+                        (club, index, self) =>
+                            index ===
+                            self.findIndex(
+                                (t) => t.id === club.id
+                            )
+                    );
+    
+                    // Update the state with unique clubs
+                    setClubs(prevClubs => {
+                        // Track added club IDs to avoid duplicates
+                        const addedClubIds = new Set(prevClubs.map(club => club.id));
+                        const clubsToAdd = uniqueClubs.filter(club => !addedClubIds.has(club.id));
+                        return [...prevClubs, ...clubsToAdd];
+                    });
+                } catch (error) {
+                    console.error('Error fetching clubs:', error);
+                }
+            }
+        };
+    
+        fetchData();
+    }, [showClubs]);
+    
+    
+
 
     return (
         <>
@@ -238,26 +270,26 @@ const ProfilePage = (props: any) => {
                                     {/* tabs item for clubs */}
                                     <Tabs.Item className='tabsFont' title='Clubs'>
                                         <div className={clubs.length !== 0 ? 'bg-darkblue p-3 rounded-lg w-full' : ''}>
-                                        <div className={showClubs ? "" : ""}>
-                                            {clubs.length !== 0 ? clubs.map((club, idx) => (
-                                                <div key={idx} className='col-span-1 mx-2 py-1' onClick={() => handleClubCardClick(club)}>
-                                                    <CardProfPgComponent
-                                                        id={club.id}
-                                                        leaderId={club.leaderId}
-                                                        description={club.description}
-                                                        dateCreated={club.dateCreated}
-                                                        image={club.image}
-                                                        isPublic={club.isPublic}
-                                                        clubName={club.clubName}
-                                                        isDeleted={club.isDeleted}
-                                                    />
-                                                </div>
-                                            )) :
-                                                <div className='col-span-3 bg-tra'>
-                                                    <h1 className='pt-20 text-center font-poppinsMed text-2xl text-darkbrown'>You are not in any clubs. <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
-                                                </div>
-                                            }
-                                        </div>
+                                            <div className={showClubs ? "" : ""}>
+                                                {clubs.length !== 0 ? clubs.map((club, idx) => (
+                                                    <div key={idx} className='col-span-1 mx-2 py-1' onClick={() => handleClubCardClick(club)}>
+                                                        <CardProfPgComponent
+                                                            id={club.id}
+                                                            leaderId={club.leaderId}
+                                                            description={club.description}
+                                                            dateCreated={club.dateCreated}
+                                                            image={club.image}
+                                                            isPublic={club.isPublic}
+                                                            clubName={club.clubName}
+                                                            isDeleted={club.isDeleted}
+                                                        />
+                                                    </div>
+                                                )) :
+                                                    <div className='col-span-3 bg-tra'>
+                                                        <h1 className='pt-20 text-center font-poppinsMed text-2xl text-darkbrown'>You are not in any clubs. <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
 
                                     </Tabs.Item>
@@ -272,7 +304,7 @@ const ProfilePage = (props: any) => {
                                     <Tabs.Item className='tabs ' style={{ fontFamily: 'mainFont' }} title='Mangas'>
 
                                         <div className={!showClubs ? "" : "border-ivory bg-white border-8 rounded-lg"}>
-                                            
+
                                             <div className='grid grid-cols-2'>
                                                 {/* current reads */}
                                                 <img src='/aot.png' className="h-[215px] w-[150px] m-4" />
@@ -282,7 +314,7 @@ const ProfilePage = (props: any) => {
                                                 <img src='/signofaff.jpg' className="h-[215px] w-[150px] m-4" />
 
                                             </div>
-                                                
+
                                         </div>
                                     </Tabs.Item>
 
