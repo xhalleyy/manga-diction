@@ -508,7 +508,7 @@ const ClubPage = () => {
           {/* DESKTOP MEMBERS, DESCRIPTIONS, POSTS ETC */}
           <div className={pageSize ? 'grid grid-cols-7 pt-3 gap-5 pb-5' : 'hidden'}>
             {!seeMembers ? <div className='col-span-5'>
-              {(createPost && joined) || (createPost && isLeader) && (
+              {((createPost && joined) || (createPost && isLeader)) && (
                 <CreatePostComponent setPosts={setPosts} />
               )}
               <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
