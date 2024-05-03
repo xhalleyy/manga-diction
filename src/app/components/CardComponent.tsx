@@ -13,6 +13,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
   const goToClub = () => {
     router.push('/ClubPage');
   }
+  
 
   const customCard: CustomFlowbiteTheme["card"] = {
     "root": {
