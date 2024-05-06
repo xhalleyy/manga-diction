@@ -14,6 +14,8 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
     const info = useClubContext();
     const [value, setValue] = useState<any>([]);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const [pageSize, setPageSize] = useState<boolean>(false)
+
 
     const [id, setId] = useState<number>(0)
     const [userId, setUserId] = useState<number | undefined>(0);
@@ -116,13 +118,35 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
         }
     };
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setPageSize(window.innerWidth > 768);
+            const handleResize = () => {
+              setPageSize(window.innerWidth > 768)
+            }
+            window.addEventListener('resize', handleResize)
+            return () => window.removeEventListener('resize', handleResize)
+          }
+    })
+
 
     return (
         <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
-            <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                <Label htmlFor="base" value="Title:" className='col-span-1 text-lg' />
-                <TextInput onChange={(e)=>handleTitleChange(e.target.value)} value={title} theme={customInput} placeholder="What is the topic?" id="base" type="text" sizing="post" className='col-span-9' required />
-                <div className='col-span-2 flex justify-center'>
+
+            <div className={pageSize ? 'hidden' : 'col-span-2 flex justify-end py-1'}>
+                    <Select onChange={(e)=> handleCategoryChange(e.target.value)} value={category} id='myDropdown' defaultValue={"Category"} required={true} className='font-mainFont'>
+                        <option value="Category" disabled>Category</option>
+                        <option value="Discussion">Discussion</option>
+                        <option value="Spoilers">Spoilers</option>
+                        <option value="Question">Question</option>
+                        <option value="Rant">RANT</option>
+                    </Select>
+                </div>
+
+            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5 pb-2"}>
+                <Label htmlFor="base" value="Title:" className='col-span-1 text-lg mt-1' />
+                <TextInput onChange={(e)=>handleTitleChange(e.target.value)} value={title} theme={customInput} placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
+                <div className={pageSize ? 'col-span-2 flex justify-center' : 'hidden'}>
                     <Select onChange={(e)=> handleCategoryChange(e.target.value)} value={category} id='myDropdown' defaultValue={"Category"} required={true} className='font-mainFont'>
                         <option value="Category" disabled>Category</option>
                         <option value="Discussion">Discussion</option>
@@ -132,9 +156,9 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
                     </Select>
                 </div>
             </div>
-            <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg' />
-                <div className="card p-fluid col-span-11">
+            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5 pb-2"}>
+                <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg mt-1' />
+                <div className={pageSize ? "card p-fluid col-span-11" : "col-span-4"}>
                     {value !== undefined && value !== null && (
                         <Chips className='' value={value} onChange={(e) =>{
 
@@ -146,8 +170,8 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
                     )}
                 </div>
             </div>
-            <div className='grid grid-cols-12 items-center gap-3 py-1'>
-                <Label htmlFor="base3" value="Post:" className='col-span-1 text-lg' />
+            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5"}>
+                <Label htmlFor="base3" value="Post:" className='col-span-1 text-lg mt-1' />
                 <textarea
                     required
                     id="review-text"
@@ -156,7 +180,7 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
                     placeholder='Write your thoughts...'
                     rows={1}
                     value={expandValue}
-                    className='col-span-11 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5'
+                    className={pageSize ? 'col-span-11 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5' : 'col-span-4 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5' }
                 />
                 {/* <TextInput theme={customInput} id="base3" type="text" sizing="post" className='col-span-11 w-full' /> */}
             </div>

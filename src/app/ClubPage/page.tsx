@@ -379,22 +379,9 @@ const ClubPage = () => {
               {/* tabs item for posts */}
               <Tabs.Item className='tabsFont' title='Posts'>
                 <div className=''>
-                  {createPost && joined ?
-                    <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
-                      <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : 'grid grid-cols-5 py-1'}>
-                        <Label htmlFor="base" value="Title:" className={pageSize ? 'col-span-1 text-lg' : 'col-span-1 text-md mt-1'} />
-                        <TextInput theme={customInput} id="base" type="text" sizing="post" className={pageSize ? 'col-span-11 w-7/12' : 'col-span-4'} />
-                      </div>
-                      <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : 'grid grid-cols-5 py-1'}>
-                        <Label htmlFor="base2" value="Tags:" className={pageSize ? 'col-span-1 text-lg' : 'col-span-1 text-md mt-1'} />
-                        <TextInput theme={customInput} id="base2" type="text" sizing="post" className={pageSize ? 'col-span-11 w-7/12' : 'col-span-4'} />
-                      </div>
-                      <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : 'grid grid-cols-5 py-1'}>
-                        <Label htmlFor="base3" value="Post:" className={pageSize ? 'col-span-1 text-lg' : 'col-span-1 text-md mt-1'} />
-                        <TextInput theme={customInput} id="base3" type="text" sizing="post" className={pageSize ? 'col-span-11 w-7/12' : 'col-span-4'} />
-                      </div>
-                    </div> : null
-                  }
+                {((createPost && joined) || (createPost && isLeader)) && (
+                <CreatePostComponent setPosts={setPosts} />
+              )}
 
                   <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                     <div className='flex justify-end items-center'>
