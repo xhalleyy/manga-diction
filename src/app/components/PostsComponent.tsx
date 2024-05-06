@@ -97,29 +97,42 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
             </div>
 
             <div className={pageSize ? 'hidden' : 'contents '}>
-            <div>
-                <div className='grid grid-cols-3'>
-                    <div className='col-span-1'>
-                        <Avatar img={image} rounded theme={customAvatar} size="md" />
-                    </div>
+                <div>
+                    <div className='grid grid-cols-3'>
+                        <div className='col-span-1'>
+                            <Avatar img={image} rounded theme={customAvatar} size="md" />
+                        </div>
 
-                    <div className='col-span-2'>
-                        <div className=''>
-                            <p className='text-xl'>{username}</p>
-                            <div className=' w-auto inline-flex'>
-                                <Badge className='bg-darkblue rounded-lg inline-block text-white px-2 mr-1'>{category}</Badge>
-                                {
-                                    tags && tags.map((tag, idx) => <Badge key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
-                                }
+                        <div className='col-span-2'>
+                            <div className=''>
+                                <p className='text-xl'>{username}</p>
+                                <div className=' w-auto inline-flex'>
+                                    <Badge className='bg-darkblue rounded-lg inline-block text-white px-2 mr-1'>{category}</Badge>
+                                    {
+                                        tags && tags.map((tag, idx) => <Badge key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className='px-10 pt-2'>
-                <p className='font-bold text-lg mb-1'> {title} </p>
+                    <div className='px-10 pt-2'>
+                        <p className='font-bold text-lg mb-1'> {title} </p>
                         <p className='ps-1 pb-2 font-normal text-md'> {description && (description.length < 150 ? description : `${description.substring(0, 150)} (see more)`)}</p>
-                </div>
+                    </div>
+
+                    <div className='inline-flex gap-1 mb-2 pl-10 pb-1'>
+                        <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
+                            <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
+                            <div></div>
+                        </div>
+
+
+                        <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
+                            <ModeCommentOutlinedIcon sx={{ fontSize: '16px' }} />
+                            <p>comments</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
