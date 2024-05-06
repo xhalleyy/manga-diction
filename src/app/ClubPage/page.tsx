@@ -476,10 +476,10 @@ const ClubPage = () => {
                         <p className="font-mainFont text-darkbrown text-xs">{`${leader?.firstName} ${leader?.lastName}`}</p>
                       </div>
                       {members.map((member) => (
-                        <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
+                        <div key={member.id} className="col-span-1 flex flex-col justify-center items-center py-2">
                           <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
-                          <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
-                          <p className="font-mainFont text-darkbrown text-xs">{`${member.firstName} ${member.lastName}`}</p>
+                          <h1 className="font-poppinsMed text-lg text-center text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
+                          <p className="font-mainFont text-darkbrown text-xs text-center">{`${member.firstName} ${member.lastName}`}</p>
                         </div>
                       )
                       )}
@@ -554,7 +554,7 @@ const ClubPage = () => {
                       <p className="font-mainFont text-darkbrown text-sm">{`${leader?.firstName} ${leader?.lastName}`}</p>
                     </div>
                     {members.map((member) => (
-                      <div key={member.id} className="col-span-1 flex flex-col justify-center items-center">
+                      <div key={member.id} className="col-span-1 flex flex-col justify-center items-center py-2">
                         <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
                         <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
                         <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
