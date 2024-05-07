@@ -304,3 +304,56 @@ export const RemoveMember = async(userId: number | undefined, clubId: number | u
     console.log(data);
     return data;
 }
+
+
+// -----------------  LIKES API FETCHES--------------
+export const GetLikesByPost = async (postId: number) => {
+    const res = await fetch(`${url}Likes/GetLikesForPost/${postId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if(!res.ok){
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json();
+    return data;
+}
+
+export const AddLikeToPost = async (postId: number, userId: number) => {
+    const res = await fetch(`${url}Likes/AddLikeToPost/${postId}/${userId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if(!res.ok){
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json();
+    return data;
+}
+
+export const RemoveLikeFromPost = async (postId: number, userId: number) => {
+    const res = await fetch(`${url}Likes/RemoveLike/${postId}/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if(!res.ok){
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json()
+    return data;
+}

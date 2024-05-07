@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import { Category } from '@mui/icons-material';
-
+import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost } from '@/utils/DataServices';
 
 interface PostsProps {
     id: number
@@ -24,9 +24,20 @@ interface PostsProps {
     displayClubName: boolean // Define displayClubName as a prop
 }
 
+interface likedUser {
+    userId: number
+    username: string
+}
+
+
 const PostsComponent = ({ id, userId, username, clubId, clubName, title, category, tags, description, image, dateCreated, dateUpdated, isDeleted, displayClubName }: PostsProps) => {
 
     const [pageSize, setPageSize] = useState<boolean>(false);
+    const [likes, setLikes] = useState<number>(0);
+    const [likedByUsers, setLikedByUsers] = useState<string[]>([]);
+    const [isLiked, setIsLiked] = useState<boolean>(false);
+    const [isUnliked, setIsUnliked] = useState<boolean>(false);
+
 
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
         "root": {
@@ -49,7 +60,56 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
             window.addEventListener('resize', handleResize);
             return () => window.removeEventListener('resize', handleResize);
         }
-    })
+    }, [])
+
+    const handleLikes = async () => {
+        try {
+            const user = Number(localStorage.getItem("UserId"))
+            const likes = await AddLikeToPost(id, user)
+            const likedPost = await GetLikesByPost(id);
+            setLikes(likedPost.likesCount)
+
+            const isUserLiked = likedPost.likedByUsers.some((likedUser: likedUser) => likedUser.userId === user);
+            setIsLiked(isUserLiked)
+            
+        } catch (error) {
+            console.error('error adding like: ', error)
+        }
+    }
+
+    const removeLikes = async () => {
+        try {
+            const user = Number(localStorage.getItem("UserId"))
+            const likes = await RemoveLikeFromPost(id, user)
+            const likedPost = await GetLikesByPost(id);
+            setLikes(likedPost.likesCount)
+            const isUserLiked = likedPost.likedByUsers.some((likedUser: likedUser) => likedUser.userId === user);
+            setIsLiked(isUserLiked)
+        } catch (error) {
+
+            console.error('error adding like: ', error)
+        }
+    }
+
+    useEffect(() => {
+        const fetchedLikes = async () => {
+            try {
+                const user = Number(localStorage.getItem("UserId"))
+                const likedPost = await GetLikesByPost(id);
+                console.log(likedPost);
+                setLikes(likedPost.likesCount)
+                setLikedByUsers(likedPost.likedByUsers)
+
+                const isUserLiked = likedPost.likedByUsers.some((likedUser: likedUser) => likedUser.userId === user);
+            setIsLiked(isUserLiked)
+            } catch (error) {
+                console.error('error fetching likes: ', error)
+            }
+        }
+        fetchedLikes();
+    }, [id])
+
+
 
     return (
         <div className='font-mainFont w-full bg-white rounded-lg'>
@@ -80,9 +140,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                     </div>
 
                     <div className='inline-flex gap-1 mb-2'>
-                        <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
+                        <div onClick={() => {isLiked ? removeLikes() : handleLikes()}}  className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer': 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
                             <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
-                            <div></div>
+                            <div> <p> {likes} </p></div>
                         </div>
 
 
@@ -122,9 +182,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                     </div>
 
                     <div className='inline-flex gap-1 mb-2 pl-10 pb-1'>
-                        <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
+                        <div onClick={() => isLiked ? removeLikes() : handleLikes()} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer': 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
                             <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
-                            <div></div>
+                            <div> <p> {likes} </p> </div>
                         </div>
 
 

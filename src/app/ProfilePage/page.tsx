@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
 import { IClubs, IUserData } from '@/Interfaces/Interfaces';
-import { getClubsByLeader, getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
+import { GetLikesByPost, getClubsByLeader, getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
@@ -23,6 +23,7 @@ const ProfilePage = (props: any) => {
     const [clubs, setClubs] = useState<IClubs[]>([]);
 
     const [pageSize, setPageSize] = useState<boolean>(false);
+    const [likes, setLikes] = useState<number>(0);
 
     const [showClubs, setShowClubs] = useState<boolean>(true);
     const [userData, setUserData] = useState<IUserData>();
@@ -135,6 +136,7 @@ const ProfilePage = (props: any) => {
         }
     }, []);
 
+    
 
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
