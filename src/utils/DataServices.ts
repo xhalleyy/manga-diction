@@ -16,7 +16,7 @@ export const createUser = async (createdUser: IUserData) => {
     })
 
     console.log('Response: ' + res)
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'an error has occured! ' + res.status;
         throw new Error(message);
     }
@@ -26,7 +26,7 @@ export const createUser = async (createdUser: IUserData) => {
 }
 
 // FETCH FOR LOGIN
-export const login = async(loginUser: ILoginUserInfo) => {
+export const login = async (loginUser: ILoginUserInfo) => {
     const res = await fetch(url + 'User/Login', {
         method: 'POST',
         headers: {
@@ -35,7 +35,7 @@ export const login = async(loginUser: ILoginUserInfo) => {
         body: JSON.stringify(loginUser)
     })
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'an error has occured! ' + res.status;
         throw new Error(message);
     }
@@ -50,7 +50,7 @@ export const checkToken = () => {
     let result = false;
     let isData = localStorage.getItem("Token");
 
-    if(isData != null){
+    if (isData != null) {
         result = true;
     }
 
@@ -65,30 +65,30 @@ export const createClub = async (Club: IClubs) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body:JSON.stringify(Club)
+        body: JSON.stringify(Club)
     });
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
 
     const data = await res.json;
     return data;
-    
+
 }
 
 // FETCH FOR UPDATING CLUBS
 export const updateClubs = async (Club: IClubs) => {
     const res = await fetch(url + 'Club/UpdateClub/', {
         method: "PUT",
-        headers:{
+        headers: {
             'Content-Type': 'application/json'
         },
-        body:JSON.stringify(Club)
+        body: JSON.stringify(Club)
     });
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -106,7 +106,7 @@ export const updateClubs = async (Club: IClubs) => {
 // }
 
 // Get Public Clubs
-export const publicClubsApi = async() => {
+export const publicClubsApi = async () => {
     const promise = await fetch('https://mangadictionapi.azurewebsites.net/Club/GetAllClubs');
     const data: IClubs[] = await promise.json();
     // console.log(data);
@@ -114,7 +114,7 @@ export const publicClubsApi = async() => {
 }
 
 // GET CLUB BY ID
-export const specifiedClub = async(clubId: number) => {
+export const specifiedClub = async (clubId: number) => {
     const promise = await fetch(url + 'Club/GetClubById/' + clubId);
     const data: IClubs = await promise.json();
     // console.log(data);
@@ -122,7 +122,7 @@ export const specifiedClub = async(clubId: number) => {
 }
 
 // GET CLUB BY NAME
-export const getClubsByName = async(clubName: string | null) => {
+export const getClubsByName = async (clubName: string | null) => {
     const promise = await fetch(url + 'Club/GetClubsByName/' + clubName);
     const data: IClubs[] = await promise.json();
     console.log(data);
@@ -151,6 +151,31 @@ publicClubsApi();
 // for example: https://api.mangadex.org/manga?limit=10&title=shingeki&includedTags%5B%5D=391b0423-d847-456f-aff0-8b0cfc03066b&includedTagsMode=AND&excludedTagsMode=OR&status%5B%5D=completed&publicationDemographic%5B%5D=shounen&contentRating%5B%5D=safe&contentRating%5B%5D=suggestive&contentRating%5B%5D=erotica&order%5BlatestUploadedChapter%5D=desc
 const mangaUrl: string = 'https://api.mangadex.org';
 
+export const getTagsIds = async (tags: string[]) => {
+    const tagsResponse = await axios.get(`${mangaUrl}/manga/tag`);
+
+    // Filter tags to only include those present in your input tags array
+    const includedTags = tagsResponse.data.data.filter((tag: any) =>
+        tags.includes(tag.attributes.name.en)
+    );
+
+    // Extract IDs from included tags
+    const includedTagIDs = includedTags.map((tag: any) => tag.id);
+
+    return includedTagIDs;
+};
+
+
+// Get Author List
+export const getAuthorIds = async (authorInput: string) => {
+    const res = await axios.get(`${mangaUrl}/author?limit=1&name=${authorInput}&order%5Bname%5D=asc`);
+    // const data = await res.json();
+    // Axios already parses to JSON format 
+    console.log(res.data);
+    return res.data;
+}
+
+
 export const getTags = async (includedTagNames: string[]) => {
     const tagsResponse = await axios.get(`${mangaUrl}/manga/tag`);
     const includedTagIDs: string[] = tagsResponse.data.data
@@ -159,43 +184,62 @@ export const getTags = async (includedTagNames: string[]) => {
     return { includedTagIDs };
 };
 
-export const mangaSearch = async (title: string, author: string, includedTagIDs: string[], status: string[], contentRating: string[]) => {
+export const mangaSearch = async (
+    title: string,
+    includedTagIDs: string[] = [],
+    publicationDemographic: string[] = [],
+    status: string[] = [],
+    contentRating: string[] = []
+) => {
     const queryParams = new URLSearchParams({
-        limit: '10',
-        title: title,
-        authorOrArtist: author,
+        limit: '15',
+        title: title.toLowerCase(), // Ensure lowercase title
         includedTagsMode: 'AND',
         excludedTagsMode: 'OR',
-        'order[latestUploadedChapter]': 'desc'
+        'order[latestUploadedChapter]': 'desc',
     });
 
     // Add includedTagIDs to query string if present
-    if (includedTagIDs.length > 0) {
+    if (includedTagIDs && includedTagIDs.length > 0) {
         includedTagIDs.forEach(tagId => {
             queryParams.append('includedTags[]', tagId);
         });
     }
 
+    // Add Publication Demographics to query string if present
+    if (publicationDemographic && publicationDemographic.length > 0) {
+        publicationDemographic.forEach(demo => {
+            queryParams.append('publicationDemographic[]', demo);
+        });
+    }
+
     // Add status to query string if present
-    if (status.length > 0) {
+    if (status && status.length > 0) {
         status.forEach(s => {
             queryParams.append('status[]', s);
         });
     }
 
     // Add contentRating to query string if present
-    if (contentRating.length > 0) {
+    if (contentRating && contentRating.length > 0) {
         contentRating.forEach(rating => {
             queryParams.append('contentRating[]', rating);
         });
     }
 
-    const res = await axios.get(`${mangaUrl}/manga?${queryParams}`);
-    return res.data.data.map((manga: any) => manga.id);
+    try {
+        const res = await axios.get(`${mangaUrl}/manga?${queryParams}`);
+        return res.data.data.map((manga: any) => manga.id);
+    } catch (error) {
+        console.error('Error fetching manga:', error);
+        return []; // Return empty array or handle error as needed
+    }
 };
 
+
+
 // GET MANGA BY ID
-export const specificManga = async(mangaId: string) => {
+export const specificManga = async (mangaId: string) => {
     const promise = await fetch(`https://api.mangadex.org/manga/${mangaId}?includes%5B%5D=cover_art`)
     const data = await promise.json();
     return data;
@@ -203,7 +247,7 @@ export const specificManga = async(mangaId: string) => {
 
 // ------------------------ POST API FETCHES -----------------------
 // GET POSTS BY CLUB ID 
-export const getPostsByClubId = async( clubId: number | undefined) => {
+export const getPostsByClubId = async (clubId: number | undefined) => {
     const res = await fetch(url + 'Post/GetAllPostsInClub/' + clubId)
     const data: IPosts[] = await res.json();
     // console.log(data);
@@ -214,26 +258,26 @@ export const getPostsByClubId = async( clubId: number | undefined) => {
 export const createPost = async (postData: IPostData) => {
     const clubId = postData.clubId;
     const res = await fetch(`${url}Post/CreateNewPostInClub/${clubId}`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postData)
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
     });
-  
+
     if (!res.ok) {
-      const message = 'An error has occured: ' + res.status;
-      throw new Error(message);
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
     }
-  
+
     const data = await res.json();
     console.log(data);
     return data;
-  };
+};
 
 // ---------------------- USERS API FETCHES ------------
 // GET USER INFO
-export const getUserInfo = async(userId: number | undefined) => {
+export const getUserInfo = async (userId: number | undefined) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
     const data: IUserData = await res.json();
     // console.log(data)
@@ -241,16 +285,16 @@ export const getUserInfo = async(userId: number | undefined) => {
 }
 
 // UPDATE USER INFO
-export const updateUser = async(User: IUserData) => {
+export const updateUser = async (User: IUserData) => {
     const res = await fetch(url + 'User/UpdateUser/', {
         method: "PUT",
-        headers:{
+        headers: {
             'Content-Type': 'application/json'
         },
-        body:JSON.stringify(User)
+        body: JSON.stringify(User)
     });
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -261,7 +305,7 @@ export const updateUser = async(User: IUserData) => {
 
 // ----------------- CLUB MEMBERS API FETCHES--------------
 // GET USER'S CLUBS
-export const getUserClubs = async(userId: number | undefined ) => {
+export const getUserClubs = async (userId: number | undefined) => {
     const res = await fetch(url + '/Member/GetUserClubs/' + userId);
     const data: number[] = await res.json();
     // console.log(data);
@@ -269,7 +313,7 @@ export const getUserClubs = async(userId: number | undefined ) => {
 }
 
 // GET CLUB'S MEMBERS
-export const getClubMembers = async(clubId: number | undefined) => {
+export const getClubMembers = async (clubId: number | undefined) => {
     const res = await fetch(url + '/Member/GetClubMembers/' + clubId);
     const data: number[] = await res.json();
     // console.log(data);
@@ -277,13 +321,13 @@ export const getClubMembers = async(clubId: number | undefined) => {
 }
 
 // ADD USER TO CLUB
-export const AddUserToClub = async(userId: number | undefined, clubId: number | undefined) => {
+export const AddUserToClub = async (userId: number | undefined, clubId: number | undefined) => {
     const res = await fetch(`${url}Member/AddMemberToClub?userId=${userId}&clubId=${clubId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        
+
     });
 
     const data = res.text();
@@ -292,7 +336,7 @@ export const AddUserToClub = async(userId: number | undefined, clubId: number | 
 }
 
 // DELETE USER IN CLUB
-export const RemoveMember = async(userId: number | undefined, clubId: number | undefined) => {
+export const RemoveMember = async (userId: number | undefined, clubId: number | undefined) => {
     const res = await fetch(`${url}Member/RemoveMemberFromClub?userId=${userId}&clubId=${clubId}`, {
         method: 'DELETE',
         headers: {

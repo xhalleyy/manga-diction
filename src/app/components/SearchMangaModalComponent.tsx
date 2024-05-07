@@ -3,7 +3,9 @@
 import { Button, Modal } from 'flowbite-react'
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
-import {Chips} from 'primereact/chips'
+import { Chips, ChipsChangeEvent } from 'primereact/chips'
+import { useClubContext } from '@/context/ClubContext';
+import { useRouter } from 'next/navigation';
 
 interface SearchMangaModalProps {
     open: boolean;
@@ -13,14 +15,15 @@ interface SearchMangaModalProps {
 // React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
 const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
 
-    const [titleInput, setTitleInput] = useState<string>('');
-    const [authorInput, setAuthorInput] = useState<string>('');
-    const [tagsInput, setTagsInput] = useState<string>('');
-    const [sortOrder, setSortOrder] = useState<string>('');
-    const [demographicOptions, setDemographicOptions] = useState<string>('');
-    const [publishStatus, setPublishStatus] = useState<string>('');
+    const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags } = useClubContext();
+    // const [titleInput, setTitleInput] = useState<string>('');
+    // const [authorInput, setAuthorInput] = useState<string>('');
+    // const [tagsInput, setTagsInput] = useState<string>('');
+    // const [demographicOptions, setDemographicOptions] = useState<string>('');
+    // const [publishStatus, setPublishStatus] = useState<string>('');
     const [value, setValue] = useState<any>([]);
     const [pageSize, setPageSize] = useState<boolean>(false);
+    const router = useRouter();
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -34,6 +37,24 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
             return () => window.removeEventListener('resize', handleResize);
         }
     }, [])
+
+    const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const inputTags = e.target.value.trim(); // Remove leading/trailing whitespace
+        const newTagsArray = inputTags.split(',').map(tag => tag.trim()); // Split by comma and trim whitespace
+        setTags(newTagsArray);
+    }
+
+    const handleSubmit = () => {
+        console.log({
+            title,
+            author,
+            demographics,
+            publication,
+            tags
+        })
+        setOpen(false)
+        router.push('/SearchManga')
+    }
 
     return (
         <div>
@@ -49,15 +70,15 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                     </div>
                     <div className="pt-3">
                         <div className="py-2">
-                            <label className="font-mainFont text-lg">Search Manga</label>
+                            <label className="font-mainFont text-lg">Search Manga Title</label>
                             <div>
-                                <input className="opaqueWhite rounded-xl w-[50%] h-8" id="titleSearch" onChange={(e) => setTitleInput(e.target.value)} />
+                                <input value={title} className="opaqueWhite rounded-xl w-[50%] h-8" id="titleSearch" onChange={(e) => setTitle(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Author Name</label>
                             <div>
-                                <input className="opaqueWhite rounded-xl w-[50%] h-8" onChange={(e) => setAuthorInput(e.target.value)} />
+                                <input value={author} className="opaqueWhite rounded-xl w-[50%] h-8" onChange={(e) => setAuthor(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2">
@@ -65,7 +86,8 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             <div>
                                 {/* wider + taller than club name input */}
                                 {/* <input className="opaqueWhite rounded-xl w-[100%] h-14" onChange={(e) => setTagsInput(e.target.value)} /> */}
-                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={value} onChange={(e) => setValue(e.value)} separator="," />
+                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={tags} // Ensure value is an array of strings
+                                    onChange={(e) => setTags(e.value || [])} separator="," />
                             </div>
                         </div>
                         <div className={pageSize ? "grid grid-cols-2 rounded-xl  " : "grid grid-cols-2"}>
@@ -73,34 +95,35 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             {/* dropdown, 2 options (public, private) */}
 
                             <div className={pageSize ? "col-span-1" : ""}>
-                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
-                                    <option value="public" className="font-mainFont">Demographics</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("shounen")}>Shounen</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("shoujo")}>Shoujo</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("josei")}>Josei</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setDemographicOptions("seinen")}>Seinen</option>
+                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setDemographics(e.target.value)}>
+                                    <option value="" className="font-mainFont">Demographics</option>
+                                    <option value="shounen" className="font-mainFont">Shounen</option>
+                                    <option value="shoujo" className="font-mainFont">Shoujo</option>
+                                    <option value="josei" className="font-mainFont">Josei</option>
+                                    <option value="seinen" className="font-mainFont">Seinen</option>
                                 </select>
                             </div>
 
                             <div className={pageSize ? "col-span-1" : "pt-3"}>
-                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none">
-                                    <option value="public" className="font-mainFont">Publication Status</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("ongoing")}>Ongoing</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("hiatus")}>Hiatus</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("completed")}>Completed</option>
-                                    <option value="public" className="font-mainFont" onClick={() => setPublishStatus("cancelled")}>Cancelled</option>
+                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setPublication(e.target.value)}>
+                                    <option value="" className="font-mainFont">Publication Status</option>
+                                    <option value="ongoing" className="font-mainFont">Ongoing</option>
+                                    <option value="hiatus" className="font-mainFont">Hiatus</option>
+                                    <option value="completed" className="font-mainFont">Completed</option>
+                                    <option value="cancelled" className="font-mainFont">Cancelled</option>
                                 </select>
                             </div>
+
 
                         </div>
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
-                        <Link href="SearchManga">
-                            <Button className="darkBlue rounded-xl" onClick={() => setOpen(false)}>
-                                <span className="font-mainFont text-lg">Submit</span>
-                                {/* <img alt="plus sign" src=""/> */}
-                            </Button>
-                        </Link>
+                        {/* <Link href="SearchManga"> */}
+                        <Button className="darkBlue rounded-xl" onClick={handleSubmit}>
+                            <span className="font-mainFont text-lg">Submit</span>
+                            {/* <img alt="plus sign" src=""/> */}
+                        </Button>
+                        {/* </Link> */}
                     </div>
                 </Modal.Body>
 
