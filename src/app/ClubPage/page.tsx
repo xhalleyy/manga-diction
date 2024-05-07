@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { TextInput, Label, Dropdown, Navbar, Modal, Button, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { AddUserToClub, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
+import { AddUserToClub, GetLikesByPost, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { Chips } from 'primereact/chips'
 import { useClubContext } from '@/context/ClubContext';
@@ -34,6 +34,8 @@ const ClubPage = () => {
   // New state to track whether members section is visible
   const [membersVisible, setMembersVisible] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<boolean>(false)
+  const [likes, setLikes] = useState<number>(0);
+
 
   // useAutosizeTextArea(textAreaRef.current, expandValue);
   // const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -192,6 +194,7 @@ const ClubPage = () => {
 
     checkJoined(displayedClub?.id)
   }, [displayedClub?.id])
+
 
   const customInput = {
     "field": {

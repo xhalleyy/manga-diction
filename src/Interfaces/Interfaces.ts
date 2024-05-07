@@ -94,3 +94,11 @@ export interface IManga {
     },
     result: string
 }
+
+export interface IGetLikes {
+    likesCount: number
+    likedByUsers: [{
+        userId: string
+        username: string
+    }]
+}

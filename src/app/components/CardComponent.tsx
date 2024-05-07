@@ -10,6 +10,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
   
   const router = useRouter();
   
+  
   const goToClub = () => {
     router.push('/ClubPage');
   }
