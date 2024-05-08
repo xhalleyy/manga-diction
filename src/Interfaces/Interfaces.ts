@@ -71,6 +71,9 @@ export interface IManga {
         type: string,
         attributes: {
             altTitles: [{}],
+            description: {
+                en: string
+            },
             createdAt: string,
             lastChapter: string,
             lastVolume: string,

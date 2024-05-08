@@ -20,6 +20,8 @@ type ClubContextType = {
     setPublication: React.Dispatch<React.SetStateAction<string>>,
     tags: string[],
     setTags: React.Dispatch<React.SetStateAction<string[]>>,
+    mangaId: string,
+    setMangaId: React.Dispatch<React.SetStateAction<string>>,
 
 }
 
@@ -38,9 +40,10 @@ export const AppWrapper = ({
     const [demographics, setDemographics] = useState<string>('');
     const [publication, setPublication] = useState<string>('');
     const [tags, setTags] = useState<string[] >([]);
+    const [mangaId, setMangaId] = useState<string>('');
 
     return (
-        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags}}>
+        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, mangaId, setMangaId}}>
             {children}
         </ClubContext.Provider>
     )

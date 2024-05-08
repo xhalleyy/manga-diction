@@ -1,21 +1,23 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { MouseEventHandler, useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import Link from 'next/link'
 import axios from 'axios';
 import { getAuthorIds, getTags, getTagsIds, mangaSearch, specificManga } from '@/utils/DataServices';
 import { IManga } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
+import { useRouter } from 'next/navigation';
 
 
 const SearchManga = () => {
-    const { title, demographics, publication, tags } = useClubContext();
+    const { title, demographics, publication, tags, mangaId, setMangaId } = useClubContext();
     const [mangaList, setMangaList] = useState<IManga[]>([]);
     const [coverArtList, setCoverArtList] = useState<string[]>([]);
     // const tempID: string = '304ceac3-8cdb-4fe7-acf7-2b6ff7a60613';
     const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1);
     const maxTitleLength = 30;
+    const router = useRouter();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -72,6 +74,17 @@ const SearchManga = () => {
         }
     };
 
+    const getMangaId = (manga: IManga) => {
+        const mID = manga.data.id;
+        setMangaId(mID);
+    }
+
+    const handleMangaSubmit = () => {
+    //    getMangaId(mangaId);
+       mangaId;
+        router.push('MangaInfo');
+    }
+
     return (
         <>
             <div className='bg-offwhite  min-h-screen'>
@@ -89,8 +102,7 @@ const SearchManga = () => {
                             {/* 1st result */}
 
                             {mangaList.map((manga: IManga, index: number) => (
-                                <div key={index} className='flex justify-center'>
-                                    <Link href='MangaInfo'>
+                                <div key={index} className='flex justify-center' onClick={handleMangaSubmit}>
                                         <div className='px-0 mx-0'>
                                             <img src={`https://uploads.mangadex.org/covers/${manga.data.id}/${coverArtList[index]}`} alt='Title of Manga' className='w-[177px] h-64' />
                                             <h2 className='text-center text-xl font-semibold max-w-[170px] mt-2 text-darkbrown font-mainFont'>
@@ -100,7 +112,6 @@ const SearchManga = () => {
                                                 }
                                             </h2>
                                         </div>
-                                    </Link>
                                 </div>
                             ))}
                         </div>

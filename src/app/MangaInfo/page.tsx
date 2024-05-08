@@ -1,10 +1,28 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Badge, Button } from 'flowbite-react'
+import { useClubContext } from '@/context/ClubContext'
 
 
 const MangaInfo = () => {
+
+    const { mangaId, setMangaId } = useClubContext();
+
+    useEffect(() => {
+        //function to fetch manga ID from useContext
+        const fetchId = async () => {
+            try{
+                // 
+            }
+            catch (error) {
+                console.log(error);
+            }
+        }
+        fetchId();
+        // function to pass mangaID through the fetch function
+    }, []);
+
     return (
         <>
         <div className='bg-offwhite  min-h-screen'>
@@ -15,11 +33,12 @@ const MangaInfo = () => {
 
                 <div style={{ width: '30%' }} className='flex flex-col'>
                     <div className=' flex justify-end pt-10'>
+                        {/* cover_art img*/}
                         <img className='rounded-lg' src='/aot.png' />
-
                     </div>
 
                     <div className='flex justify-end pt-8'>
+                        {/* favorites button */}
                         <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont'>
                             <span className='text-xl'>Favorite Manga +</span>
                         </Button>
@@ -31,14 +50,17 @@ const MangaInfo = () => {
                     {/* manga name, tags, sypnosis */}
                     <div className='bg-white border-darkbrown border-2 rounded-t-lg'>
                         <div className='p-5 inline-flex'>
+                            {/* title */}
                             <p className='text-3xl text-darkbrown font-bold'> Manga Title </p>
                             <div className='p-2'>
+                                {/* publication status */}
                                 <Badge className='bg-darkblue rounded-xl text-white px-2 mr-1 font-mainFont'>Completed</Badge>
                             </div>
                         </div>
 
                         <div className='px-5'>
                             <div className='inline-flex'>
+                                {/* all applicable tags, .map ? */}
                                 <Badge className='bg-ivory font-normal rounded-md font-mainFont text-black text-sm px-3 py-1 mr-1'>tags</Badge>
                                 <Badge className='bg-ivory font-normal rounded-md font-mainFont text-black text-sm px-3 py-1 mr-1'>tags</Badge>
                                 <Badge className='bg-ivory font-normal rounded-md font-mainFont text-black text-sm px-3 py-1 mr-1'>tags</Badge>
@@ -49,6 +71,7 @@ const MangaInfo = () => {
 
                         <div className='p-5'>
                             <span className='font-mainFont'>
+                                {/* description? check fetch later for this */}
                                 Several hundred years ago, humans were nearly exterminated by Titans. Titans are typically several stories tall, seem to have no intelligence, devour human beings and, worst of all, seem to do it for pleasure rather than as a food source.
                                 A small percentage of humanity survived by walling themselves in a city protected by extremely high walls, even taller than the biggest of Titans. Flash forward to the present and the southern district of Shinganshina has not seen a Titan in over 100 years.
 
