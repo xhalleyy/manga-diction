@@ -68,11 +68,11 @@ const MangaInfo = () => {
     };
 
     const favBtnDisplay = () => {
-        if(favBool == false){
+        if (favBool == false) {
             setFavBool(true);
             // include display block dropdown toggle
             document.getElementById("dropCont")?.classList.add("show");
-        }else {
+        } else {
             setFavBool(false);
             document.getElementById("dropCont")?.classList.remove("show");
         }
@@ -97,21 +97,25 @@ const MangaInfo = () => {
                             <div className='flex justify-end pt-8 favdropContainer'>
                                 {/* favorites button */}
                                 <div>
-                                <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont' onClick={favBtnDisplay}>
-                                    <span className='text-xl'>Favorite Manga +</span>
-                                </Button>
+                                    <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont' onClick={favBtnDisplay}>
+                                        <span className='text-xl'>Favorite Manga +</span>
+                                    </Button>
                                 </div>
-                                {/* Currently Reading and Completed options */}
                                 <div id='dropCont' className="favdrop bg-ivory">
-                            {/* will fix formatting */}
-                            <input type='checkbox'/>
-                                <p>Currently Reading</p>
-                                <input type='checkbox'/>
-                                <p>Completed</p>
+                                    {/* will fix formatting */}
+                                    <div className="flex">
+                                        <input type='checkbox' />
+                                        <p>Currently Reading</p>
+                                    </div>
+
+                                    <div className="flex">
+                                        <input type='checkbox' />
+                                        <p>Completed</p>
+                                    </div>
+                                </div>
+
                             </div>
-                            
-                            </div>
-                            
+
                         </div>
 
 
