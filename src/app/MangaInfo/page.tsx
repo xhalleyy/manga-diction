@@ -1,13 +1,15 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
-import { Badge, Button } from 'flowbite-react'
+import { Badge, Button, Dropdown } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext'
 
 
 const MangaInfo = () => {
 
     const { mangaId, setMangaId } = useClubContext();
+
+    const [favBool, setFavBool] = useState<boolean>(false);
 
     useEffect(() => {
         //function to fetch manga ID from useContext
@@ -23,6 +25,17 @@ const MangaInfo = () => {
         // function to pass mangaID through the fetch function
     }, []);
 
+    const favBtnDisplay = () => {
+        if(favBool == false){
+            setFavBool(true);
+            // include display block dropdown toggle
+            document.getElementById("dropCont")?.classList.add("show");
+        }else {
+            setFavBool(false);
+            document.getElementById("dropCont")?.classList.remove("show");
+        }
+    };
+
     return (
         <>
         <div className='bg-offwhite  min-h-screen'>
@@ -37,11 +50,22 @@ const MangaInfo = () => {
                         <img className='rounded-lg' src='/aot.png' />
                     </div>
 
-                    <div className='flex justify-end pt-8'>
+                    <div className='flex justify-end pt-8 favdropContainer'>
                         {/* favorites button */}
-                        <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont'>
+                        <div>
+                        <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont' onClick={favBtnDisplay}>
                             <span className='text-xl'>Favorite Manga +</span>
                         </Button>
+                        </div>
+
+                         <div id='dropCont' className="favdrop bg-ivory">
+                            {/* will fix formatting */}
+                            <input type='checkbox'/>
+                                <p>Currently Reading</p>
+                                <input type='checkbox'/>
+                                <p>Completed</p>
+                            </div>
+                        
                     </div>
 
                 </div>

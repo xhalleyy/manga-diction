@@ -164,7 +164,23 @@
 .tabsFont {
     font-family: 'mainFont' !important;
 }
+.favdropContainer{
+    position: relative;
+}
 
+.favdrop{
+    display: none;
+    position: absolute;
+    min-width: 300px;
+    overflow: auto;
+    box-shadow: 0px 6px 12px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-top: 10%;
+}
+
+.show {
+    display: block;
+}
 /* Styles for the Chips component */
 .p-chips {
     width: 100%;
