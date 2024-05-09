@@ -236,6 +236,11 @@ export const mangaSearch = async (
     }
 };
 
+export const getAuthorName = async (authorId: string) => {
+    const promise = await fetch(`${mangaUrl}/author/${authorId}`);
+    const data = await promise.json();
+    return data;
+}
 
 
 // GET MANGA BY ID

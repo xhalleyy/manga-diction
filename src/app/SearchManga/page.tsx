@@ -74,15 +74,10 @@ const SearchManga = () => {
         }
     };
 
-    const getMangaId = (manga: IManga) => {
-        const mID = manga.data.id;
-        setMangaId(mID);
-    }
-
-    const handleMangaSubmit = () => {
-    //    getMangaId(mangaId);
-       mangaId;
-        router.push('MangaInfo');
+    const handleMangaSubmit = (mangaId: string) => {
+       setMangaId(mangaId);
+       console.log({mangaId});
+        router.push('/MangaInfo');
     }
 
     return (
@@ -100,9 +95,10 @@ const SearchManga = () => {
                             {/* search results, 5 per 'row' */}
                             {/* if no matches found, display 'hidden' h1 with a message similar to "Can't find what you're looking for? Double check your spelling" */}
                             {/* 1st result */}
+                            <Link href='/MangaInfo'>DevBtn</Link> {/* to navigate to MangaInfo when api is blocked- delete later */}
 
                             {mangaList.map((manga: IManga, index: number) => (
-                                <div key={index} className='flex justify-center' onClick={handleMangaSubmit}>
+                                <div key={index} className='flex justify-center' onClick={() => handleMangaSubmit(manga.data.id)}>
                                         <div className='px-0 mx-0'>
                                             <img src={`https://uploads.mangadex.org/covers/${manga.data.id}/${coverArtList[index]}`} alt='Title of Manga' className='w-[177px] h-64' />
                                             <h2 className='text-center text-xl font-semibold max-w-[170px] mt-2 text-darkbrown font-mainFont'>

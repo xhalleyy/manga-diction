@@ -75,6 +75,7 @@ export interface IManga {
                 en: string
             },
             createdAt: string,
+            updatedAt: string,
             lastChapter: string,
             lastVolume: string,
             publicationDemographic: string,
