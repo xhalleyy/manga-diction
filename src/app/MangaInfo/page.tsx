@@ -9,8 +9,6 @@ const MangaInfo = () => {
 
     const { mangaId, setMangaId } = useClubContext();
 
-    const [favBool, setFavBool] = useState<boolean>(false);
-
     useEffect(() => {
         //function to fetch manga ID from useContext
         const fetchId = async () => {
