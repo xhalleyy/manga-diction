@@ -96,7 +96,6 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
             try {
                 const user = Number(localStorage.getItem("UserId"))
                 const likedPost = await GetLikesByPost(id);
-                console.log(likedPost);
                 setLikes(likedPost.likesCount)
                 setLikedByUsers(likedPost.likedByUsers)
 

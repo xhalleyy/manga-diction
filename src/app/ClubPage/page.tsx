@@ -14,6 +14,9 @@ import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
 import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
 import CreatePostComponent from '../components/CreatePostComponent';
+import EditClubSettingsComponent from '../components/EditClubSettingsComponent';
+import { Chocolate, Planet } from 'react-kawaii';
+import { Alert } from '@mui/material';
 ;
 
 const ClubPage = () => {
@@ -34,8 +37,8 @@ const ClubPage = () => {
   // New state to track whether members section is visible
   const [membersVisible, setMembersVisible] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<boolean>(false)
-  const [likes, setLikes] = useState<number>(0);
-
+  const [editClub, setEditClub] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean | undefined>(undefined)
 
   // useAutosizeTextArea(textAreaRef.current, expandValue);
   // const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -78,6 +81,18 @@ const ClubPage = () => {
 
   const handleSeeMembers = () => {
     setSeeMembers(!seeMembers);
+  }
+
+  const handleEditClub = () => {
+    setEditClub(!editClub);
+  }
+
+  const handleEditSuccess = () => {
+    setSuccess(!success);
+    setEditClub(false);
+    setTimeout(() => {
+      setSuccess(undefined);
+  }, 4000);
   }
 
   // function to handle leaving and/or deleting club!!
@@ -320,9 +335,14 @@ const ClubPage = () => {
 
         <NavbarComponent />
 
-
-
         <div className={pageSize ? 'px-16' : 'px-5'}>
+
+          {success && <div className={pageSize ? 'grid grid-cols-4' : 'pt-4'}>
+            <Alert className='rounded-xl bg-paleblue' icon={<Planet size={30} mood="happy" color="#FCCB7E" />} severity="success">
+              Club successfully updated!
+            </Alert>
+          </div>}
+
 
           <div className={pageSize ? 'hidden' : 'pt-4'}>
             <div className=''>
@@ -382,9 +402,9 @@ const ClubPage = () => {
               {/* tabs item for posts */}
               <Tabs.Item className='tabsFont' title='Posts'>
                 <div className=''>
-                {((createPost && joined) || (createPost && isLeader)) && (
-                <CreatePostComponent setPosts={setPosts} />
-              )}
+                  {((createPost && joined) || (createPost && isLeader)) && (
+                    <CreatePostComponent setPosts={setPosts} />
+                  )}
 
                   <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                     <div className='flex justify-end items-center'>
@@ -435,9 +455,11 @@ const ClubPage = () => {
                 <div className='bg-ivory border-8 border-ivory rounded-lg'>
                   <div className=''>
                     <div>
+                      {(editClub && isLeader) ?
+                        <EditClubSettingsComponent updateSuccess={handleEditSuccess} /> : null}
                       {isLeader ?
                         <div className='py-1'>
-                          <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button>
+                          <button onClick={handleEditClub} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button>
                         </div> : null}
 
                       {isLeader ?
@@ -495,6 +517,7 @@ const ClubPage = () => {
             </Tabs>
           </div>
 
+
           {/* DESKTOP MEMBERS, DESCRIPTIONS, POSTS ETC */}
           <div className={pageSize ? 'grid grid-cols-7 pt-3 gap-5 pb-5' : 'hidden'}>
             {!seeMembers ? <div className='col-span-5'>
@@ -511,6 +534,12 @@ const ClubPage = () => {
                     <Dropdown.Item onClick={() => handleSortingPost("Least Recently Updated")}>Least Recently Updated</Dropdown.Item>
                   </Dropdown>
                 </div>
+
+                {(editClub && isLeader) && (
+                  <EditClubSettingsComponent updateSuccess={handleEditSuccess} />
+
+                )}
+
                 <div className='opacity-90 py-3'>
                   {posts.length > 0 ? (
                     posts.map((post, idx) => (
@@ -578,7 +607,7 @@ const ClubPage = () => {
               </div>
 
               <div>
-                {isLeader ? <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button> : null}
+                {isLeader ? <button onClick={handleEditClub} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-5 py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button> : null}
                 {seeMembers ? <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'> Posts </button>
                   :
                   <button onClick={handleSeeMembers} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl mt-2.5 py-1 font-mainFont text-darkbrown text-lg'> All Members </button>}

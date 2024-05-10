@@ -15,7 +15,8 @@ import FriendsComponent from '../components/FriendsDesktopComponent';
 import { CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import CardComponent2 from '../components/CardComponent2';
 import CardProfPgComponent from '../components/CardProfPgComponent';
-;
+import EditIcon from '@mui/icons-material/Edit';
+import { Tooltip } from '@mui/material';
 
 const ProfilePage = (props: any) => {
 
@@ -23,7 +24,6 @@ const ProfilePage = (props: any) => {
     const [clubs, setClubs] = useState<IClubs[]>([]);
 
     const [pageSize, setPageSize] = useState<boolean>(false);
-    const [likes, setLikes] = useState<number>(0);
 
     const [showClubs, setShowClubs] = useState<boolean>(true);
     const [userData, setUserData] = useState<IUserData>();
@@ -101,6 +101,10 @@ const ProfilePage = (props: any) => {
     }
     const favDisplay = () => {
         setShowClubs(false);
+    }
+
+    const editSettingsPage = () => {
+        router.push('/EditSettings')
     }
 
     const handleClubCardClick = async (club: IClubs) => {
@@ -219,7 +223,14 @@ const ProfilePage = (props: any) => {
                                     />
                                 </div>
                                 <div className='text-center mt-5'>
+                                    <div className='inline-flex'>
                                     <h1 className='text-[28px] font-mainFont font-bold'>{info.displayedUser?.username}</h1>
+                                    <Tooltip onClick={editSettingsPage} title='Edit Profile' placement='right'>
+                                    <EditIcon className='cursor-pointer mt-2 ml-1'/>
+
+                                    </Tooltip>
+                                    </div>
+                                    
                                     <h2 className='text-[22px] font-mainFont'>{`${info.displayedUser?.firstName} ${info.displayedUser?.lastName}`}</h2>
                                     <div className='mt-3'>
                                         {!isMyProfile &&

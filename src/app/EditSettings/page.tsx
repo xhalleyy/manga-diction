@@ -18,6 +18,13 @@ const EditSettings = () => {
     const [profilePic, setProfilePic] = useState<string | null>(null);
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
+    const [firstName, setFirstName] = useState<string>('');
+    const [lastName, setLastName] = useState<string>('');
+    const [username, setUserName] = useState<string>('');
+    const [password, setPasswword] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<boolean | undefined>(undefined);
+
+
 
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
@@ -90,16 +97,28 @@ const EditSettings = () => {
         }
     };
 
+    
+
     useEffect(() => {
         console.log("Profile Picture Updated:", profilePic);
     }, [profilePic]);
 
     const updateUserInfo = async () => {
         try {
+            if (!firstName.trim() && !lastName.trim() && !username.trim() && password.trim()) {
+                setErrorMessage(!errorMessage)
+                setTimeout(() => {
+                    setErrorMessage(undefined);
+                }, 3000);
+                return;
+            }
+
             if (displayedUser) {
+                
                 // Ensure profilePic is always a string
                 const updatedProfilePic = profilePic || displayedUser.profilePic || '';
     
+
                 // Update displayedUser with new picture
                 setDisplayedUser((prevUser) => ({
                     ...prevUser!,
@@ -169,6 +188,7 @@ const EditSettings = () => {
                     </div>
                     <div className='col-span-1 flex-col justify-center items-center gap-3'>
                         <div className='flex flex-col gap-4 py-4'>
+                            {success && <p className='text-red-900'>Nothing to update. Please enter new first name, last name, username, password or image.</p>}
                             <div className='flex items-center gap-2 py-2'>
                                 <Label htmlFor="base" value="Username:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
                                 <TextInput onChange={handleUsernameChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
