@@ -4,7 +4,7 @@ import { Button, Dropdown, FileInput, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import { IClubs } from "@/Interfaces/Interfaces";
-import { updateClubs } from "@/utils/DataServices";
+import { createClub, updateClubs } from "@/utils/DataServices";
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -114,12 +114,11 @@ function ClubModalComponent() {
         setClubItems(prevClubItems => [...prevClubItems, newClub]);
 
         try {
-            let result = await updateClubs(newClub)
+            await createClub(newClub)
 
-            if (result) {
                 clubData.setDisplayedClub(newClub)
                 router.push('/ClubPage')
-            }
+            
         } catch (error) {
             alert("Creating Group Unsuccessful!")
         }
