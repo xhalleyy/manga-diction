@@ -8,13 +8,13 @@ import { Label, TextInput } from "flowbite-react"
 import { describe } from "node:test";
 import { spec } from "node:test/reporters";
 import { useEffect, useState } from "react";
-import {Chocolate} from 'react-kawaii'
+import { Chocolate } from 'react-kawaii'
 
 interface successProps {
     updateSuccess: () => void
 }
 
-const EditClubSettingsComponent: React.FC<successProps> = ({updateSuccess}) => {
+const EditClubSettingsComponent: React.FC<successProps> = ({ updateSuccess }) => {
 
     const { displayedClub, setDisplayedClub } = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
@@ -37,6 +37,7 @@ const EditClubSettingsComponent: React.FC<successProps> = ({updateSuccess}) => {
             }
         }
     }, [])
+    console.log(displayedClub?.id)
 
     useEffect(() => {
         if (displayedClub) {
@@ -44,7 +45,8 @@ const EditClubSettingsComponent: React.FC<successProps> = ({updateSuccess}) => {
             setClubDesc('');
             setClubImg('');
         }
-    }, []);
+
+    }, [displayedClub, setClubDesc, setClubName, setClubImg]);
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setClubName(e.target.value);
@@ -79,6 +81,7 @@ const EditClubSettingsComponent: React.FC<successProps> = ({updateSuccess}) => {
             return;
         }
 
+
         let reader = new FileReader();
         reader.onload = () => {
             setClubImg(reader.result as string);
@@ -88,7 +91,9 @@ const EditClubSettingsComponent: React.FC<successProps> = ({updateSuccess}) => {
     };
 
     const updateClubInfo = async () => {
+
         try {
+            console.log(displayedClub)
             // using .trim() to remove whitespace so that if the user wants to only edit one aspect, it won't change the other
             if (!clubName.trim() && !clubDesc.trim() && !clubImg) {
                 setErrorMessage(!errorMessage)
@@ -97,21 +102,32 @@ const EditClubSettingsComponent: React.FC<successProps> = ({updateSuccess}) => {
                 }, 3000);
                 return;
             }
+
+            if (displayedClub) {
+
                 const updatedClub = {
-                    ...displayedClub!,
-                    clubName: clubName.trim() || displayedClub!.clubName,
-                    description: clubDesc.trim() || displayedClub!.description,
-                    image: clubImg || displayedClub!.image,
+                    ...displayedClub,
+                    clubName: clubName.trim() || displayedClub.clubName,
+                    description: clubDesc.trim() || displayedClub.description,
+                    image: clubImg || displayedClub!.image || '',
                 };
 
-                await updateClubs(updatedClub);
-                setDisplayedClub(updatedClub)
-                setIsUpdated(true);
-                
-                setClubDesc('')
-                setClubName('')
-                
-                updateSuccess();
+                if (displayedClub.id === updatedClub.id) {
+                    await updateClubs(updatedClub);
+                    setDisplayedClub(updatedClub)
+
+                    setIsUpdated(true);
+
+                    setClubDesc('')
+                    setClubName('')
+
+                    updateSuccess();
+                }
+
+
+            }
+
+            console.log(displayedClub)
         } catch (error) {
             console.error('Failed to update:', error);
         }
@@ -146,7 +162,7 @@ const EditClubSettingsComponent: React.FC<successProps> = ({updateSuccess}) => {
                     />
                 </label>
             </div>
-            
+
             <div className="flex justify-end">
                 <button onClick={updateClubInfo} className={pageSize ? 'bg-offwhite enabled:hover:bg-ivory px-3 py-1.5 mt-2 font-poppinsMed text-darkbrown rounded-md' : 'bg-offwhite enabled:hover:bg-ivory px-3 py-1.5 mt-4 font-poppinsMed text-darkbrown rounded-md'}>Update Club</button>
 

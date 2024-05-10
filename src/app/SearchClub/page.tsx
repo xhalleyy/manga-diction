@@ -52,7 +52,7 @@ const SearchClub = () => {
   const handleClick = () => {
     if (inputRef.current) {
       // Access the value of the input element using inputRef.current.value
-      const inputValue = inputRef.current.value;
+      const inputValue = inputRef.current.value.toLowerCase();
       setSearchClub(inputValue);
       console.log(inputValue)
       // router.push('/SearchClub');

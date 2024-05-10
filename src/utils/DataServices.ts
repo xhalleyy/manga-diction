@@ -61,7 +61,7 @@ export const checkToken = () => {
 // FETCH FOR CREATING CLUB
 export const createClub = async (Club: IClubs) => {
     const res = await fetch(url + 'Club/CreateClub', {
-        method: "PUT",
+        method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
