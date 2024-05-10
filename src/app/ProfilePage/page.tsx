@@ -17,6 +17,8 @@ import CardComponent2 from '../components/CardComponent2';
 import CardProfPgComponent from '../components/CardProfPgComponent';
 import EditIcon from '@mui/icons-material/Edit';
 import { Tooltip } from '@mui/material';
+import SearchIcon from "@mui/icons-material/Search";
+import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 
 const ProfilePage = (props: any) => {
 
@@ -30,6 +32,8 @@ const ProfilePage = (props: any) => {
     const [isMyProfile, setIsMyProfile] = useState<boolean>(true);
     const [picture, setPicture] = useState<string>("");
     const router = useRouter();
+
+    const [friendBool, setFriendBool] = useState<boolean>(false);
 
     const customTabs: CustomFlowbiteTheme["tabs"] = {
         "base": "flex flex-col gap-2",
@@ -140,7 +144,7 @@ const ProfilePage = (props: any) => {
         }
     }, []);
 
-    
+
 
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
@@ -170,10 +174,10 @@ const ProfilePage = (props: any) => {
                     const userId = Number(localStorage.getItem("UserId"));
                     const userClubs = await fetchUserClubs(userId);
                     const leaderClubs = await fetchClubsbyLeader(userId);
-    
+
                     // Merge fetched clubs
                     const allClubs = [...userClubs, ...leaderClubs];
-    
+
                     // Deduplicate clubs
                     const uniqueClubs = allClubs.filter(
                         (club, index, self) =>
@@ -182,7 +186,7 @@ const ProfilePage = (props: any) => {
                                 (t) => t.id === club.id
                             )
                     );
-    
+
                     // Update the state with unique clubs
                     setClubs(prevClubs => {
                         // Track added club IDs to avoid duplicates
@@ -195,11 +199,36 @@ const ProfilePage = (props: any) => {
                 }
             }
         };
-    
+
         fetchData();
     }, [showClubs]);
-    
-    
+
+    const openFriendSearch = () => {
+        // using document.getElementById instead of using switch statement dependent on bool in className to prevent conflicts with responsiveness bool and classes
+        if (friendBool == false) {
+            document.getElementById("clubfavBox")?.classList.add("hidden");
+            document.getElementById("friendsBB")?.classList.remove("hidden")
+            setFriendBool(true);
+        } else {
+            document.getElementById("clubfavBox")?.classList.remove("hidden");
+            document.getElementById("friendsBB")?.classList.add("hidden");
+            setFriendBool(false);
+        }
+    };
+
+    const viewAllFriends = () => {
+        // same function as openFriendSearch, but for mobile
+        if (friendBool === false){
+            document.getElementById("mobileClubFav")?.classList.add("hidden");
+            document.getElementById("mobileFriends")?.classList.remove("hidden");
+            setFriendBool(true);
+        } else {
+            document.getElementById("mobileClubFav")?.classList.remove("hidden");
+            document.getElementById("mobileFriends")?.classList.add("hidden");
+            setFriendBool(false);
+        }
+    };
+
 
 
     return (
@@ -224,13 +253,13 @@ const ProfilePage = (props: any) => {
                                 </div>
                                 <div className='text-center mt-5'>
                                     <div className='inline-flex'>
-                                    <h1 className='text-[28px] font-mainFont font-bold'>{info.displayedUser?.username}</h1>
-                                    <Tooltip onClick={editSettingsPage} title='Edit Profile' placement='right'>
-                                    <EditIcon className='cursor-pointer mt-2 ml-1'/>
+                                        <h1 className='text-[28px] font-mainFont font-bold'>{info.displayedUser?.username}</h1>
+                                        <Tooltip onClick={editSettingsPage} title='Edit Profile' placement='right'>
+                                            <EditIcon className='cursor-pointer mt-2 ml-1' />
 
-                                    </Tooltip>
+                                        </Tooltip>
                                     </div>
-                                    
+
                                     <h2 className='text-[22px] font-mainFont'>{`${info.displayedUser?.firstName} ${info.displayedUser?.lastName}`}</h2>
                                     <div className='mt-3'>
                                         {!isMyProfile &&
@@ -248,7 +277,7 @@ const ProfilePage = (props: any) => {
                                         <h3 className='text-2xl font-mainFont font-semibold'>Friends</h3>
                                     </div>
                                     <div className='me-5'>
-                                        <AddIcon fontSize='large' />
+                                        <AddIcon fontSize='large' className='addI' onClick={() => openFriendSearch()} />
                                     </div>
                                 </div>
                                 <div className="bg-ivory rounded-lg p-[5px]">
@@ -264,7 +293,7 @@ const ProfilePage = (props: any) => {
                             <div className={pageSize ? "hidden" : "contents font-mainFont"}>
                                 <div className='flex justify-between px-4'>
                                     <p className='text-xl font-bold'> Friends </p>
-                                    <p className='justify-end'> view all </p>
+                                    <button className='justify-end' onClick={() => viewAllFriends()}> View All </button>
                                 </div>
 
                                 <div className='border-ivory rounded-lg bg-white border-8 h-36'>
@@ -276,8 +305,28 @@ const ProfilePage = (props: any) => {
                                 </div>
                             </div>
 
+                            {/* friends section (toggled with View All) */}
+                            <div className={pageSize ? 'hidden' : 'mt-7 hidden'} id='mobileFriends'>
+                                    <div className='flex justify-center'>
+                                        <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
+                                            <input className='rounded-xl h-8 ps-3' />
+                                            <SearchIcon className='text-4xl text-white' />
+                                        </div>
+                                    </div>
+                                        <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p>
+
+                                        <div className="grid grid-cols-2">
+                                            <SearchedFriendsComponent/>
+                                            <SearchedFriendsComponent/>
+                                            <SearchedFriendsComponent/>
+                                            <SearchedFriendsComponent/>
+                                            <SearchedFriendsComponent/>
+                                        </div>
+
+                            </div>
+
                             {/* clubs and favorited manga tabs */}
-                            <div className={pageSize ? 'hidden' : 'items-center mt-2'}>
+                            <div className={pageSize ? 'hidden' : 'items-center mt-2'} id='mobileClubFav'>
                                 <Tabs theme={customTabs} aria-label='Tabs with underline' style='underline'>
 
                                     {/* tabs item for clubs */}
@@ -336,7 +385,35 @@ const ProfilePage = (props: any) => {
                             </div>
 
                         </div>
-                        <div className={pageSize ? "col-span-3 ms-10" : "hidden"}>
+
+                        {/* friends search section here- displayed onClick (of + button) */}
+                        <div className="bg-offwhite col-span-3 hidden" id='friendsBB'>
+                            {/* onClick of + button, target and hide div with id "clubfavBox" and display current div "friendsBB" */}
+                            <div className='flex justify-end rounded-xl'>
+                                <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
+                                    <input className='rounded-xl h-8 ps-3' />
+                                    <SearchIcon className='text-4xl text-white' />
+                                </div>
+                            </div>
+
+                            <p className='px-16 text-[26px] font-poppinsMed text-darkbrown'>Search Results for "</p>
+
+                            {/* Friend item will be another component, .map through user's friends to display */}
+                            <div className='grid grid-cols-5'>
+
+                                <SearchedFriendsComponent />
+                                <SearchedFriendsComponent />
+                                <SearchedFriendsComponent />
+                                <SearchedFriendsComponent />
+                                <SearchedFriendsComponent />
+                                <SearchedFriendsComponent />
+                                <SearchedFriendsComponent />
+
+                            </div>
+
+                        </div>
+
+                        <div className={pageSize ? "col-span-3 ms-10" : "hidden"} id='clubfavBox'>
                             {/* (if own profile + user is in no clubs, create club button = true) clubs section, favorites section, displays 6+ clubs at a time, faves display 5 covers per 'row' */}
                             <div className="flex">
                                 <div className='me-5'>

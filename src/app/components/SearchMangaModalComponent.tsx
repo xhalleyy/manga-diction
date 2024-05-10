@@ -1,7 +1,6 @@
 "use client"
 
 import { Button, Modal } from 'flowbite-react'
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { Chips, ChipsChangeEvent } from 'primereact/chips'
 import { useClubContext } from '@/context/ClubContext';
@@ -59,7 +58,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
     return (
         <div>
 
-            <Modal show={open} onClose={() => setOpen(false)}>
+            <Modal show={open} onClose={() => setOpen(false)} className='mobileBgColor'>
 
                 <Modal.Body className="darkBeige rounded-lg px-10">
                     <div className="flex justify-end justify-items-end">
@@ -90,11 +89,11 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                                     onChange={(e) => setTags(e.value || [])} separator="," />
                             </div>
                         </div>
-                        <div className={pageSize ? "grid grid-cols-2 rounded-xl  " : "grid grid-cols-2"}>
+                        <div className={pageSize ? "grid grid-cols-2 rounded-xl  " : "grid grid-cols-1"}>
 
                             {/* dropdown, 2 options (public, private) */}
 
-                            <div className={pageSize ? "col-span-1" : ""}>
+                            <div className={pageSize ? "col-span-1" : "pt-4"}>
                                 <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setDemographics(e.target.value)}>
                                     <option value="" className="font-mainFont">Demographics</option>
                                     <option value="shounen" className="font-mainFont">Shounen</option>

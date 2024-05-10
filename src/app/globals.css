@@ -77,6 +77,14 @@
     object-fit: cover;
 }
 
+.searchPfp{
+    border-radius: 50%;
+    height: 110px;
+    width: 110px;
+    object-fit: cover;
+    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.1);
+}
+
 .friendPfp{
     border-radius: 50%;
     width: 55px;
@@ -182,6 +190,28 @@
 
 .show {
     display: block;
+}
+
+.addI{
+    transition: all .2s ease-in-out;
+}
+
+.addI:hover{
+    transform: translateY(-3px);
+}
+
+.mobileBgColor {
+    background-color: none;
+}
+
+@media screen and (max-width: 1024px) {
+    .mobileBgColor {
+        background-color: #273043;
+    }
+    .modalNav{
+        display: block;
+    }
+    
 }
 /* Styles for the Chips component */
 .p-chips {
