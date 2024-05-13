@@ -395,129 +395,6 @@ const ClubPage = () => {
 
           </div>
 
-          {/* MOBILE TABS FOR POSTS AND CLUB SETTINGS */}
-          <div className={pageSize ? 'hidden' : 'items-center mt-2'}>
-            <Tabs onClick={handleSeeMembers} theme={customTabs} aria-label='Tabs with underline' style='underline'>
-
-              {/* tabs item for posts */}
-              <Tabs.Item className='tabsFont' title='Posts'>
-                <div className=''>
-                  {((createPost && joined) || (createPost && isLeader)) && (
-                    <CreatePostComponent setPosts={setPosts} />
-                  )}
-
-                  <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
-                    <div className='flex justify-end items-center'>
-                      <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
-                        <Dropdown.Item>Popular</Dropdown.Item>
-                        <Dropdown.Item>Newest</Dropdown.Item>
-                        <Dropdown.Item>Oldest</Dropdown.Item>
-                        <Dropdown.Item>Recently Updated</Dropdown.Item>
-                        <Dropdown.Item>Least Recently Updated</Dropdown.Item>
-                      </Dropdown>
-                    </div>
-                    <div className='opacity-90 py-3'>
-                      {posts.map((post, idx) => {
-
-                        return (
-
-                          <div key={idx} className='col-span-1 py-2'>
-                            <PostsComponent
-                              id={post.id}
-                              userId={post.userId}
-                              username={usersMap.get(post.userId)?.username || "Unknown User"}
-                              clubId={post.clubId}
-                              clubName={post.clubName || "Default Club Name"}
-                              title={post.title}
-                              category={post.category}
-                              tags={post.tags ? post.tags.split(',') : null}
-                              description={post.description}
-                              image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
-                              dateCreated={post.dateCreated}
-                              dateUpdated={post.dateUpdated}
-                              isDeleted={post.isDeleted}
-                              displayClubName={false}
-                            />
-                          </div>
-                        )
-                      })
-                      }
-                    </div>
-                  </div>
-
-                </div>
-
-              </Tabs.Item>
-
-
-              {/* tabs item for club settings */}
-              <Tabs.Item className='tabs ' style={{ fontFamily: 'mainFont' }} title={isLeader ? 'Settings' : 'Club Info'}>
-                <div className='bg-ivory border-8 border-ivory rounded-lg'>
-                  <div className=''>
-                    <div>
-                      {(editClub && isLeader) ?
-                        <EditClubSettingsComponent updateSuccess={handleEditSuccess} /> : null}
-                      {isLeader ?
-                        <div className='py-1'>
-                          <button onClick={handleEditClub} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button>
-                        </div> : null}
-
-                      {isLeader ?
-                        <div className='py-1'>
-                          <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Invite Members</button>
-                        </div> : null}
-
-                      {isLeader ? (
-                        <div className='py-1'>
-                          <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl  py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Delete Club</button>
-                        </div>
-                      ) : joined ? (
-                        <div className='py-1'>
-                          <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl  py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Leave Club</button>
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-
-                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> Description: </p>
-
-                  <div className='bg-white/80  rounded-lg'>
-                    <p className='p-2.5 font-poppinsMed  text-darkbrown text-lg'>{displayedClub?.description}</p>
-                  </div>
-
-                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> Members: </p>
-                  {!membersVisible && (
-                    <div className='grid grid-cols-3 px-8 justify-center p-8 bg-white/80 rounded-lg'>
-                      <div className="col-span-1 flex flex-col justify-center items-center">
-                        <div className='relative'>
-                          <img src={leader?.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
-                          <Image src="/crown.gif"
-                            width={200}
-                            height={200}
-                            alt="Club Leader"
-                            className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
-                        </div>
-                        <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
-                        <p className="font-mainFont text-darkbrown text-xs">{`${leader?.firstName} ${leader?.lastName}`}</p>
-                      </div>
-                      {members.map((member) => (
-                        <div key={member.id} className="col-span-1 flex flex-col justify-center items-center py-2">
-                          <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
-                          <h1 className="font-poppinsMed text-lg text-center text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
-                          <p className="font-mainFont text-darkbrown text-xs text-center">{`${member.firstName} ${member.lastName}`}</p>
-                        </div>
-                      )
-                      )}
-                    </div>
-                  )}
-                </div>
-
-              </Tabs.Item>
-
-            </Tabs>
-          </div>
-
-
           {/* DESKTOP MEMBERS, DESCRIPTIONS, POSTS ETC */}
           <div className={pageSize ? 'grid grid-cols-7 pt-3 gap-5 pb-5' : 'hidden'}>
             {!seeMembers ? <div className='col-span-5'>
@@ -645,6 +522,129 @@ const ClubPage = () => {
               </div>
             </Modal.Body>
           </Modal>
+
+          {/* MOBILE TABS FOR POSTS AND CLUB SETTINGS */}
+          <div className={pageSize ? 'hidden' : 'items-center mt-2'}>
+            <Tabs onClick={handleSeeMembers} theme={customTabs} aria-label='Tabs with underline' style='underline'>
+
+              {/* tabs item for posts */}
+              <Tabs.Item className='tabsFont' title='Posts'>
+                <div className=''>
+                  {((createPost && joined) || (createPost && isLeader)) && (
+                    <CreatePostComponent setPosts={setPosts} />
+                  )}
+
+                  <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
+                    <div className='flex justify-end items-center'>
+                      <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
+                        <Dropdown.Item>Popular</Dropdown.Item>
+                        <Dropdown.Item>Newest</Dropdown.Item>
+                        <Dropdown.Item>Oldest</Dropdown.Item>
+                        <Dropdown.Item>Recently Updated</Dropdown.Item>
+                        <Dropdown.Item>Least Recently Updated</Dropdown.Item>
+                      </Dropdown>
+                    </div>
+                    <div className='opacity-90 py-3'>
+                      {posts.map((post, idx) => {
+
+                        return (
+
+                          <div key={idx} className='col-span-1 py-2'>
+                            <PostsComponent
+                              id={post.id}
+                              userId={post.userId}
+                              username={usersMap.get(post.userId)?.username || "Unknown User"}
+                              clubId={post.clubId}
+                              clubName={post.clubName || "Default Club Name"}
+                              title={post.title}
+                              category={post.category}
+                              tags={post.tags ? post.tags.split(',') : null}
+                              description={post.description}
+                              image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                              dateCreated={post.dateCreated}
+                              dateUpdated={post.dateUpdated}
+                              isDeleted={post.isDeleted}
+                              displayClubName={false}
+                            />
+                          </div>
+                        )
+                      })
+                      }
+                    </div>
+                  </div>
+
+                </div>
+
+              </Tabs.Item>
+
+
+              {/* tabs item for club settings */}
+              <Tabs.Item className='tabs ' style={{ fontFamily: 'mainFont' }} title={isLeader ? 'Settings' : 'Club Info'}>
+                <div className='bg-ivory border-8 border-ivory rounded-lg'>
+                  <div className=''>
+                    <div>
+                      {(editClub && isLeader) ?
+                        <EditClubSettingsComponent updateSuccess={handleEditSuccess} /> : null}
+                      {isLeader ?
+                        <div className='py-1'>
+                          <button onClick={handleEditClub} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Edit Club Settings</button>
+                        </div> : null}
+
+                      {isLeader ?
+                        <div className='py-1'>
+                          <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Invite Members</button>
+                        </div> : null}
+
+                      {isLeader ? (
+                        <div className='py-1'>
+                          <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl  py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Delete Club</button>
+                        </div>
+                      ) : joined ? (
+                        <div className='py-1'>
+                          <button className='text-center flex w-full justify-center border-2 border-darkblue bg-darkblue rounded-xl  py-1 font-mainFont text-white text-lg' onClick={() => setOpenModal(true)}>Leave Club</button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> Description: </p>
+
+                  <div className='bg-white/80  rounded-lg'>
+                    <p className='p-2.5 font-poppinsMed  text-darkbrown text-lg'>{displayedClub?.description}</p>
+                  </div>
+
+                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> Members: </p>
+                  {!membersVisible && (
+                    <div className='grid grid-cols-3 px-8 justify-center p-8 bg-white/80 rounded-lg'>
+                      <div className="col-span-1 flex flex-col justify-center items-center">
+                        <div className='relative'>
+                          <img src={leader?.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                          <Image src="/crown.gif"
+                            width={200}
+                            height={200}
+                            alt="Club Leader"
+                            className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
+                        </div>
+                        <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
+                        <p className="font-mainFont text-darkbrown text-xs">{`${leader?.firstName} ${leader?.lastName}`}</p>
+                      </div>
+                      {members.map((member) => (
+                        <div key={member.id} className="col-span-1 flex flex-col justify-center items-center py-2">
+                          <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                          <h1 className="font-poppinsMed text-lg text-center text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
+                          <p className="font-mainFont text-darkbrown text-xs text-center">{`${member.firstName} ${member.lastName}`}</p>
+                        </div>
+                      )
+                      )}
+                    </div>
+                  )}
+                </div>
+
+              </Tabs.Item>
+
+            </Tabs>
+          </div>
+          
 
         </div>
       </div>

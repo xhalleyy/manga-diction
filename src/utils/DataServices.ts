@@ -285,7 +285,7 @@ export const createPost = async (postData: IPostData) => {
 export const getUserInfo = async (userId: number | undefined) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
     const data: IUserData = await res.json();
-    // console.log(data)
+    console.log(data)
     return data;
 }
 
@@ -299,12 +299,15 @@ export const updateUser = async (User: IUserData) => {
         body: JSON.stringify(User)
     });
 
+
     if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
 
     const data = await res.json();
+    console.log(data);
+    console.log(User);
     return data;
 }
 
