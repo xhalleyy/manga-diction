@@ -387,7 +387,7 @@ const ProfilePage = (props: any) => {
                         </div>
 
                         {/* friends search section here- displayed onClick (of + button) */}
-                        <div className="bg-offwhite col-span-3 hidden" id='friendsBB'>
+                        <div className={pageSize ? "bg-offwhite col-span-3 hidden" : "hidden"} id='friendsBB'>
                             {/* onClick of + button, target and hide div with id "clubfavBox" and display current div "friendsBB" */}
                             <div className='flex justify-end rounded-xl'>
                                 <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
