@@ -1,4 +1,4 @@
-import { IClubs, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUserData } from "@/Interfaces/Interfaces";
+import { IClubs, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -259,6 +259,12 @@ export const getPostsByClubId = async (clubId: number | undefined) => {
     return data;
 }
 
+export const getPostById = async (postId: number | null) => {
+    const res = await fetch(url + 'Post/GetPostById/' + postId)
+    const data: IPosts = await res.json();
+    return data;
+}
+
 // CREATE POST IN CLUB
 export const createPost = async (postData: IPostData) => {
     const clubId = postData.clubId;
@@ -290,7 +296,7 @@ export const getUserInfo = async (userId: number | undefined) => {
 }
 
 // UPDATE USER INFO
-export const updateUser = async (User: IUserData) => {
+export const updateUser = async (User: IUpdateUser) => {
     const res = await fetch(url + 'User/UpdateUser/', {
         method: "PUT",
         headers: {
@@ -407,5 +413,23 @@ export const RemoveLikeFromPost = async (postId: number, userId: number) => {
     }
 
     const data = await res.json()
+    return data;
+}
+
+// ------------------- COMMENTS API FETCHES -----------------------
+
+// GET TOP LEVEL REPLIES
+export const getComments = async(postId: number) => {
+    const promise = await fetch(url + 'Comment/GetPostReplies/' + postId);
+    const data = await promise.json();
+    console.log(data)
+    return data;
+}
+
+// GET REPLIES TO COMMENTS
+export const getRepliesFromComment = async (commentId: number) => {
+    const promise = await fetch(url + 'Comment/GetRepliesFromComment/' + commentId)
+    const data = await promise.json();
+    console.log(data);
     return data;
 }

@@ -4,8 +4,19 @@ export interface IUserData {
     firstName: string
     lastName: string
     age: number
-    password: string
+    // password: string
     profilePic: string | null
+}
+
+export interface IUpdateUser {
+    id: number
+    username: string
+    firstName: string
+    lastName: string
+    age: number
+    profilePic: string | null
+    currentPassword: string | null
+    newPassword: string | null
 }
 
 export interface ILoginUserInfo {
@@ -105,4 +116,21 @@ export interface IGetLikes {
         userId: string
         username: string
     }]
+}
+
+export interface IComments {
+    id: number,
+    userId: number,
+    reply: string,
+    postedAt: string,
+    postId: number,
+    parentCommentId: number | null,
+    user: {
+        id: number,
+        username: string,
+        firstName: string,
+        lastName: string,
+        age: number,
+        profilePic: string
+    }
 }

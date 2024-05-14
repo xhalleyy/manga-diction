@@ -1,27 +1,26 @@
 'use client'
 
-import React, { FormEventHandler, useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
-import { TextInput, Label, Dropdown, Navbar, Modal, Button, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
+import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
 import { AddUserToClub, GetLikesByPost, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
-import { Chips } from 'primereact/chips'
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
-import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
 import CreatePostComponent from '../components/CreatePostComponent';
 import EditClubSettingsComponent from '../components/EditClubSettingsComponent';
 import { Chocolate, Planet } from 'react-kawaii';
 import { Alert } from '@mui/material';
+import PostRepliesComponent from '../components/PostRepliesComponent';
 ;
 
 const ClubPage = () => {
   ;
-  const { displayedClub } = useClubContext();
+  const { displayedClub, selectedPostId, setSelectedPostId } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
@@ -31,21 +30,13 @@ const ClubPage = () => {
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState(false);
   const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
-  // const [value, setValue] = useState<any>([]);
-  // const [expandValue, setExpandValue] = useState("");
-  // const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
   // New state to track whether members section is visible
   const [membersVisible, setMembersVisible] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<boolean>(false)
   const [editClub, setEditClub] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean | undefined>(undefined)
 
-  // useAutosizeTextArea(textAreaRef.current, expandValue);
-  // const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-  //   const val = evt.target?.value;
-
-  //   setExpandValue(val);
-  // };
 
   const fetchClubMembers = async (clubId: number | undefined) => {
     try {
@@ -92,7 +83,7 @@ const ClubPage = () => {
     setEditClub(false);
     setTimeout(() => {
       setSuccess(undefined);
-  }, 4000);
+    }, 4000);
   }
 
   // function to handle leaving and/or deleting club!!
@@ -107,8 +98,23 @@ const ClubPage = () => {
     }
   }
 
+  const handlePostPage = (postId: number) => {
+    setSelectedPostId(postId)
+  }
+
   useEffect(() => {
-    // Effect to set seeMembers to true when Settings tab is clicked
+    // set Selected Post null so that all the posts show instead of the full posts
+    setSelectedPostId(null);
+    // responsiveness
+    if (typeof window !== 'undefined') {
+      setPageSize(window.innerWidth > 768);
+      const handleResize = () => {
+        setPageSize(window.innerWidth > 768)
+      }
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
+
     const handleSettingsTabClick = () => {
       setSeeMembers(true);
       setMembersVisible(true); // Set members section to be visible
@@ -119,17 +125,6 @@ const ClubPage = () => {
     return () => {
       document.removeEventListener('SettingsTabClicked', handleSettingsTabClick);
     };
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setPageSize(window.innerWidth > 768);
-      const handleResize = () => {
-        setPageSize(window.innerWidth > 768)
-      }
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
-    }
   }, [])
 
   // if seeMembers is true, then we fetch the club members based on club's id and it rerenders when seeMembers is changed
@@ -138,19 +133,6 @@ const ClubPage = () => {
       fetchClubMembers(displayedClub?.id);
     }
   }, [seeMembers])
-
-  useEffect(() => {
-    // Set seeMembers to true when Settings tab is clicked
-    const handleSettingsTabClick = () => {
-      setSeeMembers(true);
-    };
-
-    document.addEventListener('SettingsTabClicked', handleSettingsTabClick);
-
-    return () => {
-      document.removeEventListener('SettingsTabClicked', handleSettingsTabClick);
-    };
-  }, []);
 
   useEffect(() => {
 
@@ -231,21 +213,18 @@ const ClubPage = () => {
         return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
       })
 
-    }
-    if (option === "Oldest") {
+    } else if (option === "Oldest") {
 
       newOrder.sort((a, b) => {
         return new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime();
       })
+    } else if (option === "Recently Updated") {
 
-
-    }
-    if (option === "Recently Updated") {
-
-    }
-    if (option === "Least Recently Updated") {
+    } else {
 
     }
+    // (option === "Least Recently Updated") {
+
     setPosts(newOrder)
     console.log(posts)
   }
@@ -402,7 +381,7 @@ const ClubPage = () => {
                 <CreatePostComponent setPosts={setPosts} />
               )}
               <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
-                <div className='flex justify-end items-center'>
+                {!selectedPostId && <div className='flex justify-end items-center'>
                   <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
                     <Dropdown.Item onClick={() => handleSortingPost("Popular")}>Popular</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Newest")}>Newest</Dropdown.Item>
@@ -410,39 +389,48 @@ const ClubPage = () => {
                     <Dropdown.Item onClick={() => handleSortingPost("Recently Updated")}>Recently Updated</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Least Recently Updated")}>Least Recently Updated</Dropdown.Item>
                   </Dropdown>
-                </div>
+                </div>}
 
                 {(editClub && isLeader) && (
                   <EditClubSettingsComponent updateSuccess={handleEditSuccess} />
 
                 )}
 
+
                 <div className='opacity-90 py-3'>
-                  {posts.length > 0 ? (
-                    posts.map((post, idx) => (
-                      <div key={idx} className='col-span-1 py-2'>
-                        <PostsComponent
-                          id={post.id}
-                          userId={post.userId}
-                          username={usersMap.get(post.userId)?.username || "Unknown User"}
-                          clubId={post.clubId}
-                          clubName={post.clubName || "Default Club Name"} // Provide a default value
-                          title={post.title}
-                          category={post.category}
-                          tags={post.tags ? post.tags.split(',') : null}
-                          description={post.description}
-                          image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
-                          dateCreated={post.dateCreated}
-                          dateUpdated={post.dateUpdated}
-                          isDeleted={post.isDeleted}
-                          displayClubName={false}
-                        />
-                      </div>
-                    ))
+                  {selectedPostId ? (
+                    <div>
+                      <Button onClick={() => setSelectedPostId(null)}>Back</Button>
+                      <PostRepliesComponent />
+                    </div>
                   ) : (
-                    <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts ):</h1>
+                    posts.length > 0 ? (
+                      posts.map((post, idx) => (
+                        <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handlePostPage(post.id)}>
+                          <PostsComponent
+                            id={post.id}
+                            userId={post.userId}
+                            username={usersMap.get(post.userId)?.username || "Unknown User"}
+                            clubId={post.clubId}
+                            clubName={post.clubName || "Default Club Name"} // Provide a default value
+                            title={post.title}
+                            category={post.category}
+                            tags={post.tags ? post.tags.split(',') : null}
+                            description={post.description}
+                            image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                            dateCreated={post.dateCreated}
+                            dateUpdated={post.dateUpdated}
+                            isDeleted={post.isDeleted}
+                            displayClubName={false}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts ):</h1>
+                    )
                   )}
                 </div>
+
               </div>
             </div>
               :
@@ -644,10 +632,10 @@ const ClubPage = () => {
 
             </Tabs>
           </div>
-          
+
 
         </div>
-      </div>
+      </div >
 
     </>
 

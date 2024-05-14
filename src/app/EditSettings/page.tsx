@@ -18,6 +18,8 @@ const EditSettings = () => {
     const [profilePic, setProfilePic] = useState<string | null>(null);
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
+    const [newPass, setNewPass] = useState<string | null>(null);
+    const [currentPass, setCurrentPass] = useState<string | null>(null);
 
     useEffect(() => {
         let userId = Number(localStorage.getItem("UserId"));
@@ -108,7 +110,7 @@ const EditSettings = () => {
                 }));
         
                 // Call updateUser with displayedUser
-                const updatedUser = { ...displayedUser, profilePic: updatedProfilePic };
+                const updatedUser = { ...displayedUser, profilePic: updatedProfilePic, currentPassword: currentPass, newPassword: newPass };
                 console.log(updatedUser);
                 await updateUser(updatedUser);
                 
