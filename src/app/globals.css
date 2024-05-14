@@ -172,18 +172,15 @@
 .tabsFont {
     font-family: 'mainFont' !important;
 }
-.favdropContainer{
-    position: relative;
-}
 
 .favdrop{
     display: none;
-    position: absolute;
-    min-width: 300px;
+    justify-content: center;
+    width: 94%;
     overflow: auto;
     box-shadow: 0px 6px 12px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    margin-top: 10%;
+    /* margin-top: 10%; */
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
 }

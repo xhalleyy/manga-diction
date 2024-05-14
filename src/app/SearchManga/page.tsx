@@ -76,7 +76,7 @@ const SearchManga = () => {
 
     const handleMangaSubmit = (mangaId: string) => {
        setMangaId(mangaId);
-       console.log({mangaId});
+    //    console.log({mangaId});
         router.push('/MangaInfo');
     }
 
@@ -95,7 +95,6 @@ const SearchManga = () => {
                             {/* search results, 5 per 'row' */}
                             {/* if no matches found, display 'hidden' h1 with a message similar to "Can't find what you're looking for? Double check your spelling" */}
                             {/* 1st result */}
-                            <Link href='/MangaInfo'>DevBtn</Link> {/* to navigate to MangaInfo when api is blocked- delete later */}
 
                             {mangaList.map((manga: IManga, index: number) => (
                                 <div key={index} className='flex justify-center' onClick={() => handleMangaSubmit(manga.data.id)}>
