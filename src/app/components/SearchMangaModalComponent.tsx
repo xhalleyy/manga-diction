@@ -130,7 +130,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
 
 
         </div>
-    )
+    ) 
 }
 
 export default SearchMangaModalComponent

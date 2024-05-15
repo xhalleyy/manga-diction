@@ -1,29 +1,31 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Badge, Button, Dropdown } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext'
-import { getAuthorName, specificManga } from '@/utils/DataServices'
-import { IManga } from '@/Interfaces/Interfaces'
+import { addMangaFav, getAuthorName, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
+import { IFavManga, IManga } from '@/Interfaces/Interfaces'
 
 
 const MangaInfo = () => {
 
     const { mangaId } = useClubContext();
-
     const [manga, setManga] = useState<IManga | null>(null); //null to handle intitial state
-
     const [authorName, setAuthorName] = useState<string>("");
-
     const [fileName, setFileName] = useState<string | undefined>("");
-
     // need to capitalize: Status and Demographic - manga possibly undefined, declare inside func
     const [favBool, setFavBool] = useState<boolean>(false);
-
     const [formattedStatus, setFormattedStatus] = useState<string>("");
-
     const [formattedDemographics, setFormattedDemographics] = useState<string>("");
+    const [isFavManga, setIsFavManga] = useState<IFavManga>();
+    const [fav, setFave] = useState<boolean>(false)
+    const [completed, setCompleted] = useState<boolean>(false);
+    const [isReading, setIsReading] = useState<boolean>(false);
 
+    const [completedChecked, setCompletedChecked] = useState<boolean>(false);
+    const [readingChecked, setReadingChecked] = useState<boolean>(false);
+
+    
 
     useEffect(() => {
 
@@ -34,11 +36,11 @@ const MangaInfo = () => {
                 findCoverArt(data);
                 const authorRel = data?.data.relationships;
                 const authorTruthy = authorRel?.find((auth: { type: string }) => auth.type === "author");
-                if(authorTruthy){
+                if (authorTruthy) {
                     const theAuthor = authorTruthy.id;
                     // console.log(theAuthor);
                     fetchAuthor(theAuthor);
-                }else{
+                } else {
                     return undefined
                 }
             } catch (error) {
@@ -46,10 +48,36 @@ const MangaInfo = () => {
             }
         };
 
-        
+
         fetchMangaInfo();
     }, [mangaId]);
-    
+
+    useEffect(() => {
+        const checkIsFavManga = async () => {
+            const user = Number(localStorage.getItem("UserId"));
+
+            if (manga) {
+                // Check if the manga is favorited by the user
+                const completedManga = await getCompletedManga(user);
+                const inProgressManga = await getInProgessManga(user)
+                setIsFavManga(inProgressManga || completedManga);
+            }
+        };
+
+        checkIsFavManga();
+    }, [manga]);
+
+    useEffect(() => {
+        // Initialize checkbox states based on manga status
+        if (isFavManga) {
+            setCompletedChecked(isFavManga.completed);
+            setReadingChecked(!isFavManga.completed);
+        } else {
+            setCompletedChecked(false);
+            setReadingChecked(false);
+        }
+    }, [isFavManga]);
+
     const fetchAuthor = async (authorId: string) => {
         const aData = await getAuthorName(authorId);
         // console.log(aData);
@@ -98,7 +126,7 @@ const MangaInfo = () => {
     };
 
     const favBtnDisplay = () => {
-        if (favBool == false) {
+        if (favBool == false && isFavManga) {
             setFavBool(true);
             // include display block dropdown toggle
             document.getElementById("dropCont")?.classList.add("show");
@@ -106,6 +134,66 @@ const MangaInfo = () => {
             setFavBool(false);
             document.getElementById("dropCont")?.classList.remove("show");
         }
+    };
+
+    const handleCompleted = async (manga: IManga) => {
+        let user = Number(localStorage.getItem("UserId"));
+    
+        try {
+            if (!completed && manga) {
+                const favMangaData: IFavManga = {
+                    id: isFavManga ? isFavManga.id : 0,
+                    userId: user,
+                    mangaId: manga.data.id,
+                    completed: true
+                };
+    
+                await addMangaFav(favMangaData);
+                setIsFavManga(favMangaData);
+            } else if (completed && isFavManga && isFavManga !== undefined) {
+                await removeFavManga(isFavManga.id);
+                setIsFavManga(undefined);
+            }
+
+            setCompletedChecked(true);
+                setReadingChecked(false);
+        } catch (error) {
+            console.error('Error updating manga status!', error);
+        }
+    
+        setCompleted(!completed);
+        setIsReading(false);
+        setFave(!fav);
+    };
+    
+    const handleOngoing = async (manga: IManga) => {
+        let user = Number(localStorage.getItem("UserId"));
+    
+        try {
+            if (!isReading && manga) {
+                const favMangaData: IFavManga = {
+                    id: isFavManga ? isFavManga.id : 0,
+                    userId: user,
+                    mangaId: manga.data.id,
+                    completed: false
+                };
+    
+                await addMangaFav(favMangaData);
+                setIsFavManga(favMangaData);
+            } else if (isReading && isFavManga) {
+                await removeFavManga(isFavManga.id);
+                setIsFavManga(undefined);
+            }
+
+            setCompletedChecked(false);
+            setReadingChecked(true);
+        } catch (error) {
+            console.error('Error updating manga status!', error);
+        }
+    
+        setCompleted(false);
+        setIsReading(!isReading);
+        setFave(!fav);
     };
 
     return (
@@ -128,23 +216,23 @@ const MangaInfo = () => {
                                 {/* favorites button */}
                                 <div>
                                     <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont w-full' onClick={favBtnDisplay}>
-                                        <span className='text-xl'>{!favBool ? "Favorite Manga +" : "Favorited ✔"}</span>
+                                        <span className='text-xl'>{fav ? "Favorited ✔" : "Favorite Manga +"}</span>
                                     </Button>
                                 </div>
-                                <div id='dropCont' className="favdrop bg-ivory mx-auto">
+                                <div id='dropCont' className={"favdrop bg-ivory mx-auto"}>
                                     {/* will fix formatting */}
                                     <div className='mt-1 ms-4'>
 
-                                    <div className="flex my-2">
-                                        <input type='checkbox' className='me-2 mt-1' />
-                                        <p>Currently Reading</p>
-                                    </div>
+                                        <div className="flex my-2">
+                                            <input onClick={() => handleOngoing(manga)} type='checkbox' className='me-2 mt-1' />
+                                            <p>Currently Reading</p>
+                                        </div>
 
-                                    <div className="flex my-2">
-                                        <input type='checkbox' className='me-2 mt-1' />
-                                        <p>Completed</p>
-                                    </div>
-                                    
+                                        <div className="flex my-2">
+                                            <input onClick={() => handleCompleted(manga)} type='checkbox' className='me-2 mt-1' />
+                                            <p>Completed</p>
+                                        </div>
+
                                     </div>
 
                                 </div>

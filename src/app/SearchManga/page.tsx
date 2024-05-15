@@ -45,6 +45,7 @@ const SearchManga = () => {
                 });
 
                 const mangaResults = await Promise.all(mangaPromises);
+                console.log(mangaResults);
                 setMangaList(mangaResults);
 
                 // Fetch cover files for each manga

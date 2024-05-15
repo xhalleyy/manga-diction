@@ -134,3 +134,10 @@ export interface IComments {
         profilePic: string
     }
 }
+
+export interface IFavManga {
+    id: number,
+    userId: number,
+    mangaId: string,
+    completed: boolean
+}
