@@ -313,7 +313,7 @@ const ProfilePage = (props: any) => {
                                             <SearchIcon className='text-4xl text-white' />
                                         </div>
                                     </div>
-                                        <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p>
+                                        <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{}&apos;</p>
 
                                         <div className="grid grid-cols-2">
                                             <SearchedFriendsComponent/>
@@ -396,7 +396,7 @@ const ProfilePage = (props: any) => {
                                 </div>
                             </div>
 
-                            <p className='px-16 text-[26px] font-poppinsMed text-darkbrown'>Search Results for "</p>
+                            <p className='px-16 text-[26px] font-poppinsMed text-darkbrown'>Search Results for &apos;{}&apos;</p>
 
                             {/* Friend item will be another component, .map through user's friends to display */}
                             <div className='grid grid-cols-5'>
