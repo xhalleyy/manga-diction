@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { AddUserToClub, GetLikesByPost, RemoveMember, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
+import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
@@ -16,10 +16,11 @@ import EditClubSettingsComponent from '../components/EditClubSettingsComponent';
 import { Chocolate, Planet } from 'react-kawaii';
 import { Alert } from '@mui/material';
 import PostRepliesComponent from '../components/PostRepliesComponent';
-;
+import { useRouter } from 'next/navigation';
+
 
 const ClubPage = () => {
-  ;
+  
   const { displayedClub, selectedPostId, setSelectedPostId } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
@@ -36,6 +37,8 @@ const ClubPage = () => {
   const [pageSize, setPageSize] = useState<boolean>(false)
   const [editClub, setEditClub] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean | undefined>(undefined)
+
+  const router = useRouter();
 
 
   const fetchClubMembers = async (clubId: number | undefined) => {
@@ -95,6 +98,8 @@ const ClubPage = () => {
       setJoined(false);
     } else {
       // STILL NEED TO WORK ON THIS
+      // await deleteClub(displayedClub?.id)
+      router.push('/Dashboard');
     }
   }
 

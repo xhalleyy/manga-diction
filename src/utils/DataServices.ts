@@ -97,6 +97,25 @@ export const updateClubs = async (Club: IClubs) => {
     return data;
 }
 
+// FETCH FOR DELETING CLUBS
+export const deleteClub = async (Club: IClubs) => {
+    const res = await fetch(url + 'Club/DeleteClub', {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(Club)
+    });
+
+    if(!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json();
+    return data;
+}
+
 // FETCH FOR GETTING CLUB BY ID OF CLUB
 
 // getClubItemsByLeaderId(1);
