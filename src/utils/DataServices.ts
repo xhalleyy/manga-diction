@@ -1,4 +1,4 @@
-import { IClubs, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -291,7 +291,7 @@ export const createPost = async (postData: IPostData) => {
 export const getUserInfo = async (userId: number | undefined) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
     const data: IUserData = await res.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -314,6 +314,14 @@ export const updateUser = async (User: IUpdateUser) => {
     const data = await res.json();
     console.log(data);
     console.log(User);
+    return data;
+}
+
+// GET USERS BY USERNAMES
+export const getUsersByUsername = async(username: string)=> {
+    const promise = await fetch(url + 'User/GetUsersbyUsername/' + username);
+    const data: IUserData[] = await promise.json()
+    console.log(data);
     return data;
 }
 
@@ -430,6 +438,31 @@ export const getComments = async(postId: number) => {
 export const getRepliesFromComment = async (commentId: number) => {
     const promise = await fetch(url + 'Comment/GetRepliesFromComment/' + commentId)
     const data = await promise.json();
+    console.log(data);
+    return data;
+}
+
+export const addCommentToPost = async (postId: number, userId: number) => {
+    const res = await fetch(`${url}Comment/AddCommentForPost/${postId}/${userId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if(!res.ok){
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json()
+    return data;
+}
+
+// --------------------- FRIENDS API FETCHES ----------------------
+export const getAcceptedFriends = async(userId: number) => {
+    const promise = await fetch(url + 'Friend/GetAcceptedFriends/' + userId);
+    const data: IAcceptedFriends[] = await promise.json();
     console.log(data);
     return data;
 }

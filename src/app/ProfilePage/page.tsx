@@ -6,19 +6,19 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
 import { IClubs, IUserData } from '@/Interfaces/Interfaces';
-import { GetLikesByPost, getClubsByLeader, getUserClubs, getUserInfo, publicClubsApi, specifiedClub } from '@/utils/DataServices';
+import { GetLikesByPost, getClubsByLeader, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
-import FriendsDesktopComponent from '../components/FriendsDesktopComponent';
-import FriendsComponent from '../components/FriendsDesktopComponent';
-import { CustomFlowbiteTheme, Tabs } from 'flowbite-react';
+// import FriendsDesktopComponent from '../components/FriendsComponent';
+import { Avatar, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import CardComponent2 from '../components/CardComponent2';
 import CardProfPgComponent from '../components/CardProfPgComponent';
 import EditIcon from '@mui/icons-material/Edit';
 import { Tooltip } from '@mui/material';
 import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
+import FriendsComponent from '../components/FriendsComponent';
 
 const ProfilePage = (props: any) => {
 
@@ -34,6 +34,18 @@ const ProfilePage = (props: any) => {
     const router = useRouter();
 
     const [friendBool, setFriendBool] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>("");
+    const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
+    const searchUser = async () => {
+        try {
+            const data = await getUsersByUsername(search);
+            setSearchedUsers(data);
+            // setSearch(data);
+        } catch (error) {
+            console.error('Error searching users:', error);
+        }
+    }
+
 
     const customTabs: CustomFlowbiteTheme["tabs"] = {
         "base": "flex flex-col gap-2",
@@ -92,6 +104,16 @@ const ProfilePage = (props: any) => {
         "tabpanel": "py-3"
     }
 
+    const customAvatar: CustomFlowbiteTheme['avatar'] = {
+        "root": {
+            "rounded": "rounded-full shadow-lg",
+            "size": {
+                "md": "h-12 w-12",
+                "lg": "h-16 w-16"
+            }
+        }
+    }
+
 
     const clubox: string = 'grid grid-cols-3 gap-5'
     const noClubox: string = 'grid grid-cols-3 gap-5 hidden'
@@ -127,7 +149,7 @@ const ProfilePage = (props: any) => {
         const fetchedUser = async () => {
             const user = await getUserInfo(userId);
             info.setDisplayedUser(user);
-            console.log("User data updated:", user);
+            // console.log("User data updated:", user);
         };
         fetchedUser();
 
@@ -218,7 +240,7 @@ const ProfilePage = (props: any) => {
 
     const viewAllFriends = () => {
         // same function as openFriendSearch, but for mobile
-        if (friendBool === false){
+        if (friendBool === false) {
             document.getElementById("mobileClubFav")?.classList.add("hidden");
             document.getElementById("mobileFriends")?.classList.remove("hidden");
             setFriendBool(true);
@@ -280,12 +302,12 @@ const ProfilePage = (props: any) => {
                                         <AddIcon fontSize='large' className='addI' onClick={() => openFriendSearch()} />
                                     </div>
                                 </div>
-                                <div className="bg-ivory rounded-lg p-[5px]">
+                                <div className="bg-white border-8 border-ivory rounded-lg p-[5px] h-72 overflow-y-scroll">
                                     {/* displays 4 friends at a time ? */}
                                     <FriendsComponent />
-                                    <FriendsComponent />
-                                    <FriendsComponent />
-                                    <FriendsComponent />
+                                    {/* <FriendsComponent /> */}
+                                    {/* <FriendsComponent /> */}
+                                    {/* <FriendsComponent /> */}
                                 </div>
                             </div>
 
@@ -296,8 +318,8 @@ const ProfilePage = (props: any) => {
                                     <button className='justify-end' onClick={() => viewAllFriends()}> View All </button>
                                 </div>
 
-                                <div className='border-ivory rounded-lg bg-white border-8 h-36'>
-                                    <div className='grid grid-cols-3'>
+                                <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
+                                    <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-scroll'>
                                         <FriendsComponent />
                                         <FriendsComponent />
                                         <FriendsComponent />
@@ -307,21 +329,21 @@ const ProfilePage = (props: any) => {
 
                             {/* friends section (toggled with View All) */}
                             <div className={pageSize ? 'hidden' : 'mt-7 hidden'} id='mobileFriends'>
-                                    <div className='flex justify-center'>
-                                        <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
-                                            <input className='rounded-xl h-8 ps-3' />
-                                            <SearchIcon className='text-4xl text-white' />
-                                        </div>
+                                <div className='flex justify-center'>
+                                    <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
+                                        <input className='rounded-xl h-8 ps-3' />
+                                        <SearchIcon className='text-4xl text-white' />
                                     </div>
-                                        <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p>
+                                </div>
+                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p>
 
-                                        <div className="grid grid-cols-2">
-                                            <SearchedFriendsComponent/>
-                                            <SearchedFriendsComponent/>
-                                            <SearchedFriendsComponent/>
-                                            <SearchedFriendsComponent/>
-                                            <SearchedFriendsComponent/>
-                                        </div>
+                                <div className="grid grid-cols-2">
+                                    <SearchedFriendsComponent />
+                                    <SearchedFriendsComponent />
+                                    <SearchedFriendsComponent />
+                                    <SearchedFriendsComponent />
+                                    <SearchedFriendsComponent />
+                                </div>
 
                             </div>
 
@@ -391,23 +413,70 @@ const ProfilePage = (props: any) => {
                             {/* onClick of + button, target and hide div with id "clubfavBox" and display current div "friendsBB" */}
                             <div className='flex justify-end rounded-xl'>
                                 <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
-                                    <input className='rounded-xl h-8 ps-3' />
-                                    <SearchIcon className='text-4xl text-white' />
+                                    <input
+                                        className='rounded-xl h-8 ps-3'
+                                        onChange={(e) => setSearch(e.target.value)}
+                                    />
+                                    <SearchIcon className='text-4xl text-white cursor-pointer' onClick={searchUser} />
                                 </div>
                             </div>
 
-                            <p className='px-16 text-[26px] font-poppinsMed text-darkbrown'>Search Results for "</p>
+                            <p className='px-16 text-[26px] font-poppinsMed text-darkbrown'>{`Search Results for '${search}'`}</p>
 
                             {/* Friend item will be another component, .map through user's friends to display */}
                             <div className='grid grid-cols-5'>
-
+                                {searchedUsers && searchedUsers.map(user => (
+                                    <div key={user.id}>
+                                        {pageSize ? (
+                                            <div className="ms-auto mt-5">
+                                                <Avatar
+                                                    img={user.profilePic || ''} 
+                                                    rounded
+                                                    theme={customAvatar}
+                                                    size="md"
+                                                />
+                                                {/* <Image
+                                                    src={user.profilePic | ''}
+                                                    alt='profile picture'
+                                                    height={110}
+                                                    width={110}
+                                                    className='searchPfp'
+                                                /> */}
+                                                <div className='text-center mt-2'>
+                                                    <p className='text-lg font font-poppinsMed'>{user.username}</p>
+                                                    <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className='mt-7 mx-auto'>
+                                                <Avatar
+                                                    img={user.profilePic || ''} 
+                                                    rounded
+                                                    theme={customAvatar}
+                                                    size="lg"
+                                                />
+                                                {/* <Image
+                                                    src={user.profilePic}
+                                                    alt='profile picture'
+                                                    height={110}
+                                                    width={110}
+                                                    className='searchPfp'
+                                                /> */}
+                                                <div className='text-center mt-2'>
+                                                    <p className='text-lg font font-poppinsMed'>{user.username}</p>
+                                                    <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                                {/* <SearchedFriendsComponent />
                                 <SearchedFriendsComponent />
                                 <SearchedFriendsComponent />
                                 <SearchedFriendsComponent />
                                 <SearchedFriendsComponent />
                                 <SearchedFriendsComponent />
-                                <SearchedFriendsComponent />
-                                <SearchedFriendsComponent />
+                                <SearchedFriendsComponent /> */}
 
                             </div>
 

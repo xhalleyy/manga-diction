@@ -134,3 +134,14 @@ export interface IComments {
         profilePic: string
     }
 }
+
+export interface IAcceptedFriends {
+    id: number
+    username: string,
+    firstName: string,
+    lastName: string,
+    age: number,
+    profilePic: string,
+    salt: string,
+    hash: string
+}
