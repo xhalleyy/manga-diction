@@ -53,21 +53,21 @@ const Dashboard = () => {
 
   return (
     <>
-    <div className='bg-offWhite flex flex-col flex-1 h-screen bg-cover bg-no-repeat'>
+    <div className='bg-offwhite flex flex-col flex-1 h-screen bg-cover bg-no-repeat'>
 
       <NavbarComponent/>
 
 
-      <div className='bg-offwhite flex flex-col flex-1 pb-10'>
+      <div className='bg-offwhite flex flex-col pb-10'>
 
-        <div className={pageSize ? "flex flex-1 justify-between items-end px-[40px] py-4" : "px-[70px] py-4"}>
-          <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 ml-8 ' : 'font-mainFont text-darkbrown pt-4 text-center font-bold'}>{pageSize ? 'Popular Public Clubs:' : 'Popular Public Clubs'}</p>
+        <div className={pageSize ? "flex flex-1 justify-between items-start px-[40px] py-4" : "px-[70px] py-4"}>
+          <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 ml-8 ' : 'font-mainFont text-darkbrown pt-4 text-center font-bold'}>Popular Public Clubs</p>
           <div className={pageSize ? 'mr-8' : 'hidden'}>
             <ClubModalComponent />
           </div>
         </div>
 
-        <div className={pageSize ? 'px-[130px] mb-2 ' : 'px-[20px] mb-2'}>
+        <div className={pageSize ? 'px-[130px] mb-2' : 'px-[20px] mb-2'}>
           <CarouselComponent />
         </div>
 
@@ -79,7 +79,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className={pageSize ? 'px-[70px] grid grid-cols-4 gap-12' : 'px-4'}>
+        <div className={pageSize ? 'px-[70px] grid grid-cols-4 xl:gap-12 lg:gap-4' : 'px-4'}>
           <div className='col-span-3'>
             <p style={pageSize ? {fontSize: '18px'} : {fontSize: '26px'}} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
             <div className='bg-paleblue px-5 py-3 rounded-lg'>

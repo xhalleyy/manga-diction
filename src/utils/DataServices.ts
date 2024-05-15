@@ -296,24 +296,22 @@ export const getUserInfo = async (userId: number | undefined) => {
 }
 
 // UPDATE USER INFO
-export const updateUser = async (User: IUpdateUser) => {
-    const res = await fetch(url + 'User/UpdateUser/', {
-        method: "PUT",
+export const updateUser = async (user: IUpdateUser) => {
+    const res = await fetch(`${url}User/UpdateUser/`, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(User)
+        body: JSON.stringify(user)
     });
 
-
     if (!res.ok) {
-        const message = 'An error has occured: ' + res.status;
+        const message = `An error has occurred: ${res.status}`;
         throw new Error(message);
     }
 
     const data = await res.json();
-    console.log(data);
-    console.log(User);
+    console.log('User updated:', data);
     return data;
 }
 
