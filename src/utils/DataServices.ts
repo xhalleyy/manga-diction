@@ -1,4 +1,5 @@
-import { IAcceptedFriends, IClubs, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IFavManga, ILoginUserInfo, IManga, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData } from "@/Interfaces/Interfaces";
+import { getDialogUtilityClass } from "@mui/material";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -250,6 +251,58 @@ export const specificManga = async (mangaId: string) => {
     return data;
 }
 
+// FAVORITED MANGA FETCHES 
+export const addMangaFav = async (manga: IFavManga) => {
+    console.log(manga.id);
+    const res = await fetch(`${url}Favorited/AddFavoriteManga/${manga.userId}`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(manga)
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.text();
+    console.log(data);
+    return data;
+}
+
+export const getInProgessManga = async (userId: number) => {
+    const promise = await fetch(url + 'Favorited/GetInProgressFavorites/' + userId)
+    const data = await promise.json()
+    console.log(data);
+    return data;
+}
+
+export const getCompletedManga = async (userId: number) => {
+    const promise = await fetch(url + 'Favorited/GetCompletedFavorites/' + userId)
+    const data = await promise.json();
+    console.log(data);
+    return data;
+}
+
+export const removeFavManga = async (id: number) => {
+    const res = await fetch(`${url}Favorited/DeleteFavoriteManga/` + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.text();
+    return data;
+}
+
 // ------------------------ POST API FETCHES -----------------------
 // GET POSTS BY CLUB ID 
 export const getPostsByClubId = async (clubId: number | undefined) => {
@@ -291,7 +344,6 @@ export const createPost = async (postData: IPostData) => {
 export const getUserInfo = async (userId: number | undefined) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
     const data: IUserData = await res.json();
-    // console.log(data)
     return data;
 }
 
@@ -464,4 +516,27 @@ export const getAcceptedFriends = async(userId: number) => {
     const data: IAcceptedFriends[] = await promise.json();
     console.log(data);
     return data;
+}
+
+// ------------------- LOCAL STORAGE FETCHES -----------------------
+export const getLocalStorage = () => {
+    let localStorageData = localStorage.getItem('Favorites')
+
+    if(localStorageData == null){
+        return [];
+    }
+
+    return JSON.parse(localStorageData);
+}
+
+export const saveToLocalStorage = (manga: IFavManga) => {
+    let favorites: string[] = getLocalStorage() || [];
+
+    const mangaName = manga.mangaId;
+
+    if(!favorites?.includes(mangaName)) {
+        favorites.push(mangaName);
+    }
+
+    localStorage.setItem("Favorites", JSON.stringify(favorites));
 }

@@ -27,8 +27,6 @@ export default function DrawerComponent() {
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
       (event: React.KeyboardEvent | React.MouseEvent<Element, MouseEvent>) => {
-        console.log('Toggling drawer:', open);
-
         if (
           event.type === 'keydown' &&
           ((event as React.KeyboardEvent).key === 'Tab' ||

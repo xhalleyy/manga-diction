@@ -135,6 +135,13 @@ export interface IComments {
     }
 }
 
+export interface IFavManga {
+    id: number,
+    userId: number,
+    mangaId: string,
+    completed: boolean
+}
+
 export interface IAcceptedFriends {
     id: number
     username: string,
