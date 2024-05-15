@@ -1,5 +1,4 @@
-import { IAcceptedFriends, IClubs, IFavManga, ILoginUserInfo, IManga, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData } from "@/Interfaces/Interfaces";
-import { getDialogUtilityClass } from "@mui/material";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -501,6 +500,23 @@ export const addCommentToPost = async (postId: number | null, userId: number, co
         body: JSON.stringify(comment)
     });
 
+    if(!res.ok){
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.text()
+    return data;
+}
+
+export const addReplyToComment = async (commentId: number, userId: number, reply: string) => {
+    const res = await fetch(`${url}/Comment/AddReplyForComment/${commentId}/${userId}`, {
+        method: 'POST',
+           headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reply)
+    });
     if(!res.ok){
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);

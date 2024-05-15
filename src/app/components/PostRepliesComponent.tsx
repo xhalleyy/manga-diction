@@ -1,6 +1,6 @@
 import { useClubContext } from '@/context/ClubContext';
 import React, { useEffect, useRef, useState } from 'react';
-import { addCommentToPost, getComments, getPostById, getRepliesFromComment, getUserInfo, specifiedClub } from '@/utils/DataServices';
+import { addCommentToPost, addReplyToComment, getComments, getPostById, getRepliesFromComment, getUserInfo, specifiedClub } from '@/utils/DataServices';
 import PostsComponent from './PostsComponent';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
@@ -18,14 +18,35 @@ const PostRepliesComponent = () => {
     const [parentComments, setParentComments] = useState<IComments[]>([]);
     const [allReplies, setAllReplies] = useState<{ [key: number]: IComments[] }>({});
     const [likes, setLikes] = useState<number>(0);
-    const [newComment, setNewComment] = useState<boolean>(false);
+
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [expandValue, setExpandValue] = useState<string>("");
+    const [replyValue, setReplyValue] = useState("");
+    const [validInput, setValidInput] = useState(false);
+    // const [newReplies, setNewReplies] = useState<{ [key: string]: boolean }>({});
+    const [validReply, setValidReply] = useState(false);
+    const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
+
 
     useAutosizeTextArea(textAreaRef.current, expandValue);
+
     const handleChange = (expand: string) => {
-        setExpandValue(expand);
+        if (expand.length > 0) {
+            setExpandValue(expand);
+            setValidInput(true);
+        } else {
+            alert("Please input something to submit comment!");
+        }
     };
+
+    const handleReplyChange = (text: string) => {
+        if (text.length > 0) {
+            setReplyValue(text);
+            setValidReply(true);
+        } else {
+            alert("Please input something to submit a reply!")
+        }
+    }
 
     const fetchedPost = async () => {
         try {
@@ -63,20 +84,47 @@ const PostRepliesComponent = () => {
 
     const handleNewComment = async () => {
         let userId = Number(localStorage.getItem("UserId"));
-        const addComment = await addCommentToPost(selectedPostId, userId, expandValue);
 
-        if (typeof addComment === 'object' && 'id' in addComment) {
-            setParentComments([...parentComments, addComment as IComments]);
-            setExpandValue(''); // Clear the textarea after adding the comment
+        if (validInput) {
+            // alert("Comment being added...");
+            const addComment = await addCommentToPost(selectedPostId, userId, expandValue);
+
+            if (addComment === "Comment added successfully.") {
+                fetchedPost();
+                setExpandValue('');
+            }
+        } else {
+            alert("Invalid input!");
+        }
+    };
+
+    const handleNewReply = async (commentId: number) => {
+        let userId = Number(localStorage.getItem("UserId"));
+    
+        if (validReply) {
+            const addReply = await addReplyToComment(commentId, userId, replyValue);
+    
+            if (addReply === "Reply added successfully.") {
+                fetchedPost();
+                setReplyValue('');
+            }
+        } else {
+            alert("Invalid input!");
         }
     }
 
+    const handleToggleReply = (commentId: number) => {
+        // setNewReplies(prevState => ({
+        //     ...prevState,
+        //     [commentId]: !prevState[commentId] // Toggle newReply state for the specific comment
+        // }));
+        setSelectedCommentId(prevId => (prevId === commentId ? null : commentId));
+    };
+
     useEffect(() => {
         fetchedPost();
-    }, [selectedPostId]);
-    // adding parentComments in dependency array causes infinite loop
+    }, []);
 
-    
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
         "root": {
             "rounded": "rounded-full shadow-lg",
@@ -85,10 +133,6 @@ const PostRepliesComponent = () => {
             }
         }
     };
-
-    const addComment = () => {
-        setNewComment(true);
-    }
 
     return (
         <>
@@ -112,7 +156,7 @@ const PostRepliesComponent = () => {
                     />
                 )}
             </div>
-            <div className='py-2 px-10 relative'>
+            <div className='py-2 px-8 relative'>
                 <textarea
                     required
                     id="review-text"
@@ -121,15 +165,15 @@ const PostRepliesComponent = () => {
                     placeholder='Add a comment...'
                     rows={1}
                     value={expandValue}
-                    className='w-full rounded-md font-mainFont border-0 focus-within:border-0 focus-within:ring-0 px-5 pt-5 pb-6'
+                    className='w-full rounded-lg font-mainFont border-0 focus-within:border-0 focus-within:ring-2 focus-within:ring-cyan-300 px-5 pt-5 pb-6'
                 />
-                <button onClick={handleNewComment} className='font-mainFont text-white text-md bg-darkerblue px-1.5 rounded-tl-lg rounded-br-lg absolute right-10 bottom-3.5'>Submit</button>
+                <button onClick={handleNewComment} className='font-mainFont text-white text-md bg-darkerblue px-1.5 rounded-tl-lg rounded-br-lg absolute right-8 bottom-3.5'>Submit</button>
             </div>
-            <div className='bg-white/95 rounded-md'>
+            <div className='mx-5'>
                 <div>
                     {parentComments.map((comment) => (
-                        <div key={comment.id} className='flex flex-col relative pt-3'>
-                            <div className='flex flex-row border-b-2 rounded-md'>
+                        <div key={comment.id} className='flex flex-col relative rounded-md pt-3 my-1 bg-white/95'>
+                            <div className='flex flex-row border-b-2 rounded-md '>
                                 <div className='arrow inline-block ms-10 place-content-end mt-6'>
                                     <TurnLeftIcon sx={{ fontSize: 30 }} />
                                 </div>
@@ -144,16 +188,31 @@ const PostRepliesComponent = () => {
                                             <ThumbUpOutlinedIcon sx={{ fontSize: '15px' }} />
                                             <div className='font-mainFont text-[15px]'><p>{likes}</p></div>
                                         </div>
-                                        <div className='flex border border-black rounded-xl h-[22px] text-black font-normal mr-1 px-5  justify-around items-center gap-3 cursor-pointer'>
+                                        <div onClick={() => handleToggleReply(comment.id)} className='flex border border-black rounded-xl h-[22px] text-black font-normal mr-1 px-5  justify-around items-center gap-3 cursor-pointer'>
                                             <ModeCommentOutlinedIcon sx={{ fontSize: '15px' }} />
                                             <p className='font-mainFont text-[15px]'>{allReplies[comment.id]?.length || 0}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            {selectedCommentId === comment.id && (
+                                <div className='py-3 px-8 relative'>
+                                    <textarea
+                                        required
+                                        id="review-text"
+                                        onChange={(e) => handleReplyChange(e.target.value)}
+                                        ref={textAreaRef}
+                                        placeholder='Add a comment...'
+                                        rows={1}
+                                        value={replyValue}
+                                        className='w-full shadow-lg rounded-lg font-mainFont border-0 focus-within:border-0 focus-within:ring-2 focus-within:ring-cyan-300 px-5 pt-5 pb-6'
+                                    />
+                                    <button onClick={() => handleNewReply(comment.id)} className='font-mainFont text-white text-md bg-darkerblue px-1.5 rounded-tl-lg rounded-br-lg absolute right-[31px] bottom-[17px]'>Submit</button>
+                                </div>
+                            )}
                             {/* Render replies for each comment */}
                             {allReplies[comment.id] && allReplies[comment.id].map((reply) => (
-                                <div key={reply.id} className='flex flex-col relative py-3 pl-10 border-b-2 rounded-md'>
+                                <div key={reply.id} className='flex flex-col relative py-3 pl-10  rounded-md'>
                                     <div className='flex flex-row'>
                                         <div className='arrow inline-block ms-20 place-content-end mt-6'>
                                             <TurnLeftIcon sx={{ fontSize: 30 }} />
