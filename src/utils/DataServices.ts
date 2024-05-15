@@ -436,7 +436,7 @@ export const getComments = async(postId: number) => {
 export const getRepliesFromComment = async (commentId: number) => {
     const promise = await fetch(url + 'Comment/GetRepliesFromComment/' + commentId)
     const data = await promise.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 

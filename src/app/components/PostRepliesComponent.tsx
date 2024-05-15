@@ -49,7 +49,10 @@ const PostRepliesComponent = () => {
                         return { [comment.id]: replies };
                     })
                 );
-                // Merge all replies into a single object
+
+                // reduce method to combine all objects into one;
+                // acc = accumulates the results
+                // curr = current value
                 const allRepliesObject = repliesData.reduce((acc, curr) => ({ ...acc, ...curr }), {});
                 setAllReplies(allRepliesObject);
             }
@@ -70,7 +73,8 @@ const PostRepliesComponent = () => {
 
     useEffect(() => {
         fetchedPost();
-    }, [selectedPostId, parentComments]);
+    }, [selectedPostId]);
+    // adding parentComments in dependency array causes infinite loop
 
     
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
