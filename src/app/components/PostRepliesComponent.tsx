@@ -1,12 +1,14 @@
 import { useClubContext } from '@/context/ClubContext';
-import React, { useEffect, useState } from 'react';
-import { getComments, getPostById, getRepliesFromComment, getUserInfo, specifiedClub } from '@/utils/DataServices';
+import React, { useEffect, useRef, useState } from 'react';
+import { addCommentToPost, getComments, getPostById, getRepliesFromComment, getUserInfo, specifiedClub } from '@/utils/DataServices';
 import PostsComponent from './PostsComponent';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import { IClubs, IComments, IPostData, IUserData } from '@/Interfaces/Interfaces';
 import TurnLeftIcon from '@mui/icons-material/TurnLeft';
 import { Avatar, CustomFlowbiteTheme } from 'flowbite-react';
+import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
+
 
 const PostRepliesComponent = () => {
     const { selectedPostId } = useClubContext();
@@ -17,6 +19,13 @@ const PostRepliesComponent = () => {
     const [allReplies, setAllReplies] = useState<{ [key: number]: IComments[] }>({});
     const [likes, setLikes] = useState<number>(0);
     const [newComment, setNewComment] = useState<boolean>(false);
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const [expandValue, setExpandValue] = useState<string>("");
+
+    useAutosizeTextArea(textAreaRef.current, expandValue);
+    const handleChange = (expand: string) => {
+        setExpandValue(expand);
+    };
 
     const fetchedPost = async () => {
         try {
@@ -43,16 +52,27 @@ const PostRepliesComponent = () => {
                 // Merge all replies into a single object
                 const allRepliesObject = repliesData.reduce((acc, curr) => ({ ...acc, ...curr }), {});
                 setAllReplies(allRepliesObject);
-            } 
+            }
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    const handleNewComment = async () => {
+        let userId = Number(localStorage.getItem("UserId"));
+        const addComment = await addCommentToPost(selectedPostId, userId, expandValue);
+
+        if (typeof addComment === 'object' && 'id' in addComment) {
+            setParentComments([...parentComments, addComment as IComments]);
+            setExpandValue(''); // Clear the textarea after adding the comment
+        }
+    }
+
     useEffect(() => {
         fetchedPost();
-    }, [selectedPostId]);
+    }, [selectedPostId, parentComments]);
 
+    
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
         "root": {
             "rounded": "rounded-full shadow-lg",
@@ -62,7 +82,7 @@ const PostRepliesComponent = () => {
         }
     };
 
-    const addComment = ()=> {
+    const addComment = () => {
         setNewComment(true);
     }
 
@@ -87,6 +107,19 @@ const PostRepliesComponent = () => {
                         displayClubName={false}
                     />
                 )}
+            </div>
+            <div className='py-2 px-10 relative'>
+                <textarea
+                    required
+                    id="review-text"
+                    onChange={(e) => handleChange(e.target.value)}
+                    ref={textAreaRef}
+                    placeholder='Add a comment...'
+                    rows={1}
+                    value={expandValue}
+                    className='w-full rounded-md font-mainFont border-0 focus-within:border-0 focus-within:ring-0 px-5 pt-5 pb-6'
+                />
+                <button onClick={handleNewComment} className='font-mainFont text-white text-md bg-darkerblue px-1.5 rounded-tl-lg rounded-br-lg absolute right-10 bottom-3.5'>Submit</button>
             </div>
             <div className='bg-white/95 rounded-md'>
                 <div>

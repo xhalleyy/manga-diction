@@ -440,12 +440,13 @@ export const getRepliesFromComment = async (commentId: number) => {
     return data;
 }
 
-export const addCommentToPost = async (postId: number, userId: number) => {
+export const addCommentToPost = async (postId: number | null, userId: number, comment: string) => {
     const res = await fetch(`${url}Comment/AddCommentForPost/${postId}/${userId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify(comment)
     });
 
     if(!res.ok){
@@ -453,7 +454,7 @@ export const addCommentToPost = async (postId: number, userId: number) => {
         throw new Error(message);
     }
 
-    const data = await res.json()
+    const data = await res.text()
     return data;
 }
 
