@@ -230,7 +230,6 @@ const ClubPage = () => {
   }
 
   const customDropdown = {
-
     "floating": {
       "base": "z-10 w-fit divide-y divide-gray-100 rounded shadow focus:outline-none",
       "content": "py-1 text-sm text-gray-700 dark:text-gray-200",
@@ -256,21 +255,11 @@ const ClubPage = () => {
     "tablist": {
       "base": "text-center",
       "styles": {
-        "default": "font-mainFont border-b border-gray-200 dark:border-gray-700",
         "underline": "font-mainFont  -mb-px border-b border-gray-200 dark:border-gray-700",
-        "pills": "font-mainFont flex-wrap space-x-2 text-3xl font-bold text-darkbrown dark:text-gray-400",
-        "fullWidth": "font-mainFont grid w-full grid-flow-col divide-x divide-gray-200 rounded-none text-lg font-bold shadow dark:divide-gray-700"
       },
       "tabitem": {
         "base": "font-mainFont rounded-t-lg p-4 text-lg font-bold first:ml-0 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:text-black disabled:dark:text-black",
         "styles": {
-          "default": {
-            "base": "rounded-t-lg",
-            "active": {
-              "on": "bg-gray-100 text-darkbrown ",
-              "off": "text-black hover:bg-gray-50"
-            }
-          },
           "underline": {
             "base": "rounded-t-lg",
             "active": {
@@ -278,31 +267,8 @@ const ClubPage = () => {
               "off": "border-b-2 border-transparent text-ivory hover:border-ivory dark:text-gray-400 dark:hover:text-gray-300"
             }
           },
-          "pills": {
-            "base": "",
-            "active": {
-              "on": "rounded-lg bg-cyan-600 text-white",
-              "off": "rounded-lg hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white"
-            }
-          },
-          "fullWidth": {
-            "base": "w-full rounded-none first:ml-0",
-            "active": {
-              "on": "active rounded-none bg-gray-100 p-4 text-gray-900 dark:bg-gray-700 dark:text-white",
-              "off": "rounded-none bg-white hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white"
-            }
-          }
         },
         "icon": "mr-2 h-5 w-5"
-      }
-    },
-    "tabitemcontainer": {
-      "base": "",
-      "styles": {
-        "default": "",
-        "underline": "",
-        "pills": "",
-        "fullWidth": ""
       }
     },
     "tabpanel": "py-3"

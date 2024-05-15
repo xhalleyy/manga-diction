@@ -173,19 +173,20 @@ const ProfilePage = (props: any) => {
             const memberIds = await getUserClubs(userId);
             const promises = memberIds.map((clubId: number) => specifiedClub(clubId)); // Assuming specifiedClub returns club info
             const usersInfo = await Promise.all(promises);
-            return usersInfo; // Return the fetched clubs
+            return usersInfo; 
         } catch (error) {
             console.error('Error fetching club members:', error);
-            return []; // Return an empty array in case of an error
+            return []; 
+            // returning an empty array because we merge user clubs and leader clubs together and they have to be of an array type
         }
     };
 
     const fetchClubsbyLeader = async (leaderId: number) => {
         try {
-            return await getClubsByLeader(leaderId); // Return the fetched clubs
+            return await getClubsByLeader(leaderId); 
         } catch (error) {
             console.error('Error fetching clubs by leader:', error);
-            return []; // Return an empty array in case of an error
+            return []; 
         }
     };
 
@@ -197,10 +198,8 @@ const ProfilePage = (props: any) => {
                     const userClubs = await fetchUserClubs(userId);
                     const leaderClubs = await fetchClubsbyLeader(userId);
 
-                    // Merge fetched clubs
                     const allClubs = [...userClubs, ...leaderClubs];
 
-                    // Deduplicate clubs
                     const uniqueClubs = allClubs.filter(
                         (club, index, self) =>
                             index ===

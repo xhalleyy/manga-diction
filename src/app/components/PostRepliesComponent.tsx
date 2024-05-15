@@ -43,9 +43,7 @@ const PostRepliesComponent = () => {
                 // Merge all replies into a single object
                 const allRepliesObject = repliesData.reduce((acc, curr) => ({ ...acc, ...curr }), {});
                 setAllReplies(allRepliesObject);
-            } else {
-                // Handle the case when selectedPostId is null
-            }
+            } 
         } catch (error) {
             console.error('Error fetching data:', error);
         }

@@ -1,23 +1,23 @@
 export interface IUserData {
-    id: number
-    username: string
-    firstName: string
-    lastName: string
-    age: number
-    // password: string
-    profilePic: string | null
+    id: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    age: number;
+    profilePic: string | null;
 }
 
 export interface IUpdateUser {
-    id: number
-    username: string
-    firstName: string
-    lastName: string
-    age: number
-    profilePic: string | null
-    currentPassword: string | null
-    newPassword: string | null
+    id: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    age: number;
+    profilePic: string | null;
+    currentPassword: string | null;
+    newPassword: string | null;
 }
+
 
 export interface ILoginUserInfo {
     username: string
