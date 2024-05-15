@@ -335,7 +335,8 @@ const ProfilePage = (props: any) => {
                                         <SearchIcon className='text-4xl text-white' />
                                     </div>
                                 </div>
-                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p>
+                                {/* <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p> */}
+                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{}&apos;</p>
 
                                 <div className="grid grid-cols-2">
                                     <SearchedFriendsComponent />
@@ -409,7 +410,7 @@ const ProfilePage = (props: any) => {
                         </div>
 
                         {/* friends search section here- displayed onClick (of + button) */}
-                        <div className="bg-offwhite col-span-3 hidden" id='friendsBB'>
+                        <div className={pageSize ? "bg-offwhite col-span-3 hidden" : "hidden"} id='friendsBB'>
                             {/* onClick of + button, target and hide div with id "clubfavBox" and display current div "friendsBB" */}
                             <div className='flex justify-end rounded-xl'>
                                 <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>

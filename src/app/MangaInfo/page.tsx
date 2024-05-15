@@ -34,11 +34,11 @@ const MangaInfo = () => {
                 findCoverArt(data);
                 const authorRel = data?.data.relationships;
                 const authorTruthy = authorRel?.find((auth: { type: string }) => auth.type === "author");
-                if(authorTruthy){
+                if (authorTruthy) {
                     const theAuthor = authorTruthy.id;
                     // console.log(theAuthor);
                     fetchAuthor(theAuthor);
-                }else{
+                } else {
                     return undefined
                 }
             } catch (error) {
@@ -46,10 +46,10 @@ const MangaInfo = () => {
             }
         };
 
-        
+
         fetchMangaInfo();
     }, [mangaId]);
-    
+
     const fetchAuthor = async (authorId: string) => {
         const aData = await getAuthorName(authorId);
         // console.log(aData);
@@ -89,12 +89,14 @@ const MangaInfo = () => {
     };
 
     const trimDescription = (description: string) => {
+        if (description) {
         const indexEnd = description.indexOf('---');
         // if '---', trims description up to that index
-        if (indexEnd !== -1) {
-            return description.substring(0, indexEnd).trim();
-        } else
-            return description;
+            if (indexEnd !== -1) {
+                return description.substring(0, indexEnd).trim();
+            } else
+                return description;
+        }
     };
 
     const favBtnDisplay = () => {
@@ -135,16 +137,16 @@ const MangaInfo = () => {
                                     {/* will fix formatting */}
                                     <div className='mt-1 ms-4'>
 
-                                    <div className="flex my-2">
-                                        <input type='checkbox' className='me-2 mt-1' />
-                                        <p>Currently Reading</p>
-                                    </div>
+                                        <div className="flex my-2">
+                                            <input type='checkbox' className='me-2 mt-1' />
+                                            <p>Currently Reading</p>
+                                        </div>
 
-                                    <div className="flex my-2">
-                                        <input type='checkbox' className='me-2 mt-1' />
-                                        <p>Completed</p>
-                                    </div>
-                                    
+                                        <div className="flex my-2">
+                                            <input type='checkbox' className='me-2 mt-1' />
+                                            <p>Completed</p>
+                                        </div>
+
                                     </div>
 
                                 </div>
