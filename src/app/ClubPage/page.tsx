@@ -229,6 +229,15 @@ const ClubPage = () => {
     console.log(posts)
   }
 
+  const handleClickPost = (postId: number ) => {
+    if (!isLeader && !joined) {
+        alert("You need to join the club to view this post.");
+    } else {
+        handlePostPage(postId);
+    }
+};
+
+
   const customDropdown = {
     "floating": {
       "base": "z-10 w-fit divide-y divide-gray-100 rounded shadow focus:outline-none",
@@ -364,38 +373,42 @@ const ClubPage = () => {
 
 
                 <div className='opacity-90 py-3'>
-                  {selectedPostId ? (
-                    <div>
-                      <Button onClick={() => setSelectedPostId(null)}>Back</Button>
-                      <PostRepliesComponent />
-                    </div>
-                  ) : (
-                    posts.length > 0 ? (
-                      posts.map((post, idx) => (
-                        <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handlePostPage(post.id)}>
-                          <PostsComponent
-                            id={post.id}
-                            userId={post.userId}
-                            username={usersMap.get(post.userId)?.username || "Unknown User"}
-                            clubId={post.clubId}
-                            clubName={post.clubName || "Default Club Name"} // Provide a default value
-                            title={post.title}
-                            category={post.category}
-                            tags={post.tags ? post.tags.split(',') : null}
-                            description={post.description}
-                            image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
-                            dateCreated={post.dateCreated}
-                            dateUpdated={post.dateUpdated}
-                            isDeleted={post.isDeleted}
-                            displayClubName={false}
-                          />
-                        </div>
-                      ))
-                    ) : (
-                      <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts &#41;:</h1>
-                    )
-                  )}
+                  {selectedPostId ?
+                    ((isLeader || joined) ? (
+                      <div>
+                        <Button onClick={() => setSelectedPostId(null)}>Back</Button>
+                        <PostRepliesComponent />
+                      </div>
+                    ) : null)
+                    : (
+                      posts.length > 0 ? (
+                        posts.map((post, idx) => (
+                          <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handleClickPost(post.id)}>
+                                <PostsComponent
+                                  id={post.id}
+                                  userId={post.userId}
+                                  username={usersMap.get(post.userId)?.username || "Unknown User"}
+                                  clubId={post.clubId}
+                                  clubName={post.clubName || "Default Club Name"}
+                                  title={post.title}
+                                  category={post.category}
+                                  tags={post.tags ? post.tags.split(',') : null}
+                                  description={post.description}
+                                  image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                                  dateCreated={post.dateCreated}
+                                  dateUpdated={post.dateUpdated}
+                                  isDeleted={post.isDeleted}
+                                  displayClubName={false}
+                                />
+                          </div>
+                        ))
+                      ) : (
+                        <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts &#41;:</h1>
+                      )
+                    )}
                 </div>
+
+
 
               </div>
             </div>
