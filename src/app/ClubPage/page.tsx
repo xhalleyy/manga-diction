@@ -16,11 +16,11 @@ import EditClubSettingsComponent from '../components/EditClubSettingsComponent';
 import { Chocolate, Planet } from 'react-kawaii';
 import { Alert } from '@mui/material';
 import PostRepliesComponent from '../components/PostRepliesComponent';
+import { useRouter } from 'next/navigation';
 ;
 
 const ClubPage = () => {
-  ;
-  const { displayedClub, selectedPostId, setSelectedPostId } = useClubContext();
+  const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
@@ -37,6 +37,7 @@ const ClubPage = () => {
   const [editClub, setEditClub] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean | undefined>(undefined)
 
+  const router = useRouter();
 
   const fetchClubMembers = async (clubId: number | undefined) => {
     try {
@@ -100,6 +101,11 @@ const ClubPage = () => {
 
   const handlePostPage = (postId: number) => {
     setSelectedPostId(postId)
+  }
+
+  const handleMemberClick = (user: IUserData | null) => {
+    setSelectedUser(user);
+    router.push('/SearchedUser')
   }
 
   useEffect(() => {
@@ -394,7 +400,7 @@ const ClubPage = () => {
                                   category={post.category}
                                   tags={post.tags ? post.tags.split(',') : null}
                                   description={post.description}
-                                  image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                                  image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
                                   dateCreated={post.dateCreated}
                                   dateUpdated={post.dateUpdated}
                                   isDeleted={post.isDeleted}
@@ -418,8 +424,8 @@ const ClubPage = () => {
                   <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon /></h1>
                   <div className='grid grid-cols-5 px-8 justify-center py-4'>
                     <div className="col-span-1 flex flex-col justify-center items-center">
-                      <div className='relative'>
-                        <img src={leader?.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                      <div onClick={()=>{handleMemberClick(leader)}} className='relative cursor-pointer'>
+                        <img src={leader?.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
                         <Image src="/crown.gif"
                           width={200}
                           height={200}
@@ -430,8 +436,8 @@ const ClubPage = () => {
                       <p className="font-mainFont text-darkbrown text-sm">{`${leader?.firstName} ${leader?.lastName}`}</p>
                     </div>
                     {members.map((member) => (
-                      <div key={member.id} className="col-span-1 flex flex-col justify-center items-center py-2">
-                        <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                      <div key={member.id} onClick={()=>{handleMemberClick(member)}} className="cursor-pointer col-span-1 flex flex-col justify-center items-center py-2">
+                        <img src={member.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
                         <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
                         <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
                       </div>
@@ -527,7 +533,7 @@ const ClubPage = () => {
                               category={post.category}
                               tags={post.tags ? post.tags.split(',') : null}
                               description={post.description}
-                              image={usersMap.get(post.userId)?.profilePic || "/dummyImg.png"}
+                              image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
                               dateCreated={post.dateCreated}
                               dateUpdated={post.dateUpdated}
                               isDeleted={post.isDeleted}
@@ -584,8 +590,8 @@ const ClubPage = () => {
                   {!membersVisible && (
                     <div className='grid grid-cols-3 px-8 justify-center p-8 bg-white/80 rounded-lg'>
                       <div className="col-span-1 flex flex-col justify-center items-center">
-                        <div className='relative'>
-                          <img src={leader?.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                        <div  onClick={()=>{handleMemberClick(leader)}} className='relative cursor-pointer'>
+                          <img src={leader?.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
                           <Image src="/crown.gif"
                             width={200}
                             height={200}
@@ -596,8 +602,8 @@ const ClubPage = () => {
                         <p className="font-mainFont text-darkbrown text-xs">{`${leader?.firstName} ${leader?.lastName}`}</p>
                       </div>
                       {members.map((member) => (
-                        <div key={member.id} className="col-span-1 flex flex-col justify-center items-center py-2">
-                          <img src={member.profilePic || '/dummyImg.png'} alt="Member" className="member-img" />
+                        <div key={member.id} onClick={()=>{handleMemberClick(member)}} className="cursor-pointer col-span-1 flex flex-col justify-center items-center py-2">
+                          <img src={member.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
                           <h1 className="font-poppinsMed text-lg text-center text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
                           <p className="font-mainFont text-darkbrown text-xs text-center">{`${member.firstName} ${member.lastName}`}</p>
                         </div>

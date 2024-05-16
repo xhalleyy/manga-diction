@@ -196,7 +196,7 @@ const EditSettings = () => {
                     <div className={pageSize ? 'bg-paleblue p-8 rounded-xl grid xl:grid-cols-2 lg:grid-cols-3' : 'bg-paleblue p-8 rounded-xl grid grid-cols-1'}>
                         <div className='col-span-1 flex justify-center items-center lg:mt-[-70px]'>
                             <img
-                                src={displayedUser?.profilePic || '/dummyImg.png'}
+                                src={displayedUser?.profilePic || '/noprofile.jpg'}
                                 onMouseEnter={() => setChangePic(true)}
                                 onMouseLeave={() => setChangePic(false)}
                                 alt='profile image'
