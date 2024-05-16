@@ -14,6 +14,12 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
   const goToClub = () => {
     router.push('/ClubPage');
   }
+
+  if(prop.isDeleted){
+    // returning null leaves empty space where card used to be, return empty tags for formatting
+    return <></>;
+    // both return null and return empty tags still leave card-sized portions of empty space in carousel and search clubs page
+  }
   
 
   const customCard: CustomFlowbiteTheme["card"] = {

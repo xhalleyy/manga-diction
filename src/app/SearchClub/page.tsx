@@ -19,13 +19,16 @@ const SearchClub = () => {
   const [fetchedClubs, setFetchedClubs] = useState<any>(null);
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [pageSize, setPageSize] = useState<boolean>(false);
+  
 
   // This useEffect gets Clubs by name, using the useContext where we saved the value from the input field
   useEffect(() => {
     const fetchedClubsData = async (clubName: string | null) => {
       try {
         const data = await getClubsByName(clubName);
-        setFetchedClubs(data); // Update the fetched clubs data
+        // filter out clubs with isDeleted: true before setting fetchedClubs
+        const filteredData = data.filter((club: IClubs) => !club.isDeleted);
+        setFetchedClubs(filteredData); // Update the fetched clubs data
       } catch (error) {
         console.error("Error fetching clubs:", error);
       }
@@ -133,6 +136,7 @@ const SearchClub = () => {
 
             {fetchedClubs &&
               fetchedClubs.map((club: any, idx: number) => (
+                !club.isDeleted && (
                 <div
                   key={idx}
                   className="col-span-1"
@@ -149,7 +153,7 @@ const SearchClub = () => {
                     isDeleted={club.isDeleted}
                   />
                 </div>
-              ))}
+              )))}
 
           </div>
 
@@ -162,6 +166,7 @@ const SearchClub = () => {
           {/* if no matches found, display 'hidden' h1 with a message similar to "Can't find what you're looking for? Double check your spelling" */}
           {fetchedClubs &&
             fetchedClubs.map((club: any, idx: number) => (
+              !club.isDeleted && (
               <div
                 key={idx}
                 className="col-span-1 pb-2"
@@ -178,7 +183,7 @@ const SearchClub = () => {
                   isDeleted={club.isDeleted}
                 />
               </div>
-            ))}
+            )))}
 
         </div>
 

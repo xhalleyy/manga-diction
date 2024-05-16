@@ -95,9 +95,16 @@ const ClubPage = () => {
       setOpenModal(false);
       setJoined(false);
     } else {
-      // STILL NEED TO WORK ON THIS
-      // await deleteClub(displayedClub?.id)
-      router.push('/Dashboard');
+      if(userId === displayedClub?.leaderId){
+        try {
+          await deleteClub(displayedClub);
+          router.push('/Dashboard');
+        } catch (error) {
+          console.error('Error deleting club, ', error );
+        }
+      } else {
+        console.log('You do not have authorization to delete this club');
+      }
     }
   }
 
