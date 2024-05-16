@@ -36,6 +36,7 @@ const ProfilePage = (props: any) => {
     const [friendBool, setFriendBool] = useState<boolean>(false);
     const [search, setSearch] = useState<string>("");
     const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
+
     const searchUser = async () => {
         try {
             const data = await getUsersByUsername(search);
@@ -44,6 +45,11 @@ const ProfilePage = (props: any) => {
         } catch (error) {
             console.error('Error searching users:', error);
         }
+    }
+
+    const handleUserClick = (user: IUserData) => {
+        info.setSelectedUser(user);
+        router.push('/SearchedUser');
     }
 
 
@@ -250,7 +256,9 @@ const ProfilePage = (props: any) => {
         }
     };
 
-
+    // const handleSearchUser = () => {
+    //     router.push('/SearchedUser');
+    // }
 
     return (
         <>
@@ -265,7 +273,7 @@ const ProfilePage = (props: any) => {
                             <div className='flex flex-col justify-center mb-10'>
                                 <div className='flex justify-center'>
                                     <Image
-                                        src={info.displayedUser?.profilePic || '/dummyImg.png'}
+                                        src={info.displayedUser?.profilePic || '/noprofile.jpg'}
                                         alt='profile image'
                                         width={150}
                                         height={150}
@@ -428,12 +436,12 @@ const ProfilePage = (props: any) => {
                                 {searchedUsers && searchedUsers.map(user => (
                                     <div key={user.id}>
                                         {pageSize ? (
-                                            <div className="ms-auto mt-5">
+                                            <div onClick={()=> {handleUserClick(user)}} className="ms-auto mt-5 flex flex-col items-center justify-center place-content-center cursor-pointer">
                                                 <Avatar
                                                     img={user.profilePic || ''} 
                                                     rounded
                                                     theme={customAvatar}
-                                                    size="md"
+                                                    size="lg"
                                                 />
                                                 {/* <Image
                                                     src={user.profilePic | ''}

@@ -157,7 +157,7 @@ const MangaInfo = () => {
                 await addMangaFav(favMangaData);
                 setIsFavManga(favMangaData);
             } else if (completed && isFavManga && isFavManga !== undefined) {
-                await removeFavManga(isFavManga.id);
+                await removeFavManga(user, mangaId);
                 setIsFavManga(undefined);
             }
 
@@ -187,7 +187,7 @@ const MangaInfo = () => {
                 await addMangaFav(favMangaData);
                 setIsFavManga(favMangaData);
             } else if (isReading && isFavManga) {
-                await removeFavManga(isFavManga.id);
+                await removeFavManga(user, mangaId);
                 setIsFavManga(undefined);
             }
 
@@ -229,19 +229,19 @@ const MangaInfo = () => {
                                     {/* will fix formatting */}
                                     <div className='mt-1 ms-4'>
 
-                                        <div className="flex my-2">
+                                        {/* <div className="flex my-2">
                                             <input type='checkbox' className='me-2 mt-1' />
                                             <p>Currently Reading</p>
-                                        </div>
+                                        </div> */}
                                         <div className="flex my-2">
                                             <input onClick={() => handleOngoing(manga)} type='checkbox' className='me-2 mt-1' />
                                             <p>Currently Reading</p>
                                         </div>
 
-                                        <div className="flex my-2">
+                                        {/* <div className="flex my-2">
                                             <input type='checkbox' className='me-2 mt-1' />
                                             <p>Completed</p>
-                                        </div>
+                                        </div> */}
 
                                         <div className="flex my-2">
                                             <input onClick={() => handleCompleted(manga)} type='checkbox' className='me-2 mt-1' />

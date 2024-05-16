@@ -39,7 +39,7 @@ const SearchedFriendsComponent = () => {
                 <div className='mt-7 mx-auto'>
                     {/* mobile formatted friend components */}
                     <Image
-                        src='/dummyImg.png'
+                        src='/noprofile.jpg'
                         alt='profile picture'
                         height={110}
                         width={110}

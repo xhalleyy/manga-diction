@@ -148,7 +148,7 @@ const PostRepliesComponent = () => {
                         category={post.category}
                         tags={post.tags ? post.tags.split(',') : null}
                         description={post.description}
-                        image={postUser.profilePic || "/dummyImg.png"}
+                        image={postUser.profilePic || "/noprofile.jpg"}
                         dateCreated={post.dateCreated || ''}
                         dateUpdated={post.dateUpdated || ''}
                         isDeleted={post.isDeleted}
