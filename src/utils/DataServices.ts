@@ -285,8 +285,8 @@ export const getCompletedManga = async (userId: number) => {
     return data;
 }
 
-export const removeFavManga = async (id: number) => {
-    const res = await fetch(`${url}Favorited/DeleteFavoriteManga/` + id, {
+export const removeFavManga = async (userId: number, mangaId: string) => {
+    const res = await fetch(`${url}Favorited/DeleteFavoriteManga/${userId}/${mangaId}`, {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json'
@@ -299,6 +299,7 @@ export const removeFavManga = async (id: number) => {
     }
 
     const data = await res.text();
+    console.log(data)
     return data;
 }
 
