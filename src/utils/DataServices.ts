@@ -74,6 +74,7 @@ export const createClub = async (Club: IClubs) => {
     }
 
     const data = await res.json;
+    console.log(data);
     return data;
 
 }
@@ -128,7 +129,7 @@ export const deleteClub = async (Club: IClubs) => {
 export const publicClubsApi = async () => {
     const promise = await fetch('https://mangadictionapi.azurewebsites.net/Club/GetAllClubs');
     const data: IClubs[] = await promise.json();
-    // console.log(data);
+    console.log(data);
     return data;
 }
 
@@ -363,6 +364,7 @@ export const createPost = async (postData: IPostData) => {
 export const getUserInfo = async (userId: number | undefined) => {
     const res = await fetch(url + 'User/GetUser/' + userId);
     const data: IUserData = await res.json();
+    // console.log(data);
     return data;
 }
 
@@ -381,7 +383,7 @@ export const updateUser = async (user: IUpdateUser) => {
         throw new Error(message);
     }
 
-    const data = await res.json();
+    const data = await res.text();
     // console.log('User updated:', data);
     return data;
 }
@@ -574,7 +576,7 @@ export const addFriend = async (userId: number, friendId: number) => {
 export const getPendingFriends = async (friendId: number) => {
     const promise = await fetch(url + 'Friend/GetPendingFriends/' + friendId);
     const data: IPendingFriends[] = await promise.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 

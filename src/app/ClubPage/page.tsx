@@ -358,7 +358,7 @@ const ClubPage = () => {
 
           <div className={pageSize ? 'hidden' : 'bg-white/80 border-8 border-ivory rounded-xl mt-4'}>
             <img
-              src={displayedClub?.image}
+              src={displayedClub?.image || '/dummyImg.jpg'}
               alt='profile image'
               className='object-fit w-full shadow-lg rounded-md'
             />
@@ -460,7 +460,7 @@ const ClubPage = () => {
               <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
               <div className='bg-white/80 border-8 border-ivory rounded-xl'>
                 <img
-                  src={displayedClub?.image}
+                  src={displayedClub?.image || '/dummyImg2.jpg'}
                   alt='profile image'
                   className='object-fit w-full shadow-lg'
                 />

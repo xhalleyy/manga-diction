@@ -45,7 +45,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
     <Card onClick={goToClub}
       className="max-w-sm cursor-pointer"
       imgAlt={prop.description}
-      imgSrc={prop.image}
+      imgSrc={prop.image || '/dummyImg.jpg'}
       theme={customCard}
 
     >

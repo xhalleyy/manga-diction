@@ -86,6 +86,7 @@ const EditSettings = () => {
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
+        console.log("New password value:", value); 
         if (displayedUser) {
             if (value.trim() !== '') {
                 setDisplayedUser((prevUserData: IUserData | null) => ({
