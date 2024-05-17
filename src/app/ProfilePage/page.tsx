@@ -599,7 +599,7 @@ const ProfilePage = (props: any) => {
                                     <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* current reads */}
-                                        {completed.map((manga, index) => (
+                                        {ongoing.map((manga, index) => (
                                             // Render JSX directly here
                                             <div key={index}>
                                                 <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} />
@@ -613,7 +613,7 @@ const ProfilePage = (props: any) => {
                                         {/* finished reads */}
 
                                         {/* finished reads */}
-                                        {ongoing.map((manga, index) => (
+                                        {completed.map((manga, index) => (
                                             // Render JSX directly here
                                             <div key={index}>
                                                 <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} />
