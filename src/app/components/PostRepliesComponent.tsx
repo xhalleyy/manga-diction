@@ -35,8 +35,8 @@ const PostRepliesComponent = () => {
             setExpandValue(expand);
             setValidInput(true);
         } else {
-            alert(`Maximum ${maxCharacters} characters allowed!`);
-            setExpandValue(expand.slice(0, maxCharacters));
+            setExpandValue(expand)
+            setValidInput(false);
         }
     };
 
@@ -45,8 +45,8 @@ const PostRepliesComponent = () => {
             setReplyValue(text);
             setValidReply(true);
         } else {
-            alert(`Maximum ${maxCharacters} characters allowed!`);
-            alert("Please input something to submit a reply!")
+            setReplyValue(text)
+            setValidReply(false);
         }
     }
 
