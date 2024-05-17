@@ -239,21 +239,21 @@ export default function Home() {
         <div className="mx-auto mt-10 w-[80%]">
           <form>
             <div className=" my-5">
-              <input className="mobileInputUser" placeholder="Username" id="username1" required onChange={(e) => setUsername(e.target.value)}/>
+              <input className="mobileInputUser" placeholder="Username" id="username2" required onChange={(e) => setUsername(e.target.value)}/>
             </div>
             
             <div className={logsign ? "hidden" : "my-7 "}>
-              <input className="mobileInputUser" placeholder="First Name" id="firstname1" required onChange={(e) => setFirstN(e.target.value)}/>
+              <input className="mobileInputUser" placeholder="First Name" id="firstname2" required onChange={(e) => setFirstN(e.target.value)}/>
             </div>
             <div className={logsign ? "hidden" : "my-7 "}>
-              <input className="mobileInputUser" placeholder="Last Name" id="lastname1" required onChange={(e) => setLastN(e.target.value)}/>
+              <input className="mobileInputUser" placeholder="Last Name" id="lastname2" required onChange={(e) => setLastN(e.target.value)}/>
             </div>
             <div className={logsign ? "hidden" : "my-7 "}>
-              <input className="mobileInputUser" placeholder="Age" id="age1" required onChange={(e) => setAge(Number(e.target.value))} />
+              <input className="mobileInputUser" placeholder="Age" id="age2" required onChange={(e) => setAge(Number(e.target.value))} />
             </div>
 
             <div className={logsign ? "grid grid-cols-8 mt-10" : "grid grid-cols-8" }>
-              <input className="mobileInputPass col-span-7" placeholder="Password" id="password1" required onChange={(e) => setPassword(e.target.value)}/>
+              <input className="mobileInputPass col-span-7" placeholder="Password" id="password2" required onChange={(e) => setPassword(e.target.value)}/>
 
             <div onClick={handlePasswordVisibility} className=" col-span-1 justify-end text-sm text-signUp cursor-pointer border-b border-gray-400">
                     {visibility ? (
