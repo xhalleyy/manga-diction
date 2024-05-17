@@ -157,5 +157,9 @@ export interface IPendingFriends {
     id: number,
     userId: number,
     friendId: number,
-    status: 0
+    status: 0,
+}
+
+export interface IUserDataWithRequestId extends IUserData {
+    requestId: number;
 }

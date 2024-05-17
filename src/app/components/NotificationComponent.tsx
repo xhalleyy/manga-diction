@@ -3,19 +3,19 @@
 import React, { useEffect, useState } from 'react'
 import { CustomFlowbiteTheme, Dropdown, DropdownDivider } from "flowbite-react";
 import { getPendingFriends, getUserInfo, handlePendingFriends } from '@/utils/DataServices';
-import { IPendingFriends, IUpdateUser, IUserData } from '@/Interfaces/Interfaces';
+import { IPendingFriends, IUserDataWithRequestId, IUpdateUser, IUserData } from '@/Interfaces/Interfaces';
 
 const NotificationComponent = () => {
-    const [requestedFriends, setRequestedFriends] = useState<IUserData[]>([]);
-    const [requestsIds, setRequestsIds] = useState<IPendingFriends[]>([]);
+    const [requestedFriends, setRequestedFriends] = useState<IUserDataWithRequestId[]>([]);
+    // const [requestsIds, setRequestsIds] = useState<IPendingFriends[]>([]);
     const [confirmationMessages, setConfirmationMessages] = useState<string[]>([]);
 
     // SEE PENDING FRIEND REQUESTS
     const seePendingFriends = async () => {
         let userId = Number(localStorage.getItem("UserId"));
         const pendingFriends = await getPendingFriends(userId);
-        setRequestsIds(pendingFriends);
-        const userIds = pendingFriends.map(user => user.userId);
+        // setRequestsIds(pendingFriends);
+        const userIds = pendingFriends.map(friend => friend.userId);
 
         const requestedUsersInfo = await Promise.all(
             userIds.map(async (userId) => {
@@ -24,15 +24,21 @@ const NotificationComponent = () => {
             })
         );
 
-        setRequestedFriends(requestedUsersInfo);
+        // Include requestId in user info for later use
+        const requestedFriendsWithIds: IUserDataWithRequestId[] = requestedUsersInfo.map((userInfo, index) => ({
+            ...userInfo,
+            requestId: pendingFriends[index].id
+        }));
+
+        setRequestedFriends(requestedFriendsWithIds);
     };
 
     useEffect(() => {
         seePendingFriends();
     }, []);
 
-    const handleFriends = async (id: number, decision: string) => {
-        const data = await handlePendingFriends(id, decision);
+    const handleFriends = async (requestId: number, decision: string) => {
+        const data = await handlePendingFriends(requestId, decision);
         console.log(data);
         // Optionally, you can refresh the pending friends list after handling a request
         seePendingFriends();
@@ -54,8 +60,8 @@ const NotificationComponent = () => {
                 {requestedFriends.length === 0 ? (
                     <p className='mt-24 text-center font-mainFont text-xl text-lightbrown'>you have no notifications <br />{'(｡ •́︿•̀｡ )'}</p>
                 ) : (
-                    requestedFriends.map(user => (
-                        <div key={user.id}> 
+                    requestedFriends.map((user) => (
+                        <div key={user.id}>
                             <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3'>
                                 <img
                                     src={user.profilePic || '/noprofile.jpg'}
@@ -68,13 +74,13 @@ const NotificationComponent = () => {
                                     </p>
                                     <div className='flex justify-center items-center gap-5 mt-1'>
                                         <button
-                                            onClick={() => handleFriends(user.id, "accept")}
+                                            onClick={() => handleFriends(user.requestId, "accept")}
                                             className='bg-darkerblue px-2 text-white font-poppinsMed rounded-lg py-0.5 hover:bg-emerald-200 hover:text-darkbrown'
                                         >
                                             Accept
                                         </button>
                                         <button
-                                            onClick={() => handleFriends(user.id, "deny")}
+                                            onClick={() => handleFriends(user.requestId, "deny")}
                                             className='bg-darkerblue px-2 text-white font-poppinsMed rounded-lg py-0.5 hover:bg-red-400 hover:text-darkbrown'
                                         >
                                             Deny
