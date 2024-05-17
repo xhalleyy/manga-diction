@@ -11,26 +11,15 @@ interface SearchMangaModalProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const initialValues = {
-    title: "",
-    tags: [""],
-    demographics: "",
-    publication: "",
-};
-
 // React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
 const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
 
     const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags } = useClubContext();
-
-    const [values, setValues] = useState(initialValues);
-
     // const [titleInput, setTitleInput] = useState<string>('');
     // const [authorInput, setAuthorInput] = useState<string>('');
-    // const [tagsInput, setTagsInput] = useState<string[]>([]);
-    // const [demographicsOptions, setDemographicsOptions] = useState<string>('');
-    // const [publicationStatus, setPublicationStatus] = useState<string>('');
-
+    // const [tagsInput, setTagsInput] = useState<string>('');
+    // const [demographicOptions, setDemographicOptions] = useState<string>('');
+    // const [publishStatus, setPublishStatus] = useState<string>('');
     const [value, setValue] = useState<any>([]);
     const [pageSize, setPageSize] = useState<boolean>(false);
     const router = useRouter();
@@ -62,13 +51,6 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
             publication,
             tags
         })
-        // set useContext variables inside submit function => information reassigned to variables only on submit
-
-        // setTitle(titleInput);
-        // setTags(tagsInput);
-        // setDemographics(demographicsOptions);
-        // setPublication(publicationStatus);
-        // ^^^ this method just prevented anything from populating in the input fields
         setOpen(false)
         router.push('/SearchManga')
     }
@@ -89,10 +71,10 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Search Manga Title</label>
                             <div>
-                                <input value={values.title} className="opaqueWhite rounded-xl w-[50%] h-8" id="titleSearch" onChange={(e) => setTitle(e.target.value)} />
+                                <input value={title} className="opaqueWhite rounded-lg w-[50%] h-8 px-3 text-mainFont" id="titleSearch" onChange={(e) => setTitle(e.target.value)} />
                             </div>
                         </div>
-                        <div className="py-2">
+                        <div className="py-2 hidden">
                             <label className="font-mainFont text-lg">Author Name</label>
                             <div>
                                 <input value={author} className="opaqueWhite rounded-xl w-[50%] h-8" onChange={(e) => setAuthor(e.target.value)} />
@@ -103,16 +85,16 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             <div>
                                 {/* wider + taller than club name input */}
                                 {/* <input className="opaqueWhite rounded-xl w-[100%] h-14" onChange={(e) => setTagsInput(e.target.value)} /> */}
-                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={values.tags} // Ensure value is an array of strings
+                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={tags} // Ensure value is an array of strings
                                     onChange={(e) => setTags(e.value || [])} separator="," />
                             </div>
                         </div>
-                        <div className={pageSize ? "grid grid-cols-2 rounded-xl  " : "grid grid-cols-1"}>
+                        <div className={pageSize ? "flex gap-3 pt-3 " : "grid grid-cols-1"}>
 
                             {/* dropdown, 2 options (public, private) */}
 
                             <div className={pageSize ? "col-span-1" : "pt-4"}>
-                                <select value={values.demographics} className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setDemographics(e.target.value)}>
+                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setDemographics(e.target.value)}>
                                     <option value="" className="font-mainFont">Demographics</option>
                                     <option value="shounen" className="font-mainFont">Shounen</option>
                                     <option value="shoujo" className="font-mainFont">Shoujo</option>
@@ -122,7 +104,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             </div>
 
                             <div className={pageSize ? "col-span-1" : "pt-3"}>
-                                <select value={values.publication} className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setPublication(e.target.value)}>
+                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setPublication(e.target.value)}>
                                     <option value="" className="font-mainFont">Publication Status</option>
                                     <option value="ongoing" className="font-mainFont">Ongoing</option>
                                     <option value="hiatus" className="font-mainFont">Hiatus</option>

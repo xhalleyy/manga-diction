@@ -92,14 +92,14 @@ const SearchManga = () => {
                     <div className='pt-6'>
                         <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown '>Manga Results for &apos;{formattedTitle}&apos;</h1>
 
-                        <div className="grid grid-cols-5 px-[70px] mt-8 gap-4">
+                        <div className="grid grid-cols-5 px-[70px] mt-8 pb-6 gap-4">
                             {/* search results, 5 per 'row' */}
                             {/* if no matches found, display 'hidden' h1 with a message similar to "Can't find what you're looking for? Double check your spelling" */}
                             {/* 1st result */}
 
                             {mangaList.map((manga: IManga, index: number) => (
                                 <div key={index} className='flex justify-center' onClick={() => handleMangaSubmit(manga.data.id)}>
-                                        <div className='px-0 mx-0'>
+                                        <div className='px-0 mx-0 cursor-pointer'>
                                             <img src={`https://uploads.mangadex.org/covers/${manga.data.id}/${coverArtList[index]}`} alt='Title of Manga' className='w-[177px] h-64' />
                                             <h2 className='text-center text-xl font-semibold max-w-[170px] mt-2 text-darkbrown font-mainFont'>
                                                 {manga.data.attributes.title.en.length > maxTitleLength

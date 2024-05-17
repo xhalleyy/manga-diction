@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Dropdown, DropdownDivider } from "flowbite-react";
+import { CustomFlowbiteTheme, Dropdown, DropdownDivider } from "flowbite-react";
 import { getPendingFriends, getUserInfo, handlePendingFriends } from '@/utils/DataServices';
 import { IPendingFriends, IUpdateUser, IUserData } from '@/Interfaces/Interfaces';
 
@@ -34,13 +34,17 @@ const NotificationComponent = () => {
     const handleFriends = async (id: number, decision: string) => {
         const data = await handlePendingFriends(id, decision);
         console.log(data);
-        // Optionally, you can refresh the pending friends list after handling a request
+
         seePendingFriends();
     };
 
+    const customDropdown: CustomFlowbiteTheme["dropdown"] = {
+        "content" : "focus:outline-none"
+    }
+
     return (
         <div>
-            <Dropdown className=" border-8 rounded-xl border-offwhite w-96"
+            <Dropdown theme={customDropdown} className=" border-8 rounded-xl border-offwhite w-96"
                 arrowIcon={false}
                 inline
                 label={

@@ -98,7 +98,7 @@ export function CarouselComponent(props: any) {
         slidesToSlide={1}
         swipeable
       >
-        {clubs.slice(0, 8).map((club, idx) => (
+        {clubs.filter(club => club.isDeleted == false).slice(0, 8).map((club, idx) => (
           <div key={idx} className='col-span-1 mx-2' onClick={() => handleClubCardClick(club)}>
             <CardComponent
               id={club.id}

@@ -93,20 +93,20 @@ const BrowseClubs = () => {
   };
 
 
-  const shuffledClubs = clubs.sort(() => Math.random() - 0.5);
+  const shuffledClubs = clubs.filter(club => club.isDeleted == false).sort(() => Math.random() - 0.5);
   const randomClubs = shuffledClubs.slice(0, 12);
   const recentClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
     const dateA = new Date(a.dateCreated);
     const dateB = new Date(b.dateCreated);
     const comparisonResult = dateB.getTime() - dateA.getTime();
     return comparisonResult;
-  });
+  }).filter(club => club.isDeleted == false);
   const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
     const dateA = new Date(a.dateCreated);
     const dateB = new Date(b.dateCreated);
     const comparisonResult = dateA.getTime() - dateB.getTime();
     return comparisonResult;
-  });
+  }).filter(club => club.isDeleted == false);
 
   const slicedRecentClubs = recentClubs.slice(0, 12);
   const slicedOldestClubs = oldestClubs.slice(0, 12);
