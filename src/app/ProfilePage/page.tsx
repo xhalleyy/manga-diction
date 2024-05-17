@@ -328,8 +328,6 @@ const ProfilePage = (props: any) => {
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                     <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-scroll'>
                                         <FriendsComponent />
-                                        <FriendsComponent />
-                                        <FriendsComponent />
                                     </div>
                                 </div>
                             </div>

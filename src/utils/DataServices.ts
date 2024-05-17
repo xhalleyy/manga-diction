@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -387,7 +387,7 @@ export const updateUser = async (user: IUpdateUser) => {
 }
 
 // GET USERS BY USERNAMES
-export const getUsersByUsername = async(username: string)=> {
+export const getUsersByUsername = async (username: string) => {
     const promise = await fetch(url + 'User/GetUsersbyUsername/' + username);
     const data: IUserData[] = await promise.json()
     console.log(data);
@@ -450,7 +450,7 @@ export const GetLikesByPost = async (postId: number) => {
         },
     });
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -467,7 +467,7 @@ export const AddLikeToPost = async (postId: number, userId: number) => {
         },
     });
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -484,7 +484,7 @@ export const RemoveLikeFromPost = async (postId: number, userId: number) => {
         },
     });
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -496,7 +496,7 @@ export const RemoveLikeFromPost = async (postId: number, userId: number) => {
 // ------------------- COMMENTS API FETCHES -----------------------
 
 // GET TOP LEVEL REPLIES
-export const getComments = async(postId: number) => {
+export const getComments = async (postId: number) => {
     const promise = await fetch(url + 'Comment/GetPostReplies/' + postId);
     const data = await promise.json();
     console.log(data)
@@ -520,7 +520,7 @@ export const addCommentToPost = async (postId: number | null, userId: number, co
         body: JSON.stringify(comment)
     });
 
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -530,14 +530,14 @@ export const addCommentToPost = async (postId: number | null, userId: number, co
 }
 
 export const addReplyToComment = async (commentId: number, userId: number, reply: string) => {
-    const res = await fetch(`${url}/Comment/AddReplyForComment/${commentId}/${userId}`, {
+    const res = await fetch(`${url}Comment/AddReplyForComment/${commentId}/${userId}`, {
         method: 'POST',
-           headers: {
+        headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(reply)
     });
-    if(!res.ok){
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -547,10 +547,52 @@ export const addReplyToComment = async (commentId: number, userId: number, reply
 }
 
 // --------------------- FRIENDS API FETCHES ----------------------
-export const getAcceptedFriends = async(userId: number) => {
+export const getAcceptedFriends = async (userId: number) => {
     const promise = await fetch(url + 'Friend/GetAcceptedFriends/' + userId);
     const data: IAcceptedFriends[] = await promise.json();
-    console.log(data);
+    // console.log(data);
+    return data;
+}
+
+export const addFriend = async (userId: number, friendId: number) => {
+    const res = await fetch(`${url}Friend/AddFriend/${userId}/${friendId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.text()
+    return data;
+}
+
+export const getPendingFriends = async (friendId: number) => {
+    const promise = await fetch(url + 'Friend/GetPendingFriends/' + friendId);
+    const data: IPendingFriends[] = await promise.json();
+    console.log(data)
+    return data;
+}
+
+export const handlePendingFriends = async (id: number, decision: string) => {
+    const res = await fetch(`${url}Friend/HandleFriendRequest/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(decision)
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.text()
     return data;
 }
 
@@ -558,7 +600,7 @@ export const getAcceptedFriends = async(userId: number) => {
 export const getLocalStorage = () => {
     let localStorageData = localStorage.getItem('Favorites')
 
-    if(localStorageData == null){
+    if (localStorageData == null) {
         return [];
     }
 
@@ -570,7 +612,7 @@ export const saveToLocalStorage = (manga: IFavManga) => {
 
     const mangaName = manga.mangaId;
 
-    if(!favorites?.includes(mangaName)) {
+    if (!favorites?.includes(mangaName)) {
         favorites.push(mangaName);
     }
 

@@ -263,3 +263,12 @@
   .arrow {
     transform: rotate(180deg);
   }
+
+  .invisibleInk {
+    filter: blur(10px);
+    transition: filter 240ms ease-in-out;
+  }
+  
+  .invisibleInk:focus {
+    filter: blur(0px);
+  }

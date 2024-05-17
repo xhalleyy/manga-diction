@@ -21,7 +21,8 @@ interface PostsProps {
     dateCreated: string
     dateUpdated: string
     isDeleted: boolean
-    displayClubName: boolean // Define displayClubName as a prop
+    displayClubName: boolean 
+    // onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 interface likedUser {
@@ -48,6 +49,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
         }
     }
 
+
     useEffect(() => {
         // handling resize
         if (typeof window !== 'undefined') {
@@ -62,7 +64,8 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
         }
     }, [])
 
-    const handleLikes = async () => {
+    const handleLikes = async (event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
         try {
             const user = Number(localStorage.getItem("UserId"))
             const likes = await AddLikeToPost(id, user)
@@ -71,13 +74,14 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
 
             const isUserLiked = likedPost.likedByUsers.some((likedUser: likedUser) => likedUser.userId === user);
             setIsLiked(isUserLiked)
-            
+
         } catch (error) {
             console.error('error adding like: ', error)
         }
     }
 
-    const removeLikes = async () => {
+    const removeLikes = async (event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
         try {
             const user = Number(localStorage.getItem("UserId"))
             const likes = await RemoveLikeFromPost(id, user)
@@ -100,7 +104,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                 setLikedByUsers(likedPost.likedByUsers)
 
                 const isUserLiked = likedPost.likedByUsers.some((likedUser: likedUser) => likedUser.userId === user);
-            setIsLiked(isUserLiked)
+                setIsLiked(isUserLiked)
             } catch (error) {
                 console.error('error fetching likes: ', error)
             }
@@ -127,19 +131,19 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                     <p className='text-xl'>{username}</p>
 
                     <div className='inline-flex'>
-                        <Badge className='bg-darkblue rounded-lg text-white px-2 mr-1'>{category}</Badge>
+                        <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white px-2 mr-1'>{category}</Badge>
                         {
-                            tags && tags.map((tag, idx) => <Badge key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
+                            tags && tags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
                         }
                     </div>
 
                     <div>
                         <p className='font-bold text-lg mb-1'> {title} </p>
-                        <p className='ps-1 pb-2 font-normal text-md'> {description && (description.length < 150 ? description : `${description.substring(0, 150)} (see more)`)}</p>
+                        <p onClick={(event) => event.stopPropagation()} className={`ps-1 pb-2 font-normal text-md ${category === "Spoilers" && 'invisibleInk'}`} tabIndex={-1}> {description && (description.length < 150 ? description : `${description.substring(0, 150)} (see more)`)}</p>
                     </div>
 
                     <div className='inline-flex gap-1 mb-2'>
-                        <div onClick={() => {isLiked ? removeLikes() : handleLikes()}}  className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer': 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
+                        <div onClick={(event) => { isLiked ? removeLikes(event) : handleLikes(event) }} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
                             <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
                             <div> <p> {likes} </p></div>
                         </div>
@@ -166,9 +170,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                             <div className=''>
                                 <p className='text-xl'>{username}</p>
                                 <div className=' w-auto inline-flex'>
-                                    <Badge className='bg-darkblue rounded-lg inline-block text-white px-2 mr-1'>{category}</Badge>
+                                    <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg inline-block text-white px-2 mr-1'>{category}</Badge>
                                     {
-                                        tags && tags.map((tag, idx) => <Badge key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
+                                        tags && tags.map((tag, idx) => <Badge key={idx} onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
                                     }
                                 </div>
                             </div>
@@ -177,11 +181,11 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
 
                     <div className='px-10 pt-2'>
                         <p className='font-bold text-lg mb-1'> {title} </p>
-                        <p className='ps-1 pb-2 font-normal text-md'> {description && (description.length < 150 ? description : `${description.substring(0, 150)} (see more)`)}</p>
+                        <p onClick={(event) => event.stopPropagation()} className='ps-1 pb-2 font-normal text-md'> {description && (description.length < 150 ? description : `${description.substring(0, 150)} (see more)`)}</p>
                     </div>
 
                     <div className='inline-flex gap-1 mb-2 pl-10 pb-1'>
-                        <div onClick={() => isLiked ? removeLikes() : handleLikes()} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer': 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
+                        <div onClick={(event) => isLiked ? removeLikes(event) : handleLikes(event)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
                             <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
                             <div> <p> {likes} </p> </div>
                         </div>

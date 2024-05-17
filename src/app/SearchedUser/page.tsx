@@ -10,8 +10,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import router from 'next/router';
 import CardProfPgComponent from '../components/CardProfPgComponent';
-import { IClubs } from '@/Interfaces/Interfaces';
-import { getClubsByLeader, getUserClubs, specifiedClub } from '@/utils/DataServices';
+import { IClubs, IUserData } from '@/Interfaces/Interfaces';
+import { addFriend, getAcceptedFriends, getClubsByLeader, getPendingFriends, getUserClubs, specifiedClub } from '@/utils/DataServices';
 import CardComponent from '../components/CardComponent';
 import ClubModalComponent from '../components/ClubModalComponent';
 
@@ -21,7 +21,11 @@ const SearchedUser = () => {
     const [friendBool, setFriendBool] = useState<boolean>(false);
     const [clubs, setClubs] = useState<IClubs[]>([]);
     const [showClubs, setShowClubs] = useState<boolean>(true);
+    const [friends, setFriends] = useState<IUserData[]>([]);
+    const [isFriend, setIsFriend] = useState<boolean>(false);
+    const [requested, setRequested] = useState<boolean>(false);
 
+    // Click a club, routes them to clubpage
     const handleClubCardClick = async (club: IClubs) => {
         try {
             const clubDisplayedInfo = await specifiedClub(club.id);
@@ -32,6 +36,7 @@ const SearchedUser = () => {
         }
     };
 
+    // Get Users' Info such as clubs 
     useEffect(() => {
         const fetchData = async () => {
             if (showClubs && info.selectedUser) {
@@ -60,6 +65,8 @@ const SearchedUser = () => {
         };
 
         fetchData();
+        checkAssociation();
+        checkRequested();
     }, [showClubs]);
 
     const fetchUserClubs = async (userId: number | undefined) => {
@@ -83,6 +90,53 @@ const SearchedUser = () => {
             return [];
         }
     };
+
+    // NEED TO CHECK IF LOGGED IN USER IS FRIENDS WITH THIS PERSON ALREADY
+    const checkAssociation = async()=> {
+        let userId = Number(localStorage.getItem("UserId"));
+        try {
+            const fetchFriends = await getAcceptedFriends(userId);
+            setFriends(fetchFriends);
+
+            if(info.selectedUser){
+                const friend = fetchFriends.find(friend => friend.id === info.selectedUser?.id)
+                setIsFriend(!!friend)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // HANDLES ADDING FRIENDS
+    const handleAddRequest = async()=> {
+        let userId = Number(localStorage.getItem("UserId"));
+        if(info.selectedUser){
+            try {
+                const addFriendApi = await addFriend(userId, info.selectedUser.id)
+                setRequested(true);
+                console.log(addFriendApi)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
+    // CHECKS ALREADY PENDING
+    const checkRequested = async() => {
+        let userId = Number(localStorage.getItem("UserId"));
+        if(info.selectedUser){
+            try {
+                const getPending = await getPendingFriends(info.selectedUser.id);
+                const requested = getPending.find(user => user.id === userId)
+
+                if(requested){
+                    setRequested(true);
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
 
     const viewAllFriends = () => {
         // same function as openFriendSearch, but for mobile
@@ -188,16 +242,20 @@ const SearchedUser = () => {
                                         className='pfp shadow-md'
                                     />
                                 </div>
-                                <div className='text-center mt-5'>
+                                <div className='text-center mt-5 flex flex-col justify-center items-center'>
                                     <div className='inline-flex'>
                                         <h1 className='text-[28px] font-mainFont font-bold'>{info.selectedUser?.username}</h1>
                                     </div>
 
                                     <h2 className='text-[22px] font-mainFont'>{`${info.selectedUser?.firstName} ${info.selectedUser?.lastName}`}</h2>
-                                    <div className='mt-3 mb-5'>
-                                        <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />
+                                    {(!isFriend && !requested) && <div className='mt-3 mb-5'>
+                                        <button onClick={handleAddRequest} className='flex items-center justify-center darkBlue text-white font-mainFont py-1 px-3 rounded-2xl hover:bg-paleblue hover:text-darkblue hover:font-poppinsMed'>Add as Friend <AddIcon sx={{fontSize: 20}} />
                                         </button>
-                                    </div>
+                                    </div>}
+                                    {(requested) && <div className='mt-3 mb-5'>
+                                        <button className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed'>Requested!
+                                        </button>
+                                    </div>}
                                 </div>
 
 
