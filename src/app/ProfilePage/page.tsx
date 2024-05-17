@@ -309,9 +309,9 @@ const ProfilePage = (props: any) => {
                                         <AddIcon fontSize='large' className='addI' onClick={() => openFriendSearch()} />
                                     </div>
                                 </div>
-                                <div className="bg-white border-8 border-ivory rounded-lg p-[5px] h-72 overflow-y-scroll">
+                                <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                     {/* displays 4 friends at a time ? */}
-                                    <FriendsComponent />
+                                    <FriendsComponent searchedUser={info.displayedUser?.id}/>
                                     {/* <FriendsComponent /> */}
                                     {/* <FriendsComponent /> */}
                                     {/* <FriendsComponent /> */}
@@ -326,8 +326,8 @@ const ProfilePage = (props: any) => {
                                 </div>
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
-                                    <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-scroll'>
-                                        <FriendsComponent />
+                                    <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
+                                    <FriendsComponent searchedUser={info.displayedUser?.id}/>
                                     </div>
                                 </div>
                             </div>

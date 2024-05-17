@@ -92,13 +92,13 @@ const SearchedUser = () => {
     };
 
     // NEED TO CHECK IF LOGGED IN USER IS FRIENDS WITH THIS PERSON ALREADY
-    const checkAssociation = async()=> {
+    const checkAssociation = async () => {
         let userId = Number(localStorage.getItem("UserId"));
         try {
             const fetchFriends = await getAcceptedFriends(userId);
             setFriends(fetchFriends);
 
-            if(info.selectedUser){
+            if (info.selectedUser) {
                 const friend = fetchFriends.find(friend => friend.id === info.selectedUser?.id)
                 setIsFriend(!!friend)
             }
@@ -108,9 +108,9 @@ const SearchedUser = () => {
     }
 
     // HANDLES ADDING FRIENDS
-    const handleAddRequest = async()=> {
+    const handleAddRequest = async () => {
         let userId = Number(localStorage.getItem("UserId"));
-        if(info.selectedUser){
+        if (info.selectedUser) {
             try {
                 const addFriendApi = await addFriend(userId, info.selectedUser.id)
                 setRequested(true);
@@ -122,14 +122,14 @@ const SearchedUser = () => {
     }
 
     // CHECKS ALREADY PENDING
-    const checkRequested = async() => {
+    const checkRequested = async () => {
         let userId = Number(localStorage.getItem("UserId"));
-        if(info.selectedUser){
+        if (info.selectedUser) {
             try {
                 const getPending = await getPendingFriends(info.selectedUser.id);
                 const requested = getPending.find(user => user.id === userId)
 
-                if(requested){
+                if (requested) {
                     setRequested(true);
                 }
             } catch (error) {
@@ -249,7 +249,7 @@ const SearchedUser = () => {
 
                                     <h2 className='text-[22px] font-mainFont'>{`${info.selectedUser?.firstName} ${info.selectedUser?.lastName}`}</h2>
                                     {(!isFriend && !requested) && <div className='mt-3 mb-5'>
-                                        <button onClick={handleAddRequest} className='flex items-center justify-center darkBlue text-white font-mainFont py-1 px-3 rounded-2xl hover:bg-paleblue hover:text-darkblue hover:font-poppinsMed'>Add as Friend <AddIcon sx={{fontSize: 20}} />
+                                        <button onClick={handleAddRequest} className='flex items-center justify-center darkBlue text-white font-mainFont py-1 px-3 rounded-2xl hover:bg-paleblue hover:text-darkblue hover:font-poppinsMed'>Add as Friend <AddIcon sx={{ fontSize: 20 }} />
                                         </button>
                                     </div>}
                                     {(requested) && <div className='mt-3 mb-5'>
@@ -266,9 +266,9 @@ const SearchedUser = () => {
                                             <h3 className='text-2xl font-mainFont font-semibold'>Friends</h3>
                                         </div>
                                     </div>
-                                    <div className="bg-white border-8 border-ivory rounded-lg p-[5px] h-72 overflow-y-scroll">
+                                    <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                         {/* displays 4 friends at a time ? */}
-                                        <FriendsComponent />
+                                        <FriendsComponent searchedUser={info.selectedUser?.id} />
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
@@ -283,10 +283,10 @@ const SearchedUser = () => {
                                     </div>
 
                                     <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
-                                        <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-scroll'>
-                                            <FriendsComponent />
-                                            <FriendsComponent />
-                                            <FriendsComponent />
+                                        <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
+                                            <FriendsComponent searchedUser={info.selectedUser?.id} />
+                                            <FriendsComponent searchedUser={info.selectedUser?.id} />
+                                            <FriendsComponent searchedUser={info.selectedUser?.id} />
                                         </div>
                                     </div>
                                 </div>
@@ -383,7 +383,7 @@ const SearchedUser = () => {
                                     <button className={!showClubs ? activeBtn : inactiveBtn} onClick={favDisplay}>Favorites</button>
                                 </div>
                                 {/* display none div unless conditions are met (viewing your own profile, in no clubs) */}
-                                
+
                             </div>
 
 
