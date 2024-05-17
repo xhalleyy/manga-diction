@@ -64,10 +64,6 @@ export function NavbarComponent() {
     setOpenModal(true);
   }
 
-  const handleSearchMobile = () => {
-    router.push('/MangaSearchMobile')
-  }
-
   return (
     <Navbar className={pageSize ? " bg-offwhite font-mainFont text-darkbrown !pt-6 !px-8 " : 'font-mainFont bg-ivory !pt-6 text-darkbrown drop-shadow-md'} fluid rounded>
       <Navbar.Brand onClick={homePage} className="cursor-pointer">
@@ -81,11 +77,7 @@ export function NavbarComponent() {
 
       <Navbar.Collapse className="ml-auto">
         <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-darkbrown navhover" as={Link} href="BrowseClubs">Browse Clubs</Navbar.Link>
-        {pageSize ?
-         (<Navbar.Link onClick={handleSearchModal} className="text-xl text-darkbrown font-bold mr-3 mt-2 navhover" href="#">Search Manga</Navbar.Link>) 
-         :
-         (<Navbar.Link onClick={handleSearchMobile} className="text-xl text-darkbrown font-bold mr-3 mt-2 navhover" href="/MangaSearchMobile">Search Manga</Navbar.Link>)
-          }
+       <Navbar.Link onClick={handleSearchModal} className="text-xl text-darkbrown font-bold mr-3 mt-2 navhover" href="#">Search Manga</Navbar.Link>
 
         <div className="mt-2">
           <NotificationComponent/>

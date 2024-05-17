@@ -45,7 +45,7 @@ export default function DrawerComponent() {
     } else if (page === 'Browse Clubs') {
       router.push('/BrowseClubs');
     } else if (page === 'Search Manga') {
-      setOpenModal(true);
+      router.push('/MangaSearchMobile')
     } else if (page === 'Profile') {
       router.push('/ProfilePage');
     } else if (page === 'Edit Settings') {
@@ -99,7 +99,6 @@ export default function DrawerComponent() {
         </React.Fragment>
       ))}
 
-      <SearchMangaModalComponent open={openModal} setOpen={setOpenModal} />
 
     </div>
   );
