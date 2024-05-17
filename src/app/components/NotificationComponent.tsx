@@ -34,12 +34,12 @@ const NotificationComponent = () => {
     const handleFriends = async (id: number, decision: string) => {
         const data = await handlePendingFriends(id, decision);
         console.log(data);
-
+        // Optionally, you can refresh the pending friends list after handling a request
         seePendingFriends();
     };
 
     const customDropdown: CustomFlowbiteTheme["dropdown"] = {
-        "content" : "focus:outline-none"
+        "content": "h-72 focus:outline-none overflow-y-auto"
     }
 
     return (
@@ -51,37 +51,41 @@ const NotificationComponent = () => {
                     <img src="/Bell.png" />
                 }
             >
-                {requestedFriends.map(user => (
-                    <div key={user.id}>
-                        <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3'>
-                            <img
-                                src={user.profilePic || '/noprofile.jpg'}
-                                alt={`${user.username} requested to add.`}
-                                className="col-span-1 cursor-pointer w-12 h-12 shadow-lg rounded-3xl"
-                            />
-                            <div className='col-span-3 flex flex-col justify-center'>
-                                <p className='font-mainFont text-[15px] text-start'>
-                                    <span className='font-poppinsBold'>{user.username} </span>requested to add you!
-                                </p>
-                                <div className='flex justify-center items-center gap-5 mt-1'>
-                                    <button
-                                        onClick={() => handleFriends(user.id, "accept")}
-                                        className='bg-darkerblue px-2 text-white font-poppinsMed rounded-lg py-0.5 hover:bg-emerald-200 hover:text-darkbrown'
-                                    >
-                                        Accept
-                                    </button>
-                                    <button
-                                        onClick={() => handleFriends(user.id, "deny")}
-                                        className='bg-darkerblue px-2 text-white font-poppinsMed rounded-lg py-0.5 hover:bg-red-400 hover:text-darkbrown'
-                                    >
-                                        Deny
-                                    </button>
+                {requestedFriends.length === 0 ? (
+                    <p className='mt-24 text-center font-mainFont text-xl text-lightbrown'>you have no notifications <br />{'(｡ •́︿•̀｡ )'}</p>
+                ) : (
+                    requestedFriends.map(user => (
+                        <div key={user.id}> 
+                            <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3'>
+                                <img
+                                    src={user.profilePic || '/noprofile.jpg'}
+                                    alt={`${user.username} requested to add.`}
+                                    className="col-span-1 cursor-pointer w-12 h-12 shadow-lg rounded-3xl"
+                                />
+                                <div className='col-span-3 flex flex-col justify-center'>
+                                    <p className='font-mainFont text-[15px] text-start'>
+                                        <span className='font-poppinsBold'>{user.username} </span>requested to add you!
+                                    </p>
+                                    <div className='flex justify-center items-center gap-5 mt-1'>
+                                        <button
+                                            onClick={() => handleFriends(user.id, "accept")}
+                                            className='bg-darkerblue px-2 text-white font-poppinsMed rounded-lg py-0.5 hover:bg-emerald-200 hover:text-darkbrown'
+                                        >
+                                            Accept
+                                        </button>
+                                        <button
+                                            onClick={() => handleFriends(user.id, "deny")}
+                                            className='bg-darkerblue px-2 text-white font-poppinsMed rounded-lg py-0.5 hover:bg-red-400 hover:text-darkbrown'
+                                        >
+                                            Deny
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        </Dropdown.Item>
-                        <DropdownDivider className="border-2 my-0 border-offwhite" />
-                    </div>
-                ))}
+                            </Dropdown.Item>
+                            <DropdownDivider className="border-2 my-0 border-offwhite" />
+                        </div>
+                    ))
+                )}
                 {/* <Dropdown.Item className="text-xl text-darkbrown">notification</Dropdown.Item>
             <Dropdown.Item className="text-xl text-darkbrown">notification</Dropdown.Item>
             <DropdownDivider className="border-2 border-offwhite" />
