@@ -99,14 +99,20 @@ const EditSettings = () => {
 
     const handlePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files && e.target.files[0];
+        const maxByteSize = 5 * 1024 * 1024;
         if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const imageData = reader.result as string;
-                setProfilePic(imageData); 
-                console.log("New profile picture data:", imageData);
-            };
-            reader.readAsDataURL(file); // Read file as base64-encoded string
+            if(file.size > maxByteSize){
+                alert("File is too big!");
+                return "";
+            } else {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const imageData = reader.result as string;
+                    setProfilePic(imageData); 
+                    console.log("New profile picture data:", imageData);
+                };
+                reader.readAsDataURL(file); // Read file as base64-encoded string
+            }
         }
     };
 
