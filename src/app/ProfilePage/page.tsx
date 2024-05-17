@@ -272,6 +272,7 @@ const ProfilePage = (props: any) => {
         fetchManga();
     }, []);
 
+
     const coverArtUrl = (manga: IManga): string => {
         if (!manga || !manga.data || !manga.data.relationships) {
             return ''; // Return an empty string if manga data or relationships are not available
@@ -284,6 +285,13 @@ const ProfilePage = (props: any) => {
         const mangaId = manga.data.id;
         const coverFileName = coverArt.attributes.fileName;
         return `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}`; // Construct the complete cover art URL
+    };
+
+    const handleMangaClick = (newMangaId: string) => {
+        info.setMangaId(newMangaId)
+        // console.log(newMangaId)
+        // console.log(mangaId)
+        router.push('MangaInfo');
     };
 
 
@@ -313,9 +321,7 @@ const ProfilePage = (props: any) => {
         }
     };
 
-    // const handleSearchUser = () => {
-    //     router.push('/SearchedUser');
-    // }
+
 
 
 
@@ -370,7 +376,7 @@ const ProfilePage = (props: any) => {
                                 </div>
                                 <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                     {/* displays 4 friends at a time ? */}
-                                    <FriendsComponent searchedUser={info.displayedUser?.id}/>
+                                    <FriendsComponent searchedUser={info.displayedUser?.id} />
                                     {/* <FriendsComponent /> */}
                                     {/* <FriendsComponent /> */}
                                     {/* <FriendsComponent /> */}
@@ -386,7 +392,7 @@ const ProfilePage = (props: any) => {
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                     <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
-                                    <FriendsComponent searchedUser={info.displayedUser?.id}/>
+                                        <FriendsComponent searchedUser={info.displayedUser?.id} />
                                     </div>
                                 </div>
                             </div>
@@ -597,28 +603,28 @@ const ProfilePage = (props: any) => {
 
                                 <div className={!showClubs ? favbox : noFavbox}>
                                     <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
-                                    <div className='grid grid-cols-5 ms-5'>
+                                    <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 xl:gap-5 ps-2 mb-5'>
                                         {/* current reads */}
-                                        {ongoing.map((manga, index) => (
-                                            // Render JSX directly here
-                                            <div key={index}>
-                                                <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} />
-                                            </div>
-                                        ))}
+                                        {ongoing.length === 0 ? <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you are currently reading.</p>
+                                            :
+                                            (ongoing.map((manga, index) => (
+                                                <div key={index} onClick={() => handleMangaClick(manga.manga.data.id)}>
+                                                    <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} alt={manga.manga.title} />
+                                                </div>
+                                            )))}
 
 
                                     </div>
                                     <p className='font-mainFont text-lg mb-4'>Completed:</p>
-                                    <div className='grid grid-cols-5 ms-5'>
+                                    <div className='grid grid-cols-5 gap-5 ps-2 mb-5'>
                                         {/* finished reads */}
 
                                         {/* finished reads */}
-                                        {completed.map((manga, index) => (
-                                            // Render JSX directly here
-                                            <div key={index}>
-                                                <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} />
+                                        {completed.length === 0 ? <p className='col-span-5 text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you've completed.</p> : (completed.map((manga, index) => (
+                                            <div key={index} onClick={() => handleMangaClick(manga.manga.data.id)}>
+                                                <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} alt={manga.manga.title} />
                                             </div>
-                                        ))}
+                                        )))}
                                     </div>
                                 </div>
 

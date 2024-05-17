@@ -150,20 +150,20 @@ const MangaInfo = () => {
             setFavBool(false);
             document.getElementById("dropCont")?.classList.remove("show");
         }
-    
+
         // Reset isChecked state when the button is clicked
         setIsChecked('');
     };
 
     const toggleCheck = (value: 'completed' | 'ongoing') => {
-        if(isChecked === value){
+        if (isChecked === value) {
             setIsChecked('')
             localStorage.removeItem('checkboxstate')
         } else {
             setIsChecked(value);
             localStorage.setItem('checkboxstate', value)
         }
-    } 
+    }
 
     useEffect(() => {
         const savedState = localStorage.getItem('checkboxstate');
@@ -247,18 +247,18 @@ const MangaInfo = () => {
                 {manga && (
                     // all variables rendering dependent on successful fetch
 
-                    <div className='flex ms-1'>
-                        <div style={{ width: '30%' }} className='flex flex-col'>
-                            <div className=' flex justify-end pt-10 w-full'>
+                    <div className='grid grid-cols-7 ms-1 lg:px-16 '>
+                        <div  className='col-span-2 flex flex-col justify-center'>
+                            <div className=' flex justify-end xl:justify-center pt-10 w-full'>
 
                                 {fileName && <img className='rounded-lg max-h-[555px]' src={`https://uploads.mangadex.org/covers/${manga.data.id}/${fileName}`} />}
                             </div>
 
-                            <div className='flex justify-end pt-8 flex-col w-full'>
+                            <div className='flex justify-end xl:justify-center pt-8 flex-col w-full text xl:w-[300px] mx-auto '>
                                 {/* favorites button */}
-                                <div>
-                                    <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont w-full' onClick={favBtnDisplay}>
-                                        <span className='text-xl'>{isFavManga && fav ? "Favorited ✔" : "Favorite Manga +"}</span>
+                                <div className='flex justify-center '>
+                                    <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 xl:px-12 px-8 font-mainFont' onClick={favBtnDisplay}>
+                                        <span className='text-xl lg:text-nowrap'>{isFavManga && fav ? "Favorited ✔" : "Favorite Manga +"}</span>
                                     </Button>
                                 </div>
                                 <div id='dropCont' className={"favdrop bg-ivory mx-auto"}>
@@ -266,22 +266,22 @@ const MangaInfo = () => {
                                     <div className='mt-1 ms-4'>
 
                                         <div className="flex my-2">
-                                            <input 
-                                            onClick={() => handleOngoing(manga)} 
-                                            checked={isChecked === 'ongoing'}
-                                            onChange={() => toggleCheck('ongoing')}
-                                            type='checkbox' 
-                                            className='me-2 mt-1' />
+                                            <input
+                                                onClick={() => handleOngoing(manga)}
+                                                checked={isChecked === 'ongoing'}
+                                                onChange={() => toggleCheck('ongoing')}
+                                                type='checkbox'
+                                                className='me-2 mt-1' />
                                             <p>Currently Reading</p>
                                         </div>
 
                                         <div className="flex my-2">
-                                            <input 
-                                            onClick={() => handleCompleted(manga)} 
-                                            checked={isChecked === 'completed'}
-                                            onChange={() => toggleCheck('completed')}
-                                            type='checkbox' 
-                                            className='me-2 mt-1' />
+                                            <input
+                                                onClick={() => handleCompleted(manga)}
+                                                checked={isChecked === 'completed'}
+                                                onChange={() => toggleCheck('completed')}
+                                                type='checkbox'
+                                                className='me-2 mt-1' />
                                             <p>Completed</p>
                                         </div>
 
@@ -294,7 +294,7 @@ const MangaInfo = () => {
                         </div>
 
 
-                        <div style={{ width: '70%' }} className='flex flex-col mt-10 ml-5 mr-10 rounded-lg '>
+                        <div className='col-span-5 flex flex-col mt-10 ml-5 mr-10 rounded-lg '>
                             {/* manga name, tags, sypnosis */}
                             <div className='bg-white border-darkbrown border-2 rounded-t-lg'>
                                 <div className='p-5 inline-flex'>
