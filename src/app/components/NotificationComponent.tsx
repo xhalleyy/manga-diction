@@ -40,7 +40,6 @@ const NotificationComponent = () => {
     const handleFriends = async (requestId: number, decision: string) => {
         const data = await handlePendingFriends(requestId, decision);
         console.log(data);
-        // Optionally, you can refresh the pending friends list after handling a request
         seePendingFriends();
     };
 
