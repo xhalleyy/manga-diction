@@ -17,15 +17,16 @@ const MangaInfo = () => {
     const [favBool, setFavBool] = useState<boolean>(false);
     const [formattedStatus, setFormattedStatus] = useState<string>("");
     const [formattedDemographics, setFormattedDemographics] = useState<string>("");
-    const [isFavManga, setIsFavManga] = useState<IFavManga>();
+    const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
     const [fav, setFave] = useState<boolean>(false)
     const [completed, setCompleted] = useState<boolean>(false);
     const [isReading, setIsReading] = useState<boolean>(false);
 
     const [completedChecked, setCompletedChecked] = useState<boolean>(false);
     const [readingChecked, setReadingChecked] = useState<boolean>(false);
+    const [isChecked, setIsChecked] = useState<'completed' | 'ongoing' | ''>('');
 
-    
+
 
     useEffect(() => {
 
@@ -37,20 +38,18 @@ const MangaInfo = () => {
                 const authorRel = data?.data.relationships;
                 const authorTruthy = authorRel?.find((auth: { type: string }) => auth.type === "author");
                 if (authorTruthy) {
-                if (authorTruthy) {
-                    const theAuthor = authorTruthy.id;
-                    // console.log(theAuthor);
-                    fetchAuthor(theAuthor);
-                } else {
-                    return undefined
+                    if (authorTruthy) {
+                        const theAuthor = authorTruthy.id;
+                        // console.log(theAuthor);
+                        fetchAuthor(theAuthor);
+                    } else {
+                        return undefined
+                    }
                 }
-            }
-         } catch (error) {
+            } catch (error) {
                 console.log('Error fetching data:', error);
             }
         };
-
-
 
         fetchMangaInfo();
     }, [mangaId]);
@@ -70,6 +69,17 @@ const MangaInfo = () => {
 
         checkIsFavManga();
     }, [manga]);
+
+    useEffect(() => {
+        // Set the initial state of isChecked based on whether the manga is favorited
+        if (isFavManga) {
+            setCompletedChecked(isFavManga.completed);
+            setReadingChecked(!isFavManga.completed);
+            setIsChecked(isFavManga.completed ? 'completed' : 'ongoing');
+        } else {
+            setIsChecked('');
+        }
+    }, [isFavManga]);
 
     useEffect(() => {
         // Initialize checkbox states based on manga status
@@ -122,8 +132,8 @@ const MangaInfo = () => {
 
     const trimDescription = (description: string) => {
         if (description) {
-        const indexEnd = description.indexOf('---');
-        // if '---', trims description up to that index
+            const indexEnd = description.indexOf('---');
+            // if '---', trims description up to that index
             if (indexEnd !== -1) {
                 return description.substring(0, indexEnd).trim();
             } else
@@ -140,11 +150,33 @@ const MangaInfo = () => {
             setFavBool(false);
             document.getElementById("dropCont")?.classList.remove("show");
         }
+    
+        // Reset isChecked state when the button is clicked
+        setIsChecked('');
     };
+
+    const toggleCheck = (value: 'completed' | 'ongoing') => {
+        if(isChecked === value){
+            setIsChecked('')
+            localStorage.removeItem('checkboxstate')
+        } else {
+            setIsChecked(value);
+            localStorage.setItem('checkboxstate', value)
+        }
+    } 
+
+    useEffect(() => {
+        const savedState = localStorage.getItem('checkboxstate');
+        if (savedState) {
+            setIsChecked(savedState as 'completed' | 'ongoing');
+        } else {
+            setIsChecked('');
+        }
+    }, []);
 
     const handleCompleted = async (manga: IManga) => {
         let user = Number(localStorage.getItem("UserId"));
-    
+
         try {
             if (!completed && manga) {
                 const favMangaData: IFavManga = {
@@ -153,28 +185,30 @@ const MangaInfo = () => {
                     mangaId: manga.data.id,
                     completed: true
                 };
-    
+
                 await addMangaFav(favMangaData);
                 setIsFavManga(favMangaData);
+                setIsChecked('completed');
             } else if (completed && isFavManga && isFavManga !== undefined) {
                 await removeFavManga(user, mangaId);
                 setIsFavManga(undefined);
+                setIsChecked('');
             }
 
             setCompletedChecked(true);
-                setReadingChecked(false);
+            setReadingChecked(false);
         } catch (error) {
             console.error('Error updating manga status!', error);
         }
-    
+
         setCompleted(!completed);
         setIsReading(false);
         setFave(!fav);
     };
-    
+
     const handleOngoing = async (manga: IManga) => {
         let user = Number(localStorage.getItem("UserId"));
-    
+
         try {
             if (!isReading && manga) {
                 const favMangaData: IFavManga = {
@@ -183,12 +217,14 @@ const MangaInfo = () => {
                     mangaId: manga.data.id,
                     completed: false
                 };
-    
+
                 await addMangaFav(favMangaData);
                 setIsFavManga(favMangaData);
+                setIsChecked('ongoing');
             } else if (isReading && isFavManga) {
                 await removeFavManga(user, mangaId);
                 setIsFavManga(undefined);
+                setIsChecked('');
             }
 
             setCompletedChecked(false);
@@ -196,7 +232,7 @@ const MangaInfo = () => {
         } catch (error) {
             console.error('Error updating manga status!', error);
         }
-    
+
         setCompleted(false);
         setIsReading(!isReading);
         setFave(!fav);
@@ -222,29 +258,30 @@ const MangaInfo = () => {
                                 {/* favorites button */}
                                 <div>
                                     <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont w-full' onClick={favBtnDisplay}>
-                                        <span className='text-xl'>{fav ? "Favorited ✔" : "Favorite Manga +"}</span>
+                                        <span className='text-xl'>{isFavManga && fav ? "Favorited ✔" : "Favorite Manga +"}</span>
                                     </Button>
                                 </div>
                                 <div id='dropCont' className={"favdrop bg-ivory mx-auto"}>
                                     {/* will fix formatting */}
                                     <div className='mt-1 ms-4'>
 
-                                        {/* <div className="flex my-2">
-                                            <input type='checkbox' className='me-2 mt-1' />
-                                            <p>Currently Reading</p>
-                                        </div> */}
                                         <div className="flex my-2">
-                                            <input onClick={() => handleOngoing(manga)} type='checkbox' className='me-2 mt-1' />
+                                            <input 
+                                            onClick={() => handleOngoing(manga)} 
+                                            checked={isChecked === 'ongoing'}
+                                            onChange={() => toggleCheck('ongoing')}
+                                            type='checkbox' 
+                                            className='me-2 mt-1' />
                                             <p>Currently Reading</p>
                                         </div>
 
-                                        {/* <div className="flex my-2">
-                                            <input type='checkbox' className='me-2 mt-1' />
-                                            <p>Completed</p>
-                                        </div> */}
-
                                         <div className="flex my-2">
-                                            <input onClick={() => handleCompleted(manga)} type='checkbox' className='me-2 mt-1' />
+                                            <input 
+                                            onClick={() => handleCompleted(manga)} 
+                                            checked={isChecked === 'completed'}
+                                            onChange={() => toggleCheck('completed')}
+                                            type='checkbox' 
+                                            className='me-2 mt-1' />
                                             <p>Completed</p>
                                         </div>
 

@@ -125,7 +125,7 @@ export const specifiedClub = async (clubId: number) => {
 export const getClubsByName = async (clubName: string | null) => {
     const promise = await fetch(url + 'Club/GetClubsByName/' + clubName);
     const data: IClubs[] = await promise.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -137,7 +137,7 @@ export const getClubsByLeader = async (userId: number) => {
             throw new Error('Failed to fetch clubs by leader');
         }
         const data: IClubs[] = await res.json();
-        console.log(data);
+        // console.log(data);
         return data;
     } catch (error) {
         console.error('Error fetching clubs by leader:', error);
@@ -171,7 +171,7 @@ export const getAuthorIds = async (authorInput: string) => {
     const res = await axios.get(`${mangaUrl}/author?limit=1&name=${authorInput}&order%5Bname%5D=asc`);
     // const data = await res.json();
     // Axios already parses to JSON format 
-    console.log(res.data);
+    // console.log(res.data);
     return res.data;
 }
 
@@ -267,21 +267,21 @@ export const addMangaFav = async (manga: IFavManga) => {
     }
 
     const data = await res.text();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
 export const getInProgessManga = async (userId: number) => {
     const promise = await fetch(url + 'Favorited/GetInProgressFavorites/' + userId)
     const data = await promise.json()
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
 export const getCompletedManga = async (userId: number) => {
     const promise = await fetch(url + 'Favorited/GetCompletedFavorites/' + userId)
     const data = await promise.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -299,7 +299,7 @@ export const removeFavManga = async (userId: number, mangaId: string) => {
     }
 
     const data = await res.text();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -335,7 +335,7 @@ export const createPost = async (postData: IPostData) => {
     }
 
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
 };
 
@@ -363,7 +363,7 @@ export const updateUser = async (user: IUpdateUser) => {
     }
 
     const data = await res.json();
-    console.log('User updated:', data);
+    // console.log('User updated:', data);
     return data;
 }
 
@@ -371,7 +371,7 @@ export const updateUser = async (user: IUpdateUser) => {
 export const getUsersByUsername = async(username: string)=> {
     const promise = await fetch(url + 'User/GetUsersbyUsername/' + username);
     const data: IUserData[] = await promise.json()
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -403,7 +403,7 @@ export const AddUserToClub = async (userId: number | undefined, clubId: number |
     });
 
     const data = res.text();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -417,7 +417,7 @@ export const RemoveMember = async (userId: number | undefined, clubId: number | 
     });
 
     const data = res.text();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -480,7 +480,7 @@ export const RemoveLikeFromPost = async (postId: number, userId: number) => {
 export const getComments = async(postId: number) => {
     const promise = await fetch(url + 'Comment/GetPostReplies/' + postId);
     const data = await promise.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -531,7 +531,7 @@ export const addReplyToComment = async (commentId: number, userId: number, reply
 export const getAcceptedFriends = async(userId: number) => {
     const promise = await fetch(url + 'Friend/GetAcceptedFriends/' + userId);
     const data: IAcceptedFriends[] = await promise.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
