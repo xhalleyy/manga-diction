@@ -183,7 +183,7 @@ function ClubModalComponent() {
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Club Name:</label>
                             <div>
-                                <input required onChange={handleClubName} className="opaqueWhite rounded-xl w-[50%] h-8" />
+                                <input required onChange={handleClubName} className="opaqueWhite rounded-xl w-[50%] h-8" maxLength={25} />
                             </div>
                         </div>
                         <div className="py-2">
