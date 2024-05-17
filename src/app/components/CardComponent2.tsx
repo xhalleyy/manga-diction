@@ -67,7 +67,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
     {!pageSize && (
       <img
         className="w-24 h-28 object-cover mr-4 rounded-l-lg"
-        src={prop.image}
+        src={prop.image || 'dummyImg.jpg'}
         alt={prop.description}
       />
     )}

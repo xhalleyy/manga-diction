@@ -120,7 +120,7 @@ function ClubModalComponent() {
             await createClub(newClub)
 
                 clubData.setDisplayedClub(newClub)
-                router.push('/ClubPage')
+                router.push('/ProfilePage')
             
         } catch (error) {
             alert("Creating Group Unsuccessful!")
