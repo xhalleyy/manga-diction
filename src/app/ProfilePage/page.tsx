@@ -615,12 +615,12 @@ const ProfilePage = (props: any) => {
 
 
                                     </div>
-                                    <p className='font-mainFont text-lg mb-4'>Completed:</p>
+                                    <p className='font-mainFont text-lg mb-4'>{'Completed:'}</p>
                                     <div className='grid grid-cols-5 gap-5 ps-2 mb-5'>
                                         {/* finished reads */}
 
                                         {/* finished reads */}
-                                        {completed.length === 0 ? <p className='col-span-5 text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you've completed.</p> : (completed.map((manga, index) => (
+                                        {completed.length === 0 ? <p className='col-span-5 text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you have completed.</p> : (completed.map((manga, index) => (
                                             <div key={index} onClick={() => handleMangaClick(manga.manga.data.id)}>
                                                 <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} alt={manga.manga.title} />
                                             </div>
