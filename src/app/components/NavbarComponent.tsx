@@ -10,6 +10,7 @@ import DrawerComponent from "./DrawerComponent";
 import { profile } from "console";
 import { useClubContext } from "@/context/ClubContext";
 import SearchMangaModalComponent from "./SearchMangaModalComponent";
+import NotificationComponent from "./NotificationComponent";
 
 export function NavbarComponent() {
 
@@ -79,7 +80,8 @@ export function NavbarComponent() {
         <Navbar.Link onClick={handleSearchModal} className="text-xl text-darkbrown font-bold mr-3 mt-2 navhover" href="#">Search Manga</Navbar.Link>
 
         <div className="mt-2">
-          <Dropdown className=" border-8 rounded-xl border-offwhite w-96"
+          <NotificationComponent/>
+          {/* <Dropdown className=" border-8 rounded-xl border-offwhite w-96"
             arrowIcon={false}
             inline
             label={
@@ -91,9 +93,9 @@ export function NavbarComponent() {
             <Dropdown.Item className="text-xl text-darkbrown">notification</Dropdown.Item>
             <DropdownDivider className="border-2 border-offwhite" />
             <Dropdown.Item className="text-xl text-darkbrown">notification</Dropdown.Item>
-          </Dropdown>
-          <Navbar.Toggle />
+          </Dropdown> */}
         </div>
+          <Navbar.Toggle />
 
         {/* onClick={() => {router.push('/ProfilePage')} */}
 

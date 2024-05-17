@@ -152,3 +152,10 @@ export interface IAcceptedFriends {
     salt: string,
     hash: string
 }
+
+export interface IPendingFriends {
+    id: number,
+    userId: number,
+    friendId: number,
+    status: 0
+}
