@@ -406,7 +406,7 @@ const ProfilePage = (props: any) => {
                                     </div>
                                 </div>
                                 {/* <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p> */}
-                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{ }&apos;</p>
+                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{}&apos;</p>
 
                                 <div className="grid grid-cols-2">
                                     <SearchedFriendsComponent />

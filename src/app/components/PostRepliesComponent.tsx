@@ -26,24 +26,26 @@ const PostRepliesComponent = () => {
     // const [newReplies, setNewReplies] = useState<{ [key: string]: boolean }>({});
     const [validReply, setValidReply] = useState(false);
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
-
+    const maxCharacters = 300;
 
     useAutosizeTextArea(textAreaRef.current, expandValue);
 
     const handleChange = (expand: string) => {
-        if (expand.length > 0) {
+        if (expand.length > 0 && expand.length <= maxCharacters) {
             setExpandValue(expand);
             setValidInput(true);
         } else {
-            alert("Please input something to submit comment!");
+            alert(`Maximum ${maxCharacters} characters allowed!`);
+            setExpandValue(expand.slice(0, maxCharacters));
         }
     };
 
     const handleReplyChange = (text: string) => {
-        if (text.length > 0) {
+        if (text.length > 0 && text.length <= maxCharacters) {
             setReplyValue(text);
             setValidReply(true);
         } else {
+            alert(`Maximum ${maxCharacters} characters allowed!`);
             alert("Please input something to submit a reply!")
         }
     }
