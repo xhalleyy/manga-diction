@@ -5,8 +5,8 @@ import ClubModalComponent from '../components/ClubModalComponent'
 import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
-import { IClubs, IUserData } from '@/Interfaces/Interfaces';
-import { GetLikesByPost, getClubsByLeader, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specifiedClub } from '@/utils/DataServices';
+import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
+import { GetLikesByPost, getClubsByLeader, getCompletedManga, getInProgessManga, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
@@ -23,8 +23,8 @@ import FriendsComponent from '../components/FriendsComponent';
 const ProfilePage = (props: any) => {
 
     const info = useClubContext();
+    const { mangaId, setMangaId } = useClubContext();
     const [clubs, setClubs] = useState<IClubs[]>([]);
-
     const [pageSize, setPageSize] = useState<boolean>(false);
 
     const [showClubs, setShowClubs] = useState<boolean>(true);
@@ -36,6 +36,13 @@ const ProfilePage = (props: any) => {
     const [friendBool, setFriendBool] = useState<boolean>(false);
     const [search, setSearch] = useState<string>("");
     const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
+
+    const [completed, setCompleted] = useState<any[]>([]);
+    const [ongoing, setOngoing] = useState<any[]>([]);
+    const [coverArtList, setCoverArtList] = useState<string>('');
+
+
+
 
     const searchUser = async () => {
         try {
@@ -179,20 +186,20 @@ const ProfilePage = (props: any) => {
             const memberIds = await getUserClubs(userId);
             const promises = memberIds.map((clubId: number) => specifiedClub(clubId)); // Assuming specifiedClub returns club info
             const usersInfo = await Promise.all(promises);
-            return usersInfo; 
+            return usersInfo;
         } catch (error) {
             console.error('Error fetching club members:', error);
-            return []; 
+            return [];
             // returning an empty array because we merge user clubs and leader clubs together and they have to be of an array type
         }
     };
 
     const fetchClubsbyLeader = async (leaderId: number) => {
         try {
-            return await getClubsByLeader(leaderId); 
+            return await getClubsByLeader(leaderId);
         } catch (error) {
             console.error('Error fetching clubs by leader:', error);
-            return []; 
+            return [];
         }
     };
 
@@ -230,6 +237,56 @@ const ProfilePage = (props: any) => {
         fetchData();
     }, [showClubs]);
 
+    useEffect(() => {
+        const fetchManga = async () => {
+            let user = Number(localStorage.getItem("UserId"));
+
+            const completedManga = await getCompletedManga(user);
+            const allCompleted = await Promise.all(
+                completedManga.map(async (manga: IFavManga) => {
+                    const mangaData = await specificManga(manga.mangaId);
+                    const coverArt = coverArtUrl(mangaData);
+                    return {
+                        manga: mangaData,
+                        coverArtUrl: coverArt
+                    };
+                })
+            );
+            setCompleted(allCompleted);
+
+            const ongoingManga = await getInProgessManga(user);
+            const allOngoing = await Promise.all(
+                ongoingManga.map(async (manga: IFavManga) => {
+                    const mangaData = await specificManga(manga.mangaId);
+                    const coverArt = coverArtUrl(mangaData);
+                    return {
+                        manga: mangaData,
+                        coverArtUrl: coverArt
+                    };
+                })
+            );
+            console.log(allOngoing)
+            setOngoing(allOngoing);
+        };
+
+        fetchManga();
+    }, []);
+
+    const coverArtUrl = (manga: IManga): string => {
+        if (!manga || !manga.data || !manga.data.relationships) {
+            return ''; // Return an empty string if manga data or relationships are not available
+        }
+        const relationships = manga.data.relationships;
+        const coverArt = relationships.find(rel => rel.type === "cover_art");
+        if (!coverArt) {
+            return ''; // Return an empty string if cover art is not available
+        }
+        const mangaId = manga.data.id;
+        const coverFileName = coverArt.attributes.fileName;
+        return `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}`; // Construct the complete cover art URL
+    };
+
+
     const openFriendSearch = () => {
         // using document.getElementById instead of using switch statement dependent on bool in className to prevent conflicts with responsiveness bool and classes
         if (friendBool == false) {
@@ -259,6 +316,8 @@ const ProfilePage = (props: any) => {
     // const handleSearchUser = () => {
     //     router.push('/SearchedUser');
     // }
+
+
 
     return (
         <>
@@ -341,7 +400,7 @@ const ProfilePage = (props: any) => {
                                     </div>
                                 </div>
                                 {/* <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p> */}
-                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{}&apos;</p>
+                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{ }&apos;</p>
 
                                 <div className="grid grid-cols-2">
                                     <SearchedFriendsComponent />
@@ -395,13 +454,23 @@ const ProfilePage = (props: any) => {
 
                                         <div className={!showClubs ? "" : "border-ivory bg-white border-8 rounded-lg"}>
 
-                                            <div className='grid grid-cols-2'>
-                                                {/* current reads */}
-                                                <img src='/aot.png' className="h-[215px] w-[150px] m-4" />
-
+                                            <div className='grid grid-cols-2 '>
+                                                {completed.map((manga, index) => {
+                                                    return (
+                                                        <div key={index}>
+                                                            <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                                    );
+                                                })}
 
                                                 {/* finished reads */}
-                                                <img src='/signofaff.jpg' className="h-[215px] w-[150px] m-4" />
+                                                {ongoing.map((manga, index) => (
+                                                    // Render JSX directly here
+                                                    <div key={index}>
+                                                        <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
+
+                                                        {/* Add more JSX as needed */}
+                                                    </div>
+                                                ))}
 
                                             </div>
 
@@ -434,9 +503,9 @@ const ProfilePage = (props: any) => {
                                 {searchedUsers && searchedUsers.map(user => (
                                     <div key={user.id}>
                                         {pageSize ? (
-                                            <div onClick={()=> {handleUserClick(user)}} className="ms-auto mt-5 flex flex-col items-center justify-center place-content-center cursor-pointer">
+                                            <div onClick={() => { handleUserClick(user) }} className="ms-auto mt-5 flex flex-col items-center justify-center place-content-center cursor-pointer">
                                                 <Avatar
-                                                    img={user.profilePic || ''} 
+                                                    img={user.profilePic || ''}
                                                     rounded
                                                     theme={customAvatar}
                                                     size="lg"
@@ -456,7 +525,7 @@ const ProfilePage = (props: any) => {
                                         ) : (
                                             <div className='mt-7 mx-auto'>
                                                 <Avatar
-                                                    img={user.profilePic || ''} 
+                                                    img={user.profilePic || ''}
                                                     rounded
                                                     theme={customAvatar}
                                                     size="lg"
@@ -530,15 +599,26 @@ const ProfilePage = (props: any) => {
                                     <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* current reads */}
-                                        <img src='/aot.png' className="h-[215px] w-[150px] mb-4" />
+                                        {completed.map((manga, index) => (
+                                            // Render JSX directly here
+                                            <div key={index}>
+                                                <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} />
+                                            </div>
+                                        ))}
 
 
                                     </div>
                                     <p className='font-mainFont text-lg mb-4'>Completed:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* finished reads */}
-                                        <img src='/aot.png' className="h-[215px] w-[150px] mb-4" />
 
+                                        {/* finished reads */}
+                                        {ongoing.map((manga, index) => (
+                                            // Render JSX directly here
+                                            <div key={index}>
+                                                <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} />
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
