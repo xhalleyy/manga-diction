@@ -9,6 +9,7 @@ import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { useRouter } from 'next/navigation'
 import { useClubContext } from '@/context/ClubContext'
+import { Planet } from 'react-kawaii'
 
 
 const EditSettings = () => {
@@ -20,6 +21,7 @@ const EditSettings = () => {
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
     const [newPass, setNewPass] = useState<string | null>(null);
     const [currentPass, setCurrentPass] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<boolean | undefined>(false);
 
     // useEffect(() => {
     //     let userId = Number(localStorage.getItem("UserId"));
@@ -84,17 +86,12 @@ const EditSettings = () => {
         }
     };
 
-    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-        console.log("New password value:", value); 
-        if (displayedUser) {
-            if (value.trim() !== '') {
-                setDisplayedUser((prevUserData: IUserData | null) => ({
-                    ...prevUserData!,
-                    newPassword: value
-                }))
-            }
-        }
+    const handleCurrentPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentPass(e.target.value);
+    };
+
+    const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNewPass(e.target.value);
     };
 
     const handlePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,16 +124,16 @@ const EditSettings = () => {
                 setSuccess(false);
                 return;
             }
-    
+
             // To handle if the profilepic is null 
             const updatedProfilePic = profilePic || displayedUser.profilePic || '';
-    
+
             // Update displayedUser with new picture
             setDisplayedUser((prevUser) => ({
                 ...prevUser!,
                 profilePic: updatedProfilePic,
             }));
-    
+
             // Object of the returning data for updateUser API endpoint
             const updatedUser = {
                 id: displayedUser.id,
@@ -148,27 +145,35 @@ const EditSettings = () => {
                 currentPassword: currentPass,
                 newPassword: newPass
             };
-    
+
             // console.log('Updated user data:', updatedUser);
-    
+
             const response = await updateUser(updatedUser);
             console.log(response);
-    
+
             if (response) {
                 setSuccess(true);
+                setCurrentPass(null); // Reset current password field
+                setNewPass(null); // Reset new password field
+                setPasswordError(false)
                 setTimeout(() => {
                     setSuccess(undefined);
                 }, 5000);
             } else {
                 console.error('Failed to update user.');
                 setSuccess(false);
+
             }
         } catch (error) {
             console.error('Failed to update:', error);
             setSuccess(false);
+            setPasswordError(true);
+            setTimeout(() => {
+                setPasswordError(undefined);
+            }, 5000);
         }
     };
-    
+
 
 
     const customInput = {
@@ -191,9 +196,8 @@ const EditSettings = () => {
                     <div className="w-full relative flex justify-end items-end -mt-[px]">
                         {success && (
                             <div className="w-72">
-                                <Alert severity="success">
-                                    <AlertTitle>Success</AlertTitle>
-                                    Settings Updated!
+                                <Alert className='rounded-xl bg-paleblue' icon={<Planet size={30} mood="happy" color="#FCCB7E" />} severity="success">
+                                    User settings successfully updated!
                                 </Alert>
                             </div>
                         )}
@@ -227,10 +231,7 @@ const EditSettings = () => {
                                     <Label htmlFor="base" value="Last Name:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
                                     <TextInput onChange={handleLastNameChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
                                 </div>
-                                <div className='flex items-center gap-2 py-2'>
-                                    <Label htmlFor="base" value="Password:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
-                                    <TextInput onChange={handlePasswordChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
-                                </div>
+
                                 <div className={pageSize ? 'flex items-center gap-2 py-2' : "grid grid-cols-1"}>
                                     <div className={pageSize ? "flex" : "col-span-1 text-center"}>
                                         <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right' />
@@ -243,6 +244,17 @@ const EditSettings = () => {
                                         accept="image/*"
                                         onChange={handlePicChange}
                                     />
+                                </div>
+                                {passwordError ?
+                                    <p className='text-red-900'>Current password incorrect. Cannot change password.</p>
+                                    : null}
+                                <div className='flex items-center gap-2 py-2'>
+                                    <Label htmlFor="base" value="Current Password:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
+                                    <TextInput required onChange={handleCurrentPasswordChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
+                                </div>
+                                <div className='flex items-center gap-2 py-2'>
+                                    <Label htmlFor="base" value="NewPassword:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
+                                    <TextInput onChange={handleNewPasswordChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
                                 </div>
                             </div>
 

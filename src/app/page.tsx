@@ -6,7 +6,7 @@ import { log, profile } from "console";
 import { create } from "domain";
 import { Button, Label, TextInput, CustomFlowbiteTheme } from "flowbite-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { use, useState } from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -15,6 +15,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { Planet } from "react-kawaii";
 
 
 export default function Home() {
@@ -34,6 +35,8 @@ export default function Home() {
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
   const [logsign, setLogsign] = useState<boolean>(true);
+  const [loginFail, setLoginFail] = useState<boolean | undefined>(false);
+  const [required, setRequired] = useState<boolean | undefined>(false);
 
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
   const [visibility, setVisibility] = useState<boolean>(false);
@@ -46,6 +49,14 @@ export default function Home() {
   }
 
   const handleSignUp = async () => {
+
+    if (!username || !password || (!logsign && (!firstN || !lastN || age === 0))) {
+      setRequired(true);
+      setTimeout(() => {
+        setRequired(undefined);
+      }, 5000);
+      return;
+    }
 
     let userData = {
       id: id,
@@ -82,7 +93,10 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Login error:', error);
-        alert('Login failed! Please try again.');
+        setLoginFail(true);
+        setTimeout(() => {
+          setLoginFail(undefined);
+        }, 5000);
       }
     } else {
       // ELSE you're signing up so 
@@ -90,7 +104,10 @@ export default function Home() {
         await createUser(userData);
         // Reset 
         setSuccess(true);
-        setLogsign(true);
+        setTimeout(() => {
+          setSuccess(undefined);
+      }, 5000);        
+      setLogsign(true);
         setUsername("");
         setPassword("");
         setId(0);
@@ -98,7 +115,8 @@ export default function Home() {
         setLastN("");
         setProfilePic(null);
         setAge(0);
-        
+        setLoginFail(false);
+
       } catch (error) {
         setLogsign(true);
         setSuccess(false)
@@ -107,7 +125,7 @@ export default function Home() {
     }
   }
 
-  
+
   const handlePasswordVisibility = () => {
     setVisibility(!visibility);
   }
@@ -124,7 +142,7 @@ export default function Home() {
 
   return (
     <>
-        <div className="hidden md:flex  ">
+      <div className="hidden md:flex  ">
         <div className="bg-bgLogin w-screen h-screen bg-cover bg-center flex flex-col flex-1">
           <div className="mt-20 ml-24">
             <img className="w-32" src="/logo.png" />
@@ -140,9 +158,8 @@ export default function Home() {
           <div className="w-full flex justify-end items-end -mt-[90px]">
             {success && (
               <div className="w-72">
-                <Alert severity="success">
-                  <AlertTitle>Success</AlertTitle>
-                  Account created successfully!
+                <Alert className='rounded-xl bg-paleblue' icon={<Planet size={30} mood="happy" color="#FCCB7E" />} severity="success">
+                  Account successfully created!
                 </Alert>
               </div>
             )}
@@ -153,6 +170,15 @@ export default function Home() {
             <div className={logsign ? 'font-bold text-3xl text-darkbrown mb-10' : ' font-bold text-3xl text-darkgray mb-10'}>
               <h1>{logsign ? "Sign in" : "Sign up"}</h1>
             </div>
+
+            {loginFail && logsign ?
+              <p className="text-red-900"> Incorrect username or password. Try again!</p> :
+              null}
+
+            {required && !logsign ?
+              <p className="text-red-900"> Please fill out all fields to create an account. </p>
+              : null
+            }
 
             <form>
               <div className="mb-3">
@@ -231,7 +257,7 @@ export default function Home() {
 
         <div className="flex flex-row gap-5 justify-center">
           <Tabs value={value} onChange={handleChange} className="!font-mainFont !text-2xl" aria-label="disabled tabs example">
-            <Tab label="Login" onClick={logsignSwitch} className="tabActive"/>
+            <Tab label="Login" onClick={logsignSwitch} className="tabActive" />
             <Tab label="Register" onClick={logsignSwitch} className="tabActive" />
           </Tabs>
         </div>
@@ -239,34 +265,34 @@ export default function Home() {
         <div className="mx-auto mt-10 w-[80%]">
           <form>
             <div className=" my-5">
-              <input className="mobileInputUser" placeholder="Username" id="username2" required onChange={(e) => setUsername(e.target.value)}/>
+              <input className="mobileInputUser" placeholder="Username" id="username2" required onChange={(e) => setUsername(e.target.value)} />
             </div>
-            
+
             <div className={logsign ? "hidden" : "my-7 "}>
-              <input className="mobileInputUser" placeholder="First Name" id="firstname2" required onChange={(e) => setFirstN(e.target.value)}/>
+              <input className="mobileInputUser" placeholder="First Name" id="firstname2" required onChange={(e) => setFirstN(e.target.value)} />
             </div>
             <div className={logsign ? "hidden" : "my-7 "}>
-              <input className="mobileInputUser" placeholder="Last Name" id="lastname2" required onChange={(e) => setLastN(e.target.value)}/>
+              <input className="mobileInputUser" placeholder="Last Name" id="lastname2" required onChange={(e) => setLastN(e.target.value)} />
             </div>
             <div className={logsign ? "hidden" : "my-7 "}>
               <input className="mobileInputUser" placeholder="Age" id="age2" required onChange={(e) => setAge(Number(e.target.value))} />
             </div>
 
-            <div className={logsign ? "grid grid-cols-8 mt-10" : "grid grid-cols-8" }>
-              <input className="mobileInputPass col-span-7" placeholder="Password" id="password2" required onChange={(e) => setPassword(e.target.value)}/>
+            <div className={logsign ? "grid grid-cols-8 mt-10" : "grid grid-cols-8"}>
+              <input className="mobileInputPass col-span-7" placeholder="Password" id="password2" required onChange={(e) => setPassword(e.target.value)} />
 
-            <div onClick={handlePasswordVisibility} className=" col-span-1 justify-end text-sm text-signUp cursor-pointer border-b border-gray-400">
-                    {visibility ? (
-                      <>
-                        <VisibilityOffIcon fontSize="small" className="me-1" />
-                      </>
-                    ) : (
-                      <>
-                        <RemoveRedEyeIcon fontSize="small" className="me-1" />
-                      </>
-                    )}
-                  </div>
-                    </div>
+              <div onClick={handlePasswordVisibility} className=" col-span-1 justify-end text-sm text-signUp cursor-pointer border-b border-gray-400">
+                {visibility ? (
+                  <>
+                    <VisibilityOffIcon fontSize="small" className="me-1" />
+                  </>
+                ) : (
+                  <>
+                    <RemoveRedEyeIcon fontSize="small" className="me-1" />
+                  </>
+                )}
+              </div>
+            </div>
             <div>
               {/* remember password? buttons */}
             </div>
@@ -275,7 +301,7 @@ export default function Home() {
         </div>
       </div>
 
-      
+
     </>
 
 
