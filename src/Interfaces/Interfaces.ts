@@ -163,3 +163,8 @@ export interface IPendingFriends {
 export interface IUserDataWithRequestId extends IUserData {
     requestId: number;
 }
+
+export interface LikedUser {
+    userId: string;
+    username: string;
+}

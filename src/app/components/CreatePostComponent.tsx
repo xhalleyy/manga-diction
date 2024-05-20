@@ -66,6 +66,16 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
         setTags(tags);
     };
 
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
     const handleSubmit = async () => {
         let userId = Number(localStorage.getItem("UserId"));
         try {
@@ -97,7 +107,8 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
                 tags: tags ?? null,
                 description: expandValue,
                 image: null, //TODO add a way to add images
-                dateUpdated: null,
+                dateCreated: formattedDate,
+                dateUpdated: formattedDate,
                 isDeleted: false
             };
             const data = await createPost(postData);

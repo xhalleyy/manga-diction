@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -74,7 +74,7 @@ export const createClub = async (Club: IClubs) => {
     }
 
     const data = await res.json;
-    console.log(data);
+    // console.log(data);
     return data;
 
 }
@@ -129,7 +129,7 @@ export const deleteClub = async (Club: IClubs) => {
 export const publicClubsApi = async () => {
     const promise = await fetch('https://mangadictionapi.azurewebsites.net/Club/GetAllClubs');
     const data: IClubs[] = await promise.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -272,7 +272,7 @@ export const specificManga = async (mangaId: string) => {
 
 // FAVORITED MANGA FETCHES 
 export const addMangaFav = async (manga: IFavManga) => {
-    console.log(manga.id);
+    // console.log(manga.id);
     const res = await fetch(`${url}Favorited/AddFavoriteManga/${manga.userId}`, {
         method: "POST",
         headers: {
@@ -358,6 +358,14 @@ export const createPost = async (postData: IPostData) => {
     // console.log(data);
     return data;
 };
+
+// RECENT POSTS FOR A USER
+export const getRecentPosts = async (userId: number) => {
+    const promise = await fetch(`${url}Post/GetRecentPostsForUserClubs/${userId}`)
+    const data: IPosts[] = await promise.json();
+    console.log(data)
+    return data;
+}
 
 // ---------------------- USERS API FETCHES ------------
 // GET USER INFO
@@ -461,6 +469,13 @@ export const GetLikesByPost = async (postId: number) => {
     return data;
 }
 
+export const GetLikesByComment = async (commentId: number) => {
+    const promise = await fetch(`${url}Likes/GetLikesForComment/${commentId}`)
+    const data: IGetLikes = await promise.json();
+    console.log(data)
+    return data;
+}
+
 export const AddLikeToPost = async (postId: number, userId: number) => {
     const res = await fetch(`${url}Likes/AddLikeToPost/${postId}/${userId}`, {
         method: 'POST',
@@ -478,8 +493,42 @@ export const AddLikeToPost = async (postId: number, userId: number) => {
     return data;
 }
 
+export const AddLikeToComment = async (commentId: number, userId: number) => {
+    const res = await fetch(`${url}Likes/AddLikeToComment/${commentId}/${userId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json();
+    return data;
+}
+
 export const RemoveLikeFromPost = async (postId: number, userId: number) => {
     const res = await fetch(`${url}Likes/RemoveLike/${postId}/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json()
+    return data;
+}
+
+export const RemoveLikeFromComment = async (commentId: number, userId: number) => {
+    const res = await fetch(`${url}Likes/RemoveCommentLike/${commentId}/${userId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'

@@ -117,8 +117,8 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
     return (
         <div className='font-mainFont w-full bg-white rounded-lg'>
 
-            <div className='pl-8 pt-2'>
-                {displayClubName && (<p className='text-2xl'>{clubName}</p>)}
+            <div className='ps-10 pt-2'>
+                {displayClubName && (<p className='text-[20px] font-poppinsMed'>{clubName}</p>)}
             </div>
 
             <div className={pageSize ? 'flex' : 'hidden'}>
