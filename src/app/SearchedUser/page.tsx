@@ -10,8 +10,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import router from 'next/router';
 import CardProfPgComponent from '../components/CardProfPgComponent';
-import { IClubs, IUserData } from '@/Interfaces/Interfaces';
-import { addFriend, getAcceptedFriends, getClubsByLeader, getPendingFriends, getUserClubs, specifiedClub } from '@/utils/DataServices';
+import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
+import { addFriend, getAcceptedFriends, getClubsByLeader, getCompletedManga, getInProgessManga, getPendingFriends, getUserClubs, getUserInfo, specificManga, specifiedClub } from '@/utils/DataServices';
 import CardComponent from '../components/CardComponent';
 import ClubModalComponent from '../components/ClubModalComponent';
 
@@ -24,6 +24,11 @@ const SearchedUser = () => {
     const [friends, setFriends] = useState<IUserData[]>([]);
     const [isFriend, setIsFriend] = useState<boolean>(false);
     const [requested, setRequested] = useState<boolean>(false);
+    const [manga, setManga] = useState<IManga | null>(null); //null to handle intitial state
+    const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
+    const [completed, setCompleted] = useState<any[]>([]);
+    const [ongoing, setOngoing] = useState<any[]>([]);
+
 
     // Click a club, routes them to clubpage
     const handleClubCardClick = async (club: IClubs) => {
@@ -157,6 +162,72 @@ const SearchedUser = () => {
     const favDisplay = () => {
         setShowClubs(false);
     }
+
+    useEffect(() => {
+        const checkIsFavManga = async () => {
+            const user = Number(localStorage.getItem("UserId"));
+
+            if (manga) {
+                // Check if the manga is favorited by the user
+                const completedManga = await getCompletedManga(user);
+                const inProgressManga = await getInProgessManga(user)
+                setIsFavManga(inProgressManga || completedManga);
+            }
+        };
+
+        checkIsFavManga();
+    }, [manga]);
+
+    useEffect(() => {
+        const fetchManga = async () => {
+            if (info.selectedUser) {
+                let user = info.selectedUser.id
+                const completedManga = await getCompletedManga(user);
+                const allCompleted = await Promise.all(
+                    completedManga.map(async (manga: IFavManga) => {
+                        const mangaData = await specificManga(manga.mangaId);
+                        const coverArt = coverArtUrl(mangaData);
+                        return {
+                            manga: mangaData,
+                            coverArtUrl: coverArt
+                        };
+                    })
+                );
+                setCompleted(allCompleted);
+
+                const ongoingManga = await getInProgessManga(user);
+                const allOngoing = await Promise.all(
+                    ongoingManga.map(async (manga: IFavManga) => {
+                        const mangaData = await specificManga(manga.mangaId);
+                        const coverArt = coverArtUrl(mangaData);
+                        return {
+                            manga: mangaData,
+                            coverArtUrl: coverArt
+                        };
+                    })
+                );
+                console.log(allOngoing)
+                setOngoing(allOngoing);
+            };
+        }
+
+        fetchManga();
+    }, []);
+
+
+    const coverArtUrl = (manga: IManga): string => {
+        if (!manga || !manga.data || !manga.data.relationships) {
+            return ''; // Return an empty string if manga data or relationships are not available
+        }
+        const relationships = manga.data.relationships;
+        const coverArt = relationships.find(rel => rel.type === "cover_art");
+        if (!coverArt) {
+            return ''; // Return an empty string if cover art is not available
+        }
+        const mangaId = manga.data.id;
+        const coverFileName = coverArt.attributes.fileName;
+        return `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}`; // Construct the complete cover art URL
+    };
 
     const customTabs: CustomFlowbiteTheme["tabs"] = {
         "base": "flex flex-col gap-2",
@@ -355,13 +426,23 @@ const SearchedUser = () => {
                                             <div className={!showClubs ? "" : "border-ivory bg-white border-8 rounded-lg"}>
 
                                                 <div className='grid grid-cols-2'>
-                                                    {/* current reads */}
-                                                    <img src='/aot.png' className="h-[215px] w-[150px] m-4" />
-
+                                                    
+                                                    {completed.map((manga, index) => {
+                                                        return (
+                                                            <div key={index}>
+                                                                <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                                        );
+                                                    })}
 
                                                     {/* finished reads */}
-                                                    <img src='/signofaff.jpg' className="h-[215px] w-[150px] m-4" />
+                                                    {ongoing.map((manga, index) => (
+                                                        // Render JSX directly here
+                                                        <div key={index}>
+                                                            <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
 
+                                                            {/* Add more JSX as needed */}
+                                                        </div>
+                                                    ))}
                                                 </div>
 
                                             </div>
@@ -413,15 +494,27 @@ const SearchedUser = () => {
                                     <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* current reads */}
-                                        <img src='/aot.png' className="h-[215px] w-[150px] mb-4" />
-
+                                        {ongoing.length === 0 ?  <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>{info.selectedUser?.username} has no mangas that they are currently reading.</p> 
+                                        : 
+                                        ongoing.map((manga, index) => {
+                                            return (
+                                                <div key={index}>
+                                                    <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                            );
+                                        })}
 
                                     </div>
                                     <p className='font-mainFont text-lg mb-4'>Completed:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* finished reads */}
-                                        <img src='/aot.png' className="h-[215px] w-[150px] mb-4" />
-
+                                        {completed.length === 0 ?  <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>{info.selectedUser?.username} has no mangas that they are finished reading.</p> 
+                                        : 
+                                        completed.map((manga, index) => {
+                                            return (
+                                                <div key={index}>
+                                                    <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 

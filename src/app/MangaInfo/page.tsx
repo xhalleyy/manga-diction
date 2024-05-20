@@ -81,16 +81,16 @@ const MangaInfo = () => {
         }
     }, [isFavManga]);
 
-    useEffect(() => {
-        // Initialize checkbox states based on manga status
-        if (isFavManga) {
-            setCompletedChecked(isFavManga.completed);
-            setReadingChecked(!isFavManga.completed);
-        } else {
-            setCompletedChecked(false);
-            setReadingChecked(false);
-        }
-    }, [isFavManga]);
+    // useEffect(() => {
+    //     // Initialize checkbox states based on manga status
+    //     if (isFavManga) {
+    //         setCompletedChecked(isFavManga.completed);
+    //         setReadingChecked(!isFavManga.completed);
+    //     } else {
+    //         setCompletedChecked(false);
+    //         setReadingChecked(false);
+    //     }
+    // }, [isFavManga]);
 
     const fetchAuthor = async (authorId: string) => {
         const aData = await getAuthorName(authorId);

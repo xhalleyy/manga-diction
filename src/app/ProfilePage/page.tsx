@@ -39,7 +39,6 @@ const ProfilePage = (props: any) => {
 
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
-    const [coverArtList, setCoverArtList] = useState<string>('');
 
 
 
