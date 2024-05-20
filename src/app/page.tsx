@@ -106,8 +106,8 @@ export default function Home() {
         setSuccess(true);
         setTimeout(() => {
           setSuccess(undefined);
-      }, 5000);        
-      setLogsign(true);
+        }, 5000);
+        setLogsign(true);
         setUsername("");
         setPassword("");
         setId(0);
@@ -263,6 +263,14 @@ export default function Home() {
         </div>
 
         <div className="mx-auto mt-10 w-[80%]">
+          {loginFail && logsign ?
+            <p className="text-red-900 text-center"> Incorrect username or password. Try again!</p> :
+            null}
+
+          {required && !logsign ?
+            <p className="text-red-900 text-center"> Please fill out all fields to create an account. </p>
+            : null
+          }
           <form>
             <div className=" my-5">
               <input className="mobileInputUser" placeholder="Username" id="username2" required onChange={(e) => setUsername(e.target.value)} />
