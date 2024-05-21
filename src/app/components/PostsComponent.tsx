@@ -1,11 +1,19 @@
 'use client'
 
-import { Avatar, Badge, CustomFlowbiteTheme } from 'flowbite-react'
-import React, { useEffect, useState } from 'react'
+import { Avatar, Badge, CustomFlowbiteTheme, Label, Select, TextInput } from 'flowbite-react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import { Category } from '@mui/icons-material';
-import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost } from '@/utils/DataServices';
+import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost, updatePosts } from '@/utils/DataServices';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Tooltip } from '@mui/material';
+import { useClubContext } from '@/context/ClubContext';
+import { IPostData } from '@/Interfaces/Interfaces';
+import { Chips } from 'primereact/chips';
+import { useRouter } from 'next/navigation';
+
 
 interface PostsProps {
     id: number
@@ -21,7 +29,7 @@ interface PostsProps {
     dateCreated: string
     dateUpdated: string
     isDeleted: boolean
-    displayClubName: boolean 
+    displayClubName: boolean
     // onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
@@ -31,14 +39,24 @@ interface likedUser {
 }
 
 
-const PostsComponent = ({ id, userId, username, clubId, clubName, title, category, tags, description, image, dateCreated, dateUpdated, isDeleted, displayClubName }: PostsProps) => {
+const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName }: PostsProps) => {
 
+    const info = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [likes, setLikes] = useState<number>(0);
     const [likedByUsers, setLikedByUsers] = useState<string[]>([]);
     const [isLiked, setIsLiked] = useState<boolean>(false);
     const [isUnliked, setIsUnliked] = useState<boolean>(false);
-
+    const [yourPost, setYourPost] = useState<boolean>(false);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [newTitle, setNewTitle] = useState<string>(initialTitle);
+    const [newCategory, setNewCategory] = useState<string>(initialCategory);
+    const [newTags, setNewTags] = useState(initialTags ? initialTags.join(', ') : '');
+    const [newDesc, setNewDesc] = useState<string>(initialDescription);
+    const [value, setValue] = useState<any>([]);
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    // const [expandValue, setExpandValue] = useState<string>(initialDescription);
+    const router = useRouter();
 
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
         "root": {
@@ -96,6 +114,17 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
     }
 
     useEffect(() => {
+        const getPost = async () => {
+            if (info.displayedUser?.id === userId) {
+                setYourPost(true);
+            }
+        }
+        getPost();
+    }, [id, info.displayedUser?.id, userId])
+
+    
+
+    useEffect(() => {
         const fetchedLikes = async () => {
             try {
                 const user = Number(localStorage.getItem("UserId"))
@@ -112,10 +141,47 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
         fetchedLikes();
     }, [id])
 
+    const handleChange = (desc: string) => {
+        setNewDesc(desc);
+    };
+    
+
+    const handleUpdatePost = async () => {
+
+        try {
+            const updatedPostData: IPostData = {
+                id,
+                userId,
+                clubId,
+                title: newTitle,
+                category: newCategory,
+                tags: newTags,
+                description: newDesc,
+                image,
+                dateCreated,
+                dateUpdated: new Date().toISOString(),
+                isDeleted
+            }
+
+            const updatedPost = await updatePosts(updatedPostData);
+            console.log(updatedPost);
+            if (updatedPost) {
+                setNewTitle(updatedPost.title);
+                setNewCategory(updatedPost.category);
+                setNewTags(updatedPost.tags);
+                setNewDesc(updatedPost.description)
+                setIsEditing(false);
+            }
+        } catch (error) {
+            console.log('error updating clubs', error)
+        }
+
+    }
+
 
 
     return (
-        <div className='font-mainFont w-full bg-white rounded-lg'>
+        <div className={isEditing ? 'font-mainFont w-full bg-darkBlue rounded-lg' : 'font-mainFont w-full bg-white rounded-lg'}>
 
             <div className='ps-10 pt-2'>
                 {displayClubName && (<p className='text-[20px] font-poppinsMed'>{clubName}</p>)}
@@ -128,32 +194,106 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                 </div>
 
                 <div style={{ width: '90%' }} className='flex-col mt-1.5'>
-                    <p className='text-xl'>{username}</p>
 
-                    <div className='inline-flex'>
-                        <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white px-2 mr-1 '>{category}</Badge>
-                        {
-                            tags && tags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white me-1.5'>{tag}</Badge>)
-                        }
+                    <div className='grid grid-cols-10'>
+                        <p className='text-xl col-span-9'>{username}</p>
+                        {yourPost ?
+                            <div className='flex justify-around'>
+                                <Tooltip onClick={() => setIsEditing(!isEditing)} title='Edit Post' placement='right'>
+                                    <EditIcon className='col-span-1 items-end' />
+                                </Tooltip>
+
+                                <Tooltip title='Delete Post' placement='right'>
+                                    <DeleteIcon />
+                                </Tooltip>
+                            </div>
+                            : null}
                     </div>
 
-                    <div>
-                        <p className='font-bold text-lg mb-1'> {title} </p>
-                        <p onClick={(event) => event.stopPropagation()} className={`ps-1 pb-2 font-normal text-md ${category === "Spoilers" && 'invisibleInk'}`} tabIndex={-1}> {description && (description.length < 150 ? description : `${description.substring(0, 150)} (see more)`)}</p>
-                    </div>
+                    {isEditing ? (
+                        <div className=' rounded-lg pr-8'>
+                            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5 pb-2"}>
+                                <Label htmlFor="base" value="Title:" className='col-span-1 text-lg mt-1' />
+                                <TextInput onChange={(e) => setNewTitle(e.target.value)} value={newTitle}  placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
+                                <div className={pageSize ? 'col-span-2 flex justify-center' : 'hidden'}>
+                                    <Select onChange={(e) => setNewCategory(e.target.value)} value={newCategory} id='myDropdown' defaultValue={"Category"} required={true} className='font-mainFont'>
+                                        <option value="Category" disabled>Category</option>
+                                        <option value="Discussion">Discussion</option>
+                                        <option value="Spoilers">Spoilers</option>
+                                        <option value="Question">Question</option>
+                                        <option value="Rant">RANT</option>
+                                    </Select>
+                                </div>
+                            </div>
+                            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5 pb-2"}>
+                                <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg mt-1' />
+                                <div className={pageSize ? "card p-fluid col-span-11" : "col-span-4"}>
+                                    {value !== undefined && value !== null && (
+                                        <Chips className='' value={value} onChange={(e) => {
 
-                    <div className='inline-flex gap-1 mb-2'>
-                        <div onClick={(event) => { isLiked ? removeLikes(event) : handleLikes(event) }} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
-                            <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
-                            <div> <p> {likes} </p></div>
+                                            setValue(e.value)
+                                            setNewTags(e.value?.join(",") ?? "")
+                                        }
+                                        }
+                                            placeholder='Enter to separate new tags' separator="," />
+                                    )}
+                                </div>
+                            </div>
+                            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5"}>
+                                <Label htmlFor="base3" value="Post:" className='col-span-1 text-lg mt-1' />
+                                <textarea
+                                    required
+                                    id="review-text"
+                                    onChange={(e) => handleChange(e.target.value)}
+                                    ref={textAreaRef}
+                                    placeholder='Write your thoughts...'
+                                    rows={1}
+                                    value={newDesc}
+                                    className={pageSize ? 'col-span-11 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5' : 'col-span-4 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5'}
+                                />
+                                {/* <TextInput theme={customInput} id="base3" type="text" sizing="post" className='col-span-11 w-full' /> */}
+                            </div>
+
+
+                            <button onClick={handleUpdatePost}>
+
+                                update post
+                            </button>
                         </div>
+                    )
+                        :
+                        <div>
+
+                            <div>
+                                <div className='inline-flex'>
+                                    <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white px-2 mr-1'>{initialCategory}</Badge>
+                                    {
+                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
+                                    }
+                                </div>
+
+                            </div>
+
+                            <div>
+                                <p className='font-bold text-lg mb-1'> {initialTitle} </p>
+                                <p onClick={(event) => event.stopPropagation()} className={`ps-1 pb-2 font-normal text-md ${initialCategory === "Spoilers" && 'invisibleInk'}`} tabIndex={-1}> {initialDescription && (initialDescription.length < 150 ? initialDescription : `${initialDescription.substring(0, 150)} (see more)`)}</p>
+                            </div>
+
+                            <div className='inline-flex gap-1 mb-2'>
+                                <div onClick={(event) => { isLiked ? removeLikes(event) : handleLikes(event) }} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
+                                    <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
+                                    <div> <p> {likes} </p></div>
+                                </div>
 
 
-                        <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
-                            <ModeCommentOutlinedIcon sx={{ fontSize: '16px' }} />
-                            <p>comments</p>
-                        </div>
-                    </div>
+                                <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
+                                    <ModeCommentOutlinedIcon sx={{ fontSize: '16px' }} />
+                                    <p>comments</p>
+                                </div>
+                            </div>
+                        </div>}
+
+
 
                 </div>
 
@@ -170,9 +310,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                             <div className=''>
                                 <p className='text-xl'>{username}</p>
                                 <div className=' w-auto inline-flex'>
-                                    <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg inline-block text-white px-2 mr-1'>{category}</Badge>
+                                    <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg inline-block text-white px-2 mr-1'>{initialCategory}</Badge>
                                     {
-                                        tags && tags.map((tag, idx) => <Badge key={idx} onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
+                                        initialTags && initialTags.map((tag, idx) => <Badge key={idx} onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
                                     }
                                 </div>
                             </div>
@@ -180,8 +320,8 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                     </div>
 
                     <div className='px-10 pt-2'>
-                        <p className='font-bold text-lg mb-1'> {title} </p>
-                        <p onClick={(event) => event.stopPropagation()} className='ps-1 pb-2 font-normal text-md'> {description && (description.length < 150 ? description : `${description.substring(0, 150)} (see more)`)}</p>
+                        <p className='font-bold text-lg mb-1'> {initialTitle} </p>
+                        <p onClick={(event) => event.stopPropagation()} className='ps-1 pb-2 font-normal text-md'> {initialDescription && (initialDescription.length < 150 ? initialDescription : `${initialDescription.substring(0, 150)} (see more)`)}</p>
                     </div>
 
                     <div className='inline-flex gap-1 mb-2 pl-10 pb-1'>
