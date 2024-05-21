@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 
 
 
-function CardProfPgComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
-  
+function CardProfPgComponent(prop: { id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean }) {
+
   const router = useRouter();
   const [pageSize, setPageSize] = useState<boolean>(false)
-  
+
   const goToClub = () => {
     router.push('/ClubPage');
   }
@@ -28,10 +28,14 @@ function CardProfPgComponent( prop: {id: number, leaderId: number, description: 
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
-  
-  }, [])
 
-  
+  }, []);
+
+  if (prop.isDeleted) {
+    return <></>;
+  }
+
+
   const customCard: CustomFlowbiteTheme["card"] = {
     "root": {
       "base": `flex rounded-lg bg-white bg-opacity-70 shadow-md  dark:bg-gray-800 h-28`,
@@ -50,7 +54,7 @@ function CardProfPgComponent( prop: {id: number, leaderId: number, description: 
       }
     }
   };
-  
+
 
   return (
     <Card onClick={goToClub}
@@ -59,22 +63,22 @@ function CardProfPgComponent( prop: {id: number, leaderId: number, description: 
       theme={customCard}
     >
       <div className={pageSize ? "flex flex-col" : "flex flex-row"}>
-    {!pageSize && (
-      <img
-        className="w-24 h-28 object-cover mr-4 rounded-l-lg"
-        src={prop.image || 'dummyImg.jpg'}
-        alt={prop.description}
-      />
-    )}
-    <div className="mt-5">
-      <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">
-        {prop.isPublic ? "Public" : "Private"}
-      </p>
-      <h5 className="text-lg font-poppinsMed tracking-tight text-gray-900 m-0 dark:text-white">
-        {prop.clubName}
-      </h5>
-    </div>
-  </div>
+        {!pageSize && (
+          <img
+            className="w-24 h-28 object-cover mr-4 rounded-l-lg"
+            src={prop.image || 'dummyImg.jpg'}
+            alt={prop.description}
+          />
+        )}
+        <div className="mt-5">
+          <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">
+            {prop.isPublic ? "Public" : "Private"}
+          </p>
+          <h5 className="text-lg font-poppinsMed tracking-tight text-gray-900 m-0 dark:text-white">
+            {prop.clubName}
+          </h5>
+        </div>
+      </div>
 
     </Card>
   );

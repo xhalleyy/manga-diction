@@ -399,19 +399,31 @@ const ProfilePage = (props: any) => {
                             <div className={pageSize ? 'hidden' : 'mt-7 hidden'} id='mobileFriends'>
                                 <div className='flex justify-center'>
                                     <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
-                                        <input className='rounded-xl h-8 ps-3' />
-                                        <SearchIcon className='text-4xl text-white' />
+                                        <input className='rounded-xl h-8 ps-3' onChange={(e) => setSearch(e.target.value)} />
+                                        <SearchIcon className='text-4xl text-white' onClick={searchUser} />
                                     </div>
                                 </div>
                                 {/* <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p> */}
-                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{}&apos;</p>
+                                <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{search}&apos;</p>
 
                                 <div className="grid grid-cols-2">
-                                    <SearchedFriendsComponent />
-                                    <SearchedFriendsComponent />
-                                    <SearchedFriendsComponent />
-                                    <SearchedFriendsComponent />
-                                    <SearchedFriendsComponent />
+                                    {searchedUsers && searchedUsers.map(user => (
+                                        <div key={user.id}>
+                                            <div className='my-7 mx-auto' onClick={() => { handleUserClick(user)}}>
+                                            <Avatar
+                                                    img={user.profilePic || ''}
+                                                    rounded
+                                                    theme={customAvatar}
+                                                    size="lg"
+                                                />
+                                                
+                                                <div className='text-center mt-2'>
+                                                    <p className='text-lg font font-poppinsMed'>{user.username}</p>
+                                                    <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
 
                             </div>
