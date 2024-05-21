@@ -5,9 +5,9 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
-import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
+import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs, Avatar } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByClubId, getUserInfo } from '@/utils/DataServices';
+import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByClubId, getUserInfo, getUsersByUsername } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
@@ -17,7 +17,8 @@ import { Chocolate, Planet } from 'react-kawaii';
 import { Alert } from '@mui/material';
 import PostRepliesComponent from '../components/PostRepliesComponent';
 import { useRouter } from 'next/navigation';
-;
+import SearchIcon from "@mui/icons-material/Search";
+import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 
 const ClubPage = () => {
   const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser } = useClubContext();
@@ -33,9 +34,14 @@ const ClubPage = () => {
 
   // New state to track whether members section is visible
   const [membersVisible, setMembersVisible] = useState<boolean>(false);
-  const [pageSize, setPageSize] = useState<boolean>(false)
+  const [pageSize, setPageSize] = useState<boolean>(true)
   const [editClub, setEditClub] = useState<boolean>(false);
-  const [success, setSuccess] = useState<boolean | undefined>(undefined)
+  const [success, setSuccess] = useState<boolean | undefined>(undefined);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [addMember, setAddMember] = useState(false);
+  const [search, setSearch] = useState<string>("");
+  const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
 
   const router = useRouter();
 
@@ -59,7 +65,7 @@ const ClubPage = () => {
   const handleJoinBtn = async () => {
     try {
       let userId = Number(localStorage.getItem("UserId"));
-      const joinUser = await AddUserToClub(userId, displayedClub?.id);
+      const joinUser = await AddUserToClub(userId, displayedClub?.id, false);
       setJoined(true);
     } catch (error) {
       alert('Unable to Join Club at this moment');
@@ -117,6 +123,30 @@ const ClubPage = () => {
     router.push('/SearchedUser')
   }
 
+  const searchUser = async () => {
+    try {
+      const data = await getUsersByUsername(search);
+      const filteredUsers = data.filter(user => user.id !== displayedClub?.leaderId && !members.some(member => member.id === user.id));
+      setSearchedUsers(filteredUsers);
+      // setSearch(data);
+    } catch (error) {
+      console.error('Error searching users:', error);
+    }
+  }
+
+  const handleUserClick = (user: IUserData) => {
+    setSelectedUser(user);
+    router.push('/SearchedUser');
+  }
+
+  const handleLeaderAdds = async (userId: number) => {
+    try {
+      const addUser = await AddUserToClub(userId, displayedClub?.id, true)
+    } catch (error) {
+      alert("User is already in the club!")
+    }
+  }
+
   useEffect(() => {
     // set Selected Post null so that all the posts show instead of the full posts
     setSelectedPostId(null);
@@ -161,7 +191,7 @@ const ClubPage = () => {
       try {
         if (clubId !== undefined) {
           const getPosts = await getPostsByClubId(clubId);
-          console.log('Fetched Posts:', getPosts);
+          // console.log('Fetched Posts:', getPosts);
           setPosts(getPosts);
 
           const memberIds = getPosts.map((post) => post.userId);
@@ -206,6 +236,32 @@ const ClubPage = () => {
 
     checkJoined(displayedClub?.id)
   }, [displayedClub?.id])
+
+  useEffect(() => {
+    if (isLeader || joined) {
+        setModalVisible(false);
+    } else if (!isLeader || !joined && (displayedClub?.isPublic === false)) {
+        setModalVisible(true);
+    } else {
+        setModalVisible(false);
+    }
+}, [isLeader, joined, displayedClub?.isPublic]);
+
+  const goBackToClubs = () => {
+    router.push('BrowseClubs')
+  }
+
+  const requestToJoin = async() =>{
+    let userId = Number(localStorage.getItem("UserId"))
+    try {
+      const addUser = await AddUserToClub(userId, displayedClub?.id, false)
+      console.log(addUser)
+      console.log("You requested to join this club")
+      router.push('BrowseClubs')
+    } catch (error) {
+      alert("User already requested to join!")
+    }
+  }
 
   const handleSortingPost = (option: string) => {
     let newOrder = posts;
@@ -347,11 +403,42 @@ const ClubPage = () => {
     "tabpanel": "py-3"
   }
 
+  const customAvatar: CustomFlowbiteTheme['avatar'] = {
+    "root": {
+      "rounded": "rounded-full shadow-lg",
+      "size": {
+        "md": "h-12 w-12",
+        "lg": "h-16 w-16"
+      }
+    }
+  }
+
   return (
     <>
       <div className='min-h-screen bg-offwhite'>
 
         <NavbarComponent />
+
+        {modalVisible && (
+        <Modal show={modalVisible} size="lg" onClose={() => setModalVisible(false)} popup>
+          {/* <Modal.Header /> */}
+            <Modal.Body>
+              <div className="text-center pt-20 pb-6">
+                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                 Unfortunately, you cannot view this club as you're not a member. 
+                </h3>
+                <div className="flex justify-center gap-4">
+                  <Button color="gray" onClick={goBackToClubs}>
+                    {"Browse other Clubs"}
+                  </Button>
+                  <Button color="success" onClick={requestToJoin}>
+                    Request to Join
+                  </Button>
+                </div>
+              </div>
+            </Modal.Body>
+        </Modal>
+      )}
 
         <div className={pageSize ? 'px-16' : 'px-5'}>
 
@@ -480,28 +567,79 @@ const ClubPage = () => {
               :
               <div className='col-span-5 overflow-hidden'>
                 <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl overflow-y-auto'>
-                  <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members <AddIcon /></h1>
-                  <div className='grid grid-cols-5 px-8 justify-center py-4'>
-                    <div className="col-span-1 flex flex-col justify-center items-center">
-                      <div onClick={() => { handleMemberClick(leader) }} className='relative cursor-pointer'>
-                        <img src={leader?.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
-                        <Image src="/crown.gif"
-                          width={200}
-                          height={200}
-                          alt="Club Leader"
-                          className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
+                  <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members {isLeader && <AddIcon className='cursor-pointer' onClick={() => setAddMember(!addMember)} />}</h1>
+                  {addMember ?
+                    <>
+                      <div className='grid grid-cols-4 items-center rounded-xl'>
+                        <div className='col-span-3'>
+                          <p className=' text-[18px] font-poppinsMed text-darkbrown'>{`Search Results for '${search}'`}</p>
+                        </div>
+                        <div className='col=span-1 darkBeige px-2 pb-1 pt-2 rounded-2xl'>
+                          <input
+                            className='rounded-xl h-8 ps-3'
+                            onChange={(e) => setSearch(e.target.value)}
+                          />
+                          <SearchIcon className='text-4xl text-white cursor-pointer' onClick={searchUser} />
+                        </div>
                       </div>
-                      <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
-                      <p className="font-mainFont text-darkbrown text-sm">{`${leader?.firstName} ${leader?.lastName}`}</p>
-                    </div>
-                    {members.map((member) => (
-                      <div key={member.id} onClick={() => { handleMemberClick(member) }} className="cursor-pointer col-span-1 flex flex-col justify-center items-center py-2">
-                        <img src={member.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
-                        <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
-                        <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
+                      <div className='grid grid-cols-5'>
+                        {searchedUsers?.length === 0 ? <div className="text-center mt-5 col-span-5">
+                          <p className="text-center text-darkbrown pt-20 text-xl font-poppinsMed">No users found. Are they already in this club?</p>
+                        </div> : searchedUsers?.map(user => (
+                          <div key={user.id}>
+                            {pageSize ? (
+                              <div className="ms-auto mt-5 flex flex-col items-center justify-center place-content-center cursor-pointer">
+                                <Avatar onClick={() => { handleUserClick(user) }}
+                                  img={user.profilePic || ''}
+                                  rounded
+                                  theme={customAvatar}
+                                  size="lg"
+                                />
+                                <div className='text-center mt-2'>
+                                  <p className='text-lg font font-poppinsMed'>{user.username}</p>
+                                  <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
+                                  <button onClick={() => handleLeaderAdds(user.id)} className='bg-darkbrown hover:bg-green-300 text-white hover:text-black font-mainFont px-2 my-1.5 rounded-xl text-[15px]'>Add to Club</button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className='mt-7 mx-auto'>
+                                <Avatar
+                                  img={user.profilePic || ''}
+                                  rounded
+                                  theme={customAvatar}
+                                  size="lg"
+                                />
+                                <div className='text-center mt-2'>
+                                  <p className='text-lg font font-poppinsMed'>{user.username}</p>
+                                  <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </>
+                    : <div className='grid grid-cols-5 px-8 justify-center py-4 mt-2'>
+                      <div className="col-span-1 flex flex-col justify-center items-center">
+                        <div className='relative cursor-pointer'>
+                          <img src={leader?.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
+                          <Image onClick={() => { handleMemberClick(leader) }} src="/crown.gif"
+                            width={200}
+                            height={200}
+                            alt="Club Leader"
+                            className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
+                        </div>
+                        <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
+                        <p className="font-mainFont text-darkbrown text-sm">{`${leader?.firstName} ${leader?.lastName}`}</p>
+                      </div>
+                      {members.map((member) => (
+                        <div key={member.id} onClick={() => { handleMemberClick(member) }} className="cursor-pointer col-span-1 flex flex-col justify-center items-center py-2">
+                          <img src={member.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
+                          <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
+                          <p className="font-mainFont text-darkbrown text-sm">{`${member.firstName} ${member.lastName}`}</p>
+                        </div>
+                      ))}
+                    </div>}
                 </div>
               </div>}
             <div className='col-span-2'>

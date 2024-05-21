@@ -130,7 +130,7 @@ const SearchClub = () => {
           <div className='mt-5'>
           {/* <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown'>Club Results for &apos;{router.query.search}&apos;</h1> */}
 
-          <div className="grid grid-cols-5 px-[30px] mt-8">
+          <div className="grid 2xl:grid-cols-5 lg:grid-cols-3 gap-5 lg:px-[30px] xl:px-[90px] mt-8">
             {/* search results, 5 per 'row' */}
             {/* if no matches found, display 'hidden' h1 with a message similar to "Can't find what you're looking for? Double check your spelling" */}
 

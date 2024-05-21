@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
 import SearchIcon from "@mui/icons-material/Search";
-import { Button, CustomFlowbiteTheme, TextInput} from "flowbite-react";
+import { Button, CustomFlowbiteTheme, TextInput, Tooltip } from "flowbite-react";
 import ClubModalComponent from "../components/ClubModalComponent";
 import { CarouselComponent } from "../components/CarouselComponent";
 import CardComponent from "../components/CardComponent";
@@ -47,29 +47,6 @@ const BrowseClubs = () => {
     }
   }, [pageSize]);
 
-  // const handleClubSearch = async () => {
-  //   try {
-  //     const searchQuery = inputRef.current?.value || '';
-  //     const fetchedClubsByName = await getClubsByName(searchQuery);
-  //     console.log('Fetched Clubs:', fetchedClubsByName);
-
-  //     // const queryString = `?clubs=${encodeURIComponent(JSON.stringify(fetchedClubsByName))}`;
-  //     // const route = `/SearchClub${queryString}`;
-  //     await router.push('/SearchClub');
-  //   } catch (error) {
-  //     console.error('Error fetching clubs:', error);
-  //   }
-  // };
-
-  // const handleClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
-  //   try {
-  //     event.preventDefault();
-  //     await handleClubSearch();
-  //   } catch (error) {
-  //     console.error('Error handling click event:', error);
-  //   }
-  // };
-
   const handleClick = () => {
     if (inputRef.current) {
       // Access the value of the input element using inputRef.current.value
@@ -93,20 +70,20 @@ const BrowseClubs = () => {
   };
 
 
-  const shuffledClubs = clubs.filter(club => club.isDeleted == false).sort(() => Math.random() - 0.5);
+  const shuffledClubs = clubs.filter(club => club.isPublic== true).sort(() => Math.random() - 0.5);
   const randomClubs = shuffledClubs.slice(0, 12);
   const recentClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
     const dateA = new Date(a.dateCreated);
     const dateB = new Date(b.dateCreated);
     const comparisonResult = dateB.getTime() - dateA.getTime();
     return comparisonResult;
-  }).filter(club => club.isDeleted == false);
+  }).filter(club => club.isPublic == true);
   const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
     const dateA = new Date(a.dateCreated);
     const dateB = new Date(b.dateCreated);
     const comparisonResult = dateA.getTime() - dateB.getTime();
     return comparisonResult;
-  }).filter(club => club.isDeleted == false);
+  }).filter(club => club.isPublic == true);
 
   const slicedRecentClubs = recentClubs.slice(0, 12);
   const slicedOldestClubs = oldestClubs.slice(0, 12);
@@ -206,7 +183,7 @@ const BrowseClubs = () => {
 
           {/* search bar visible on lg, hidden on mobile */}
           <div className={pageSize ? "flex justify-end gap-5" : ""}>
-            
+            <Tooltip content="Case Sensitive" placement="top" style="light">
               <div className={pageSize ? "relative ml-20" : "hidden"}>
                 <TextInput
                   ref={inputRef}
@@ -233,7 +210,7 @@ const BrowseClubs = () => {
                 </div>
               </div>
 
-            
+            </Tooltip>
 
             <div className={pageSize ? "flex justify-end " : "hidden"}>
               <ClubModalComponent />

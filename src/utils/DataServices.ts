@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -108,7 +108,7 @@ export const deleteClub = async (Club: IClubs) => {
         body: JSON.stringify(Club)
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
         const message = 'An error has occured: ' + res.status;
         throw new Error(message);
     }
@@ -363,7 +363,7 @@ export const createPost = async (postData: IPostData) => {
 export const getRecentPosts = async (userId: number) => {
     const promise = await fetch(`${url}Post/GetRecentPostsForUserClubs/${userId}`)
     const data: IPosts[] = await promise.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -422,8 +422,8 @@ export const getClubMembers = async (clubId: number | undefined) => {
 }
 
 // ADD USER TO CLUB
-export const AddUserToClub = async (userId: number | undefined, clubId: number | undefined) => {
-    const res = await fetch(`${url}Member/AddMemberToClub?userId=${userId}&clubId=${clubId}`, {
+export const AddUserToClub = async (userId: number | undefined, clubId: number | undefined, isLeader: boolean) => {
+    const res = await fetch(`${url}Member/AddMemberToClub/${userId}/${clubId}/${isLeader}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -447,6 +447,33 @@ export const RemoveMember = async (userId: number | undefined, clubId: number | 
 
     const data = res.text();
     // console.log(data);
+    return data;
+}
+
+// GET PENDING REQUESTS 
+export const getPendingMemberRequests = async (userId: number) => {
+    const promise = await fetch(`${url}Member/GetPendingRequest/${userId}`);
+    const data: IPendingMembers[] = await promise.json()
+    // console.log(data);
+    return data;
+}
+
+// HANDING CLUB REQUESTS
+export const handlePendingMemberRequests = async (requestId: number, decision: string) => {
+    const res = await fetch(`${url}Member/UpdatePendingStatus/${requestId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(decision)
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.text()
     return data;
 }
 

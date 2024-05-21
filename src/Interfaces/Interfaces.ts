@@ -168,3 +168,16 @@ export interface LikedUser {
     userId: number | string;
     username: string;
 }
+
+export interface IPendingMembers {
+    clubName: string
+    clubId: number
+    members: [
+        {
+            id: number
+            memberId: number
+            name: string
+            profilepic: string
+        }
+    ]
+}

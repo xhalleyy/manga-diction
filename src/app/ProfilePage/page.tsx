@@ -264,7 +264,6 @@ const ProfilePage = (props: any) => {
                     };
                 })
             );
-            console.log(allOngoing)
             setOngoing(allOngoing);
         };
 
