@@ -131,9 +131,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title, categor
                     <p className='text-xl'>{username}</p>
 
                     <div className='inline-flex'>
-                        <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white px-2 mr-1'>{category}</Badge>
+                        <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white px-2 mr-1 '>{category}</Badge>
                         {
-                            tags && tags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
+                            tags && tags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white me-1.5'>{tag}</Badge>)
                         }
                     </div>
 

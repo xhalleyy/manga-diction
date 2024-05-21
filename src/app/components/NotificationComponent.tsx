@@ -49,6 +49,8 @@ const NotificationComponent = () => {
         }
     }
 
+    // SEE MOST RECENT LIKES OF YOUR POSTS
+
     useEffect(() => {
         seePendingRequests();
         seePendingFriends();

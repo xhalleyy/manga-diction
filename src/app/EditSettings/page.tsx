@@ -86,6 +86,18 @@ const EditSettings = () => {
         }
     };
 
+    const handleAgeChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        if (displayedUser) {
+            if (value.trim() !== '') {
+                setDisplayedUser((prevUserData: IUserData | null) => ({
+                    ...prevUserData!,
+                    age: Number(value)
+                }))
+            }
+        }
+    }
+
     const handleCurrentPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCurrentPass(e.target.value);
     };
@@ -98,14 +110,14 @@ const EditSettings = () => {
         const file = e.target.files && e.target.files[0];
         const maxByteSize = 5 * 1024 * 1024;
         if (file) {
-            if(file.size > maxByteSize){
+            if (file.size > maxByteSize) {
                 alert("File is too big!");
                 return "";
             } else {
                 const reader = new FileReader();
                 reader.onload = () => {
                     const imageData = reader.result as string;
-                    setProfilePic(imageData); 
+                    setProfilePic(imageData);
                     console.log("New profile picture data:", imageData);
                 };
                 reader.readAsDataURL(file); // Read file as base64-encoded string
@@ -204,20 +216,41 @@ const EditSettings = () => {
                     </div>
 
                     <h1 className={pageSize ? 'text-darkbrown font-mainFont text-4xl ps-4 pb-2' : 'text-center text-darkbrown font-mainFont text-4xl py-5'}>Account Settings</h1>
-                    <div className={pageSize ? 'bg-paleblue p-8 rounded-xl grid xl:grid-cols-2 lg:grid-cols-3' : 'bg-paleblue p-8 rounded-xl grid grid-cols-1'}>
-                        <div className='col-span-1 flex justify-center items-center lg:mt-[-70px]'>
-                            <img
-                                src={displayedUser?.profilePic || '/noprofile.jpg'}
-                                onMouseEnter={() => setChangePic(true)}
-                                onMouseLeave={() => setChangePic(false)}
-                                alt='profile image'
-                                width={250}
-                                height={250}
-                                className='settingsImg shadow-md'
-                            />
+                    <div className={pageSize ? 'bg-paleblue p-8 rounded-xl grid lg:grid-cols-2' : 'bg-paleblue p-8 rounded-xl grid grid-cols-1'}>
+                        <div className='col-span-1 flex justify-center items-center '>
+                            <div className='flex flex-col items-center'>
+                                <img
+                                    src={displayedUser?.profilePic || '/noprofile.jpg'}
+                                    onMouseEnter={() => setChangePic(true)}
+                                    onMouseLeave={() => setChangePic(false)}
+                                    alt='profile image'
+                                    width={250}
+                                    height={250}
+                                    className='settingsImg shadow-md'
+                                />
+                                
+                                <div className={pageSize ? 'flex flex-col justify-center items-center gap-2 py-2 mt-4' : "grid grid-cols-1"}>
+                                    <div className={pageSize ? "flex" : "col-span-1 text-center"}>
+                                        <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right' />
+                                    </div>
+                                    <input
+                                        className={pageSize ? "flex xl:w-72 lg:w-52 w-72 rounded-xl bg-white" : "mt-3 col-span-1 flex justify-center"}
+                                        id="picture"
+                                        name="picture"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handlePicChange}
+                                    />
+                                </div>
+                                <div className={pageSize ? 'flex flex-col justify-center w-full items-center gap-2 py-2' : "flex justify-center items-center my-3"}>
+                                    {/* <Label htmlFor="base" value="Age:" className='text-lg font-mainFont flex-shrink-0 text-right pr-2' /> */}
+                                    <TextInput onChange={handleAgeChange} theme={customInput} placeholder='Age' id="base" type="number" sizing="post" className='w-1/3 text-center flex justify-center items-center' />
+                                </div>
+                                
+                            </div>
 
                         </div>
-                        <div className='col-span-1 lg:col-span-2 xl:col-span-1 flex-col justify-center items-center gap-3'>
+                        <div className='col-span-1 xl:col-span-1 flex-col justify-center items-center gap-3'>
                             <div className='flex flex-col gap-4 py-4'>
                                 <div className='flex items-center gap-2 py-2'>
                                     <Label htmlFor="base" value="Username:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
@@ -232,7 +265,7 @@ const EditSettings = () => {
                                     <TextInput onChange={handleLastNameChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
                                 </div>
 
-                                <div className={pageSize ? 'flex items-center gap-2 py-2' : "grid grid-cols-1"}>
+                                {/* <div className={pageSize ? 'flex items-center gap-2 py-2' : "grid grid-cols-1"}>
                                     <div className={pageSize ? "flex" : "col-span-1 text-center"}>
                                         <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right' />
                                     </div>
@@ -244,7 +277,7 @@ const EditSettings = () => {
                                         accept="image/*"
                                         onChange={handlePicChange}
                                     />
-                                </div>
+                                </div> */}
                                 {passwordError ?
                                     <p className='text-red-900'>Current password incorrect. Cannot change password.</p>
                                     : null}

@@ -19,7 +19,7 @@ const BrowseClubs = () => {
   const clubData = useClubContext();
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
-  const [pageSize, setPageSize] = useState<boolean>(false);
+  const [pageSize, setPageSize] = useState<boolean>(true);
 
   const router = useRouter();
   // useRef: used for accessing and persiting mutable values; doesn't cause a re-render when value is changed
@@ -183,7 +183,7 @@ const BrowseClubs = () => {
 
           {/* search bar visible on lg, hidden on mobile */}
           <div className={pageSize ? "flex justify-end gap-5" : ""}>
-            <Tooltip content="Case Sensitive" placement="top" style="light">
+            {/* <Tooltip content="Case Sensitive" placement="top" style="light"> */}
               <div className={pageSize ? "relative ml-20" : "hidden"}>
                 <TextInput
                   ref={inputRef}
@@ -210,7 +210,7 @@ const BrowseClubs = () => {
                 </div>
               </div>
 
-            </Tooltip>
+            {/* </Tooltip> */}
 
             <div className={pageSize ? "flex justify-end " : "hidden"}>
               <ClubModalComponent />

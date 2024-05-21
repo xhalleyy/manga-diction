@@ -238,20 +238,22 @@ const ClubPage = () => {
   }, [displayedClub?.id])
 
   useEffect(() => {
-    if (isLeader || joined) {
-        setModalVisible(false);
+    if (displayedClub?.isPublic === true) {
+      setModalVisible(false);
+    } else if (isLeader || joined) {
+      setModalVisible(false);
     } else if (!isLeader || !joined && (displayedClub?.isPublic === false)) {
-        setModalVisible(true);
+      setModalVisible(true);
     } else {
-        setModalVisible(false);
+      setModalVisible(false);
     }
-}, [isLeader, joined, displayedClub?.isPublic]);
+  }, [isLeader, joined, displayedClub?.isPublic]);
 
   const goBackToClubs = () => {
     router.push('BrowseClubs')
   }
 
-  const requestToJoin = async() =>{
+  const requestToJoin = async () => {
     let userId = Number(localStorage.getItem("UserId"))
     try {
       const addUser = await AddUserToClub(userId, displayedClub?.id, false)
@@ -420,12 +422,12 @@ const ClubPage = () => {
         <NavbarComponent />
 
         {modalVisible && (
-        <Modal show={modalVisible} size="lg" onClose={() => setModalVisible(false)} popup>
-          {/* <Modal.Header /> */}
+          <Modal show={modalVisible} size="lg" onClose={() => setModalVisible(false)} popup>
+            {/* <Modal.Header /> */}
             <Modal.Body>
               <div className="text-center pt-20 pb-6">
                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                 Unfortunately, you cannot view this club as you're not a member. 
+                  Unfortunately, you cannot view this club as you're not a member.
                 </h3>
                 <div className="flex justify-center gap-4">
                   <Button color="gray" onClick={goBackToClubs}>
@@ -437,8 +439,8 @@ const ClubPage = () => {
                 </div>
               </div>
             </Modal.Body>
-        </Modal>
-      )}
+          </Modal>
+        )}
 
         <div className={pageSize ? 'px-16' : 'px-5'}>
 
@@ -570,11 +572,11 @@ const ClubPage = () => {
                   <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members {isLeader && <AddIcon className='cursor-pointer' onClick={() => setAddMember(!addMember)} />}</h1>
                   {addMember ?
                     <>
-                      <div className='grid grid-cols-4 items-center rounded-xl'>
-                        <div className='col-span-3'>
+                      <div className='grid grid-cols-6 items-center rounded-xl'>
+                        <div className='col-span-4'>
                           <p className=' text-[18px] font-poppinsMed text-darkbrown'>{`Search Results for '${search}'`}</p>
                         </div>
-                        <div className='col=span-1 darkBeige px-2 pb-1 pt-2 rounded-2xl'>
+                        <div className='col-span-2 darkBeige px-2 pb-1 pt-2 rounded-2xl'>
                           <input
                             className='rounded-xl h-8 ps-3'
                             onChange={(e) => setSearch(e.target.value)}
@@ -598,7 +600,9 @@ const ClubPage = () => {
                                 <div className='text-center mt-2'>
                                   <p className='text-lg font font-poppinsMed'>{user.username}</p>
                                   <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
-                                  <button onClick={() => handleLeaderAdds(user.id)} className='bg-darkbrown hover:bg-green-300 text-white hover:text-black font-mainFont px-2 my-1.5 rounded-xl text-[15px]'>Add to Club</button>
+                                  <button onClick={() => handleLeaderAdds(user.id)} className='bg-darkbrown hover:bg-green-300 text-white hover:text-black font-mainFont px-2 my-1.5 rounded-xl text-[15px] flex gap-1 items-center'>
+                                    <AddIcon sx={pageSize ? { fontSize: 20, color: grey[50] } : { fontSize: 15, color: grey[50] }} />
+                                    Member</button>
                                 </div>
                               </div>
                             ) : (

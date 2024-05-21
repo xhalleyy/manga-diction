@@ -115,7 +115,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className={pageSize ? 'px-[70px] grid grid-cols-4 xl:gap-12 lg:gap-4' : 'px-4'}>
+          <div className={pageSize ? 'px-[70px] grid grid-cols-4 2xl:gap-12 xl:gap-7 lg:gap-4' : 'px-4'}>
             <div className='col-span-3'>
               <p style={pageSize ? { fontSize: '18px' } : { fontSize: '26px' }} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
               <div className='bg-paleblue px-5 py-3 rounded-lg'>
