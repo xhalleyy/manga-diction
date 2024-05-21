@@ -119,11 +119,8 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
                     setPosts(getPosts);
             }
             console.log(data)
-   
-            
         }
         
-            
         } catch (error) {
             console.log('An error occurred', error);
         }

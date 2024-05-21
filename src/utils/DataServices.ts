@@ -328,7 +328,7 @@ export const removeFavManga = async (userId: number, mangaId: string) => {
 export const getPostsByClubId = async (clubId: number | undefined) => {
     const res = await fetch(url + 'Post/GetAllPostsInClub/' + clubId)
     const data: IPosts[] = await res.json();
-    // console.log(data);
+    console.log(data);
     return data;
 }
 
@@ -337,6 +337,23 @@ export const getPostById = async (postId: number | null) => {
     const data: IPosts = await res.json();
     return data;
 }
+
+export const updatePosts = async (postData: IPostData) => {
+    const res = await fetch(`${url}Post/UpdatePost`, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+    }) 
+    
+    const data = await res.json();
+    console.log(data);
+    return data;
+}
+
+
+
 
 // CREATE POST IN CLUB
 export const createPost = async (postData: IPostData) => {
@@ -363,7 +380,7 @@ export const createPost = async (postData: IPostData) => {
 export const getRecentPosts = async (userId: number) => {
     const promise = await fetch(`${url}Post/GetRecentPostsForUserClubs/${userId}`)
     const data: IPosts[] = await promise.json();
-    // console.log(data)
+    console.log(data)
     return data;
 }
 
