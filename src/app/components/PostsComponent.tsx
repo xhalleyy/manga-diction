@@ -1,11 +1,11 @@
 'use client'
 
-import { Avatar, Badge, CustomFlowbiteTheme, Label, Select, TextInput } from 'flowbite-react'
+import { Avatar, Badge, Button, CustomFlowbiteTheme, Label, Modal, Select, TextInput } from 'flowbite-react'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import { Category } from '@mui/icons-material';
-import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost, updatePosts } from '@/utils/DataServices';
+import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost, deletePosts, updatePosts } from '@/utils/DataServices';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Tooltip } from '@mui/material';
@@ -38,8 +38,12 @@ interface likedUser {
     username: string
 }
 
+interface successProps {
+    updateSuccess: () => void
+}
 
-const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName }: PostsProps) => {
+
+const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName }: PostsProps, { updateSuccess }: successProps) => {
 
     const info = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
@@ -56,6 +60,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
     const [value, setValue] = useState<any>([]);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     // const [expandValue, setExpandValue] = useState<string>(initialDescription);
+    const [openModal, setOpenModal] = useState(false);
     const router = useRouter();
 
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
@@ -122,7 +127,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
         getPost();
     }, [id, info.displayedUser?.id, userId])
 
-    
+
 
     useEffect(() => {
         const fetchedLikes = async () => {
@@ -144,7 +149,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
     const handleChange = (desc: string) => {
         setNewDesc(desc);
     };
-    
+
 
     const handleUpdatePost = async () => {
 
@@ -171,11 +176,33 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                 setNewTags(updatedPost.tags);
                 setNewDesc(updatedPost.description)
                 setIsEditing(false);
+                updateSuccess();
             }
         } catch (error) {
             console.log('error updating clubs', error)
         }
 
+    }
+
+    const handleDeletePost = async () => {
+        try {
+            await deletePosts({
+                id,
+                userId,
+                clubId,
+                title: initialTitle,
+                category: initialCategory,
+                tags: newTags,
+                description: initialDescription,
+                image,
+                dateCreated,
+                dateUpdated,
+                isDeleted
+            });
+            setOpenModal(false)
+        } catch (error) {
+            console.log('error deleting club', error)
+        }
     }
 
 
@@ -203,18 +230,41 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                                     <EditIcon className='col-span-1 items-end' />
                                 </Tooltip>
 
-                                <Tooltip title='Delete Post' placement='right'>
+                                <Tooltip onClick={() => setOpenModal(true)} title='Delete Post' placement='right'>
                                     <DeleteIcon />
                                 </Tooltip>
                             </div>
                             : null}
                     </div>
 
+                    <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
+                        <Modal.Header />
+                        <Modal.Body>
+                            <div className="text-center">
+                                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                    <div>
+                                        Are you sure you want to delete this post?
+                                    </div>
+
+                                </h3>
+                                <div className="flex justify-center gap-4">
+                                    <Button color="failure" onClick={handleDeletePost}>
+                                        {"Yes, I'm sure"}
+                                    </Button>
+                                    <Button color="gray" onClick={() => setOpenModal(false)}>
+                                        No, cancel
+                                    </Button>
+                                </div>
+
+                            </div>
+                        </Modal.Body>
+                    </Modal>
+
                     {isEditing ? (
                         <div className=' rounded-lg pr-8'>
                             <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5 pb-2"}>
                                 <Label htmlFor="base" value="Title:" className='col-span-1 text-lg mt-1' />
-                                <TextInput onChange={(e) => setNewTitle(e.target.value)} value={newTitle}  placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
+                                <TextInput onChange={(e) => setNewTitle(e.target.value)} value={newTitle} placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
                                 <div className={pageSize ? 'col-span-2 flex justify-center' : 'hidden'}>
                                     <Select onChange={(e) => setNewCategory(e.target.value)} value={newCategory} id='myDropdown' defaultValue={"Category"} required={true} className='font-mainFont'>
                                         <option value="Category" disabled>Category</option>

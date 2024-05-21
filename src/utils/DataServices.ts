@@ -352,7 +352,19 @@ export const updatePosts = async (postData: IPostData) => {
     return data;
 }
 
-
+export const deletePosts = async (postData: IPostData) => {
+    const res = await fetch(`${url}Post/DeletePost`, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+    }) 
+    
+    const data = await res.json();
+    console.log(data);
+    return data;
+}
 
 
 // CREATE POST IN CLUB

@@ -132,7 +132,7 @@ const EditClubSettingsComponent: React.FC<successProps> = ({ updateSuccess }) =>
             console.error('Failed to update:', error);
         }
     };
-
+ 
     return (
         <div className={pageSize ? "bg-mutedblue px-5 pb-5 pt-2 rounded-xl font-mainFont" : "bg-ivory px-5 pb-5 pt-5 my-3 rounded-lg font-mainFont"}>
             <div className="pb-3">
