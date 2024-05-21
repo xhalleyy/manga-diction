@@ -113,7 +113,7 @@ export interface IManga {
 export interface IGetLikes {
     likesCount: number
     likedByUsers: [{
-        userId: string
+        userId: number
         username: string
     }]
 }
@@ -165,6 +165,6 @@ export interface IUserDataWithRequestId extends IUserData {
 }
 
 export interface LikedUser {
-    userId: string;
+    userId: number | string;
     username: string;
 }
