@@ -113,6 +113,11 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
         }
     }
 
+    const handleEdit = async (event: React.MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+        setIsEditing(!isEditing)
+    }
+
     useEffect(() => {
         const getPost = async () => {
             if (info.displayedUser?.id === userId) {
@@ -195,11 +200,11 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
 
                 <div style={{ width: '90%' }} className='flex-col mt-1.5'>
 
-                    <div className='grid grid-cols-10'>
-                        <p className='text-xl col-span-9'>{username}</p>
+                    <div className='grid grid-cols-2'>
+                        {!isEditing && <p className='text-xl col-span-1'>{username}</p>}
                         {yourPost ?
-                            <div className='flex justify-around'>
-                                <Tooltip onClick={() => setIsEditing(!isEditing)} title='Edit Post' placement='right'>
+                            <div className={isEditing ? 'col-span-2 flex justify-end float-end pe-8 gap-2' : 'col-span-1 flex justify-end float-end pe-8 gap-2'}>
+                                <Tooltip onClick={handleEdit} title='Edit Post' placement='right'>
                                     <EditIcon className='col-span-1 items-end' />
                                 </Tooltip>
 
@@ -211,8 +216,8 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                     </div>
 
                     {isEditing ? (
-                        <div className=' rounded-lg pr-8'>
-                            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5 pb-2"}>
+                        <div onClick={(event) => {event.stopPropagation()}} className=' rounded-lg pr-8 '>
+                            <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-2' : "grid grid-cols-5 pb-2"}>
                                 <Label htmlFor="base" value="Title:" className='col-span-1 text-lg mt-1' />
                                 <TextInput onChange={(e) => setNewTitle(e.target.value)} value={newTitle}  placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
                                 <div className={pageSize ? 'col-span-2 flex justify-center' : 'hidden'}>
@@ -255,9 +260,8 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                             </div>
 
 
-                            <button onClick={handleUpdatePost}>
-
-                                update post
+                            <button className='font-poppinsMed flex justify-end float-end bg-offwhite text-darkbrown px-3 rounded-lg  mt-1 py-1 hover:bg-emerald-200' onClick={handleUpdatePost}>
+                                update
                             </button>
                         </div>
                     )
@@ -268,7 +272,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                                 <div className='inline-flex'>
                                     <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white px-2 mr-1'>{initialCategory}</Badge>
                                     {
-                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
+                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white me-1.5'>{tag}</Badge>)
                                     }
                                 </div>
 
