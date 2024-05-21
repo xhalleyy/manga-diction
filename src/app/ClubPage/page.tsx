@@ -566,7 +566,7 @@ const ClubPage = () => {
                 )}
 
 
-                <div className='opacity-90 py-3'>
+                <div className='opacity-90 pt-1 pb-3'>
                   {selectedPostId ?
                     ((isLeader || joined) ? (
                       <div>
