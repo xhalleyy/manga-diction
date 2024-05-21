@@ -95,12 +95,12 @@ const ClubPage = () => {
       setOpenModal(false);
       setJoined(false);
     } else {
-      if(userId === displayedClub?.leaderId){
+      if (userId === displayedClub?.leaderId) {
         try {
           await deleteClub(displayedClub);
           router.push('/Dashboard');
         } catch (error) {
-          console.error('Error deleting club, ', error );
+          console.error('Error deleting club, ', error);
         }
       } else {
         console.log('You do not have authorization to delete this club');
@@ -207,17 +207,6 @@ const ClubPage = () => {
     checkJoined(displayedClub?.id)
   }, [displayedClub?.id])
 
-
-  const customInput = {
-    "field": {
-      "input": {
-        "sizes": {
-          "post": "py-1.5 px-2 text-[16px] font-mainFont"
-        }
-      }
-    }
-  }
-
   const handleSortingPost = (option: string) => {
     let newOrder = posts;
     if (option === "Popular") {
@@ -273,6 +262,65 @@ const ClubPage = () => {
         "auto": "bg-teal-100 border border-gray-200 bg-white text-gray-900 dark:border-none dark:bg-gray-700 dark:text-white"
       },
     },
+  }
+
+  const customButton: CustomFlowbiteTheme["button"] = {
+    "base": "group font-mainFont relative flex items-stretch justify-center p-0.5 text-center font-medium transition-[color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow] focus:z-10 focus:outline-none",
+    "fullSized": "w-full",
+    "disabled": "cursor-not-allowed opacity-50",
+    "isProcessing": "cursor-wait",
+    "spinnerSlot": "absolute top-0 flex h-full items-center",
+    "gradientDuoTone": {
+      "cyanToBlue": "bg-gradient-to-r from-cyan-500 to-cyan-500 text-white focus:ring-4 focus:ring-cyan-300 enabled:hover:bg-gradient-to-bl dark:focus:ring-cyan-800",
+      "greenToBlue": "bg-gradient-to-br from-green-400 to-cyan-600 text-white focus:ring-4 focus:ring-green-200 enabled:hover:bg-gradient-to-bl dark:focus:ring-green-800",
+      "pinkToOrange": "bg-gradient-to-br from-pink-500 to-orange-400 text-white focus:ring-4 focus:ring-pink-200 enabled:hover:bg-gradient-to-bl dark:focus:ring-pink-800",
+      "purpleToBlue": "bg-gradient-to-br from-darkerblue to-sky-300 text-white focus:ring-4 focus:ring-cyan-300 enabled:hover:bg-gradient-to-bl dark:focus:ring-cyan-800",
+      "purpleToPink": "bg-gradient-to-r from-purple-500 to-pink-500 text-white focus:ring-4 focus:ring-purple-200 enabled:hover:bg-gradient-to-l dark:focus:ring-purple-800",
+      "redToYellow": "bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 text-gray-900 focus:ring-4 focus:ring-red-100 enabled:hover:bg-gradient-to-bl dark:focus:ring-red-400",
+      "tealToLime": "bg-gradient-to-r from-teal-200 to-lime-200 text-gray-900 focus:ring-4 focus:ring-lime-200 enabled:hover:bg-gradient-to-l enabled:hover:from-teal-200 enabled:hover:to-lime-200 enabled:hover:text-gray-900 dark:focus:ring-teal-700"
+    },
+    "inner": {
+      "base": "flex items-stretch transition-all duration-200",
+      "position": {
+        "none": "",
+        "start": "rounded-r-none",
+        "middle": "rounded-none",
+        "end": "rounded-l-none"
+      },
+      "outline": "border border-transparent",
+      "isProcessingPadding": {
+        "xs": "pl-8",
+        "sm": "pl-10",
+        "md": "pl-12",
+        "lg": "pl-16",
+        "xl": "pl-20"
+      }
+    },
+    "label": "ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-cyan-200 text-xs font-semibold text-cyan-800",
+    "outline": {
+      "color": {
+        "gray": "border border-gray-900 dark:border-white",
+        "default": "border-0",
+        "light": ""
+      },
+      "off": "",
+      "on": "flex w-full justify-center bg-white text-gray-900 transition-all duration-75 ease-in group-enabled:group-hover:bg-opacity-0 group-enabled:group-hover:text-inherit dark:bg-gray-900 dark:text-white",
+      "pill": {
+        "off": "rounded-md",
+        "on": "rounded-full"
+      }
+    },
+    "pill": {
+      "off": "rounded-xl",
+      "on": "rounded-full"
+    },
+    "size": {
+      "xs": "px-2 py-1 text-xs",
+      "sm": "px-3 py-1.5 text-sm",
+      "md": "px-6 py-1.5 text-sm",
+      "lg": "px-5 py-2.5 text-base",
+      "xl": "px-6 py-3 text-base"
+    }
   }
 
   const customTabs: CustomFlowbiteTheme["tabs"] = {
@@ -392,14 +440,14 @@ const ClubPage = () => {
                   {selectedPostId ?
                     ((isLeader || joined) ? (
                       <div>
-                        <Button onClick={() => setSelectedPostId(null)}>Back</Button>
+                        <Button theme={customButton} gradientDuoTone="purpleToBlue" onClick={() => setSelectedPostId(null)}>Back</Button>
                         <PostRepliesComponent />
                       </div>
                     ) : null)
                     : (
                       posts.length > 0 ? (
                         posts.map((post, idx) => (
-                          <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick = {() => handleClickPost(post.id)}>
+                          <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handleClickPost(post.id)}>
                             <PostsComponent
                               id={post.id}
                               userId={post.userId}
@@ -415,7 +463,7 @@ const ClubPage = () => {
                               dateUpdated={post.dateUpdated}
                               isDeleted={post.isDeleted}
                               displayClubName={false}
-                              // onClick = {() => handleClickPost(post.id)}
+                            // onClick = {() => handleClickPost(post.id)}
                             />
                           </div>
                         ))

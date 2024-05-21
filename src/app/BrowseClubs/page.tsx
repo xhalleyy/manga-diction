@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
 import SearchIcon from "@mui/icons-material/Search";
-import { Button, CustomFlowbiteTheme, TextInput, Tooltip } from "flowbite-react";
+import { Button, CustomFlowbiteTheme, TextInput} from "flowbite-react";
 import ClubModalComponent from "../components/ClubModalComponent";
 import { CarouselComponent } from "../components/CarouselComponent";
 import CardComponent from "../components/CardComponent";
@@ -206,7 +206,7 @@ const BrowseClubs = () => {
 
           {/* search bar visible on lg, hidden on mobile */}
           <div className={pageSize ? "flex justify-end gap-5" : ""}>
-            <Tooltip content="Case Sensitive" placement="top" style="light">
+            
               <div className={pageSize ? "relative ml-20" : "hidden"}>
                 <TextInput
                   ref={inputRef}
@@ -233,7 +233,7 @@ const BrowseClubs = () => {
                 </div>
               </div>
 
-            </Tooltip>
+            
 
             <div className={pageSize ? "flex justify-end " : "hidden"}>
               <ClubModalComponent />

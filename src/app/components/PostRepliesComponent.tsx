@@ -16,13 +16,17 @@ const PostRepliesComponent = () => {
     const [club, setClub] = useState<IClubs | null>(null);
     const [postUser, setPostUser] = useState<IUserData | null>(null);
     const [parentComments, setParentComments] = useState<IComments[]>([]);
-    const [allReplies, setAllReplies] = useState<{ [key: number]: IComments[] }>({});
+    // const [allReplies, setAllReplies] = useState<{ [key: number]: IComments[] }>({});
     
     const [likes, setLikes] = useState<number>(0);
     const [allLikesTopComments, setAllLikesTopComments] = useState<{ [key: number]: IGetLikes }>({});
+    const [userLikedTopComments, setUserLikedTopComments] = useState<{ [key: number]: boolean }>({});
+    const [allReplies, setAllReplies] = useState<{ [key: number]: IComments[] }>({});
     const [allLikesReplies, setAllLikesReplies] = useState<{ [key: number]: IGetLikes }>({});
+    const [userLikedReplies, setUserLikedReplies] = useState<{ [key: number]: boolean }>({});
+    
     const [isLiked, setIsLiked] = useState<boolean>(false);
-    const [isUnliked, setIsUnliked] = useState<boolean>(false);
+    const [isLiked2, setIsLiked2] = useState<boolean>(false);
     const [likedByUsers, setLikedByUsers] = useState<LikedUser[]>([]);
 
 
@@ -59,55 +63,70 @@ const PostRepliesComponent = () => {
 
     const fetchedPost = async () => {
         try {
+            const userId = localStorage.getItem("UserId");
             if (selectedPostId !== null) {
                 const getPost = await getPostById(selectedPostId);
                 setPost(getPost);
-
+    
                 const getClub = await specifiedClub(getPost.clubId);
                 setClub(getClub);
-
+    
                 const memberInfo = await getUserInfo(getPost.userId);
                 setPostUser(memberInfo);
-
+    
                 const topComments = await getComments(getPost.id);
                 setParentComments(topComments);
-
+    
                 // Fetch likes for top-level comments
                 const likesDataTopComments = await Promise.all(
                     topComments.map(async (comment: IComments) => {
-                        const likes = await GetLikesByComment(comment.id); // Use your existing function to get likes
-                        return { [comment.id]: likes };
+                        const likes = await GetLikesByComment(comment.id);
+                        const isUserLiked = likes.likedByUsers.some((likedUser: LikedUser) => likedUser.userId === userId);
+                        if(isUserLiked){
+                            setIsLiked(true)
+                        }
+                        return { commentId: comment.id, likes, isUserLiked };
                     })
                 );
-
+    
                 // Combine likes data for top-level comments into one object
-                const allLikesTopComments = likesDataTopComments.reduce((acc, curr) => ({ ...acc, ...curr }), {});
-                setAllLikesTopComments(allLikesTopComments); 
-
+                const allLikesTopComments = likesDataTopComments.reduce((acc, { commentId, likes }) => ({ ...acc, [commentId]: likes }), {});
+                const userLikedTopComments = likesDataTopComments.reduce((acc, { commentId, isUserLiked }) => ({ ...acc, [commentId]: isUserLiked }), {});
+    
+                setAllLikesTopComments(allLikesTopComments);
+                setUserLikedTopComments(userLikedTopComments);
+    
                 const repliesData = await Promise.all(
                     topComments.map(async (comment: IComments) => {
                         const replies = await getRepliesFromComment(comment.id);
-                        return { [comment.id]: replies };
+                        return { commentId: comment.id, replies };
                     })
                 );
-
+    
                 // Fetch likes for replies
                 const likesDataReplies = await Promise.all(
-                    Object.values(allReplies).flat().map(async (reply: IComments) => {
-                        const likes = await GetLikesByComment(reply.id); // Use your existing function to get likes
-                        return { [reply.id]: likes };
-                    })
+                    repliesData.flatMap(({ replies }) =>
+                        replies.map(async (reply: IComments) => {
+                            const likes = await GetLikesByComment(reply.id);
+                            const isUserLiked = likes.likedByUsers.some((likedUser: LikedUser) => likedUser.userId === userId);
+                            if(isUserLiked){
+                                setIsLiked(true)
+                            }
+                            return { replyId: reply.id, likes, isUserLiked };
+                        })
+                    )
                 );
-
-                 // reduce method to combine all objects into one;
-                // acc = accumulates the results
-                // curr = current value
-                const allRepliesObject = repliesData.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    
+                // Combine replies data into one object
+                const allRepliesObject = repliesData.reduce((acc, { commentId, replies }) => ({ ...acc, [commentId]: replies }), {});
                 setAllReplies(allRepliesObject);
-
+    
                 // Combine likes data for replies into one object
-                const allLikesReplies = likesDataReplies.reduce((acc, curr) => ({ ...acc, ...curr }), {});
-                setAllLikesReplies(allLikesReplies); // Assuming allLikesReplies is your state for replies likes
+                const allLikesReplies = likesDataReplies.reduce((acc, { replyId, likes }) => ({ ...acc, [replyId]: likes }), {});
+                const userLikedReplies = likesDataReplies.reduce((acc, { replyId, isUserLiked }) => ({ ...acc, [replyId]: isUserLiked }), {});
+    
+                setAllLikesReplies(allLikesReplies);
+                setUserLikedReplies(userLikedReplies);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -154,41 +173,68 @@ const PostRepliesComponent = () => {
         fetchedPost();
     }, []);
 
-    const handleLikes = async (event: React.MouseEvent<HTMLDivElement>, commentId: number) => {
-        event.stopPropagation();
-        try {
-            const user = Number(localStorage.getItem("UserId"));
-            // Assuming you have a function to like the comment
-            await AddLikeToComment(commentId, user); // Implement this function as per your API
+    const toggleLike = async (itemId: number, isParent: boolean) => {
+        const userId = Number(localStorage.getItem("UserId"));
+        const currentLikesData = await GetLikesByComment(itemId);
+        const isUserLiked = currentLikesData.likedByUsers.some(likedUser => likedUser.userId === userId);
     
-            // Update likes state
-            const updatedLikes = await GetLikesByComment(commentId);
+        if (isUserLiked) {
+            await RemoveLikeFromComment(itemId, userId);
+            setIsLiked(false)
+        } else {
+            await AddLikeToComment(itemId, userId);
+            setIsLiked(true)
+        }
+    
+        const updatedLikes = await GetLikesByComment(itemId);
+        if (isParent) {
             setAllLikesTopComments(prevState => ({
                 ...prevState,
-                [commentId]: updatedLikes
+                [itemId]: updatedLikes,
             }));
-        } catch (error) {
-            console.error('Error adding like: ', error);
-        }
-    };
-    
-    const removeLikes = async (event: React.MouseEvent<HTMLDivElement>, commentId: number) => {
-        event.stopPropagation();
-        try {
-            const user = Number(localStorage.getItem("UserId"));
-            // Assuming you have a function to remove the like from the comment
-            await RemoveLikeFromComment(commentId, user); // Implement this function as per your API
-    
-            // Update likes state
-            const updatedLikes = await GetLikesByComment(commentId);
-            setAllLikesTopComments(prevState => ({
+        } else {
+            setAllLikesReplies(prevState => ({
                 ...prevState,
-                [commentId]: updatedLikes
+                [itemId]: updatedLikes,
             }));
-        } catch (error) {
-            console.error('Error removing like: ', error);
         }
     };
+
+    // const handleLikes = async (event: React.MouseEvent<HTMLDivElement>, commentId: number) => {
+    //     event.stopPropagation();
+    //     try {
+    //         const user = Number(localStorage.getItem("UserId"));
+    //         // Assuming you have a function to like the comment
+    //         await AddLikeToComment(commentId, user); // Implement this function as per your API
+    
+    //         // Update likes state
+    //         const updatedLikes = await GetLikesByComment(commentId);
+    //         setAllLikesTopComments(prevState => ({
+    //             ...prevState,
+    //             [commentId]: updatedLikes
+    //         }));
+    //     } catch (error) {
+    //         console.error('Error adding like: ', error);
+    //     }
+    // };
+    
+    // const removeLikes = async (event: React.MouseEvent<HTMLDivElement>, commentId: number) => {
+    //     event.stopPropagation();
+    //     try {
+    //         const user = Number(localStorage.getItem("UserId"));
+    //         // Assuming you have a function to remove the like from the comment
+    //         await RemoveLikeFromComment(commentId, user); // Implement this function as per your API
+    
+    //         // Update likes state
+    //         const updatedLikes = await GetLikesByComment(commentId);
+    //         setAllLikesTopComments(prevState => ({
+    //             ...prevState,
+    //             [commentId]: updatedLikes
+    //         }));
+    //     } catch (error) {
+    //         console.error('Error removing like: ', error);
+    //     }
+    // };
 
     // useEffect(() => {
     //     const fetchedLikes = async () => {
@@ -266,7 +312,7 @@ const PostRepliesComponent = () => {
                                     <h1 className='font-poppinsMed'>{comment.user.username}</h1>
                                     <p className='font-mainFont text-[15px]'>{comment.reply}</p>
                                     <div className='inline-flex gap-1 mb-3 mt-1.5 '>
-                                        <div onClick={(event) => isLiked ? removeLikes(event, comment.id) : handleLikes(event, comment.id)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
+                                        <div onClick={() => toggleLike(comment.id, true)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
                                             <ThumbUpOutlinedIcon sx={{ fontSize: '15px' }} />
                                             <div className='font-mainFont text-[15px]'><p>{allLikesTopComments[comment.id]?.likesCount}</p></div>
                                         </div>
@@ -306,7 +352,7 @@ const PostRepliesComponent = () => {
                                             <h1 className='font-poppinsMed'>{reply.user.username}</h1>
                                             <p className='font-mainFont text-[15px]'>{reply.reply}</p>
                                             <div className='inline-flex gap-1 mb-2 mt-1.5'>
-                                                <div onClick={(event) => isLiked ? removeLikes(event, reply.id) : handleLikes(event, reply.id)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
+                                                <div onClick={() => toggleLike(reply.id, false)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
                                                     <ThumbUpOutlinedIcon sx={{ fontSize: '15px' }} />
                                                     <div className='font-mainFont text-[15px]'><p>{allLikesReplies[reply.id]?.likesCount}</p></div>
                                                 </div>
