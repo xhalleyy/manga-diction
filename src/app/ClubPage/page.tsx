@@ -238,14 +238,14 @@ const ClubPage = () => {
   }, [displayedClub?.id])
 
   useEffect(() => {
-    if (displayedClub?.isPublic === true) {
+    if(displayedClub?.isPublic === true){
       setModalVisible(false);
-    } else if (isLeader || joined) {
-      setModalVisible(false);
-    } else if (!isLeader || !joined && (displayedClub?.isPublic === false)) {
-      setModalVisible(true);
-    } else {
-      setModalVisible(false);
+    }else{
+      if(isLeader || joined){
+        setModalVisible(false);
+      }else{
+        setModalVisible(true);
+      }
     }
   }, [isLeader, joined, displayedClub?.isPublic]);
 
@@ -266,30 +266,34 @@ const ClubPage = () => {
   }
 
   const handleSortingPost = (option: string) => {
-    let newOrder = posts;
+    let newOrder = [...posts];  // Create a copy of the posts array
     if (option === "Popular") {
-
-    }
-    if (option === "Newest") {
-      newOrder.sort((a, b) => {
-        return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
-      })
-
+        // Implement your logic for sorting by popularity
+    } else if (option === "Newest") {
+        newOrder.sort((a, b) => {
+            return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
+        });
     } else if (option === "Oldest") {
-
-      newOrder.sort((a, b) => {
-        return new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime();
-      })
+        newOrder.sort((a, b) => {
+            return new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime();
+        });
     } else if (option === "Recently Updated") {
-
-    } else {
-
+        newOrder.sort((a, b) => {
+            return new Date(b.dateUpdated).getTime() - new Date(a.dateUpdated).getTime();
+        });
+    } else if (option === "Least Recently Updated") {
+        newOrder.sort((a, b) => {
+            return new Date(a.dateUpdated).getTime() - new Date(b.dateUpdated).getTime();
+        });
     }
-    // (option === "Least Recently Updated") {
-
-    setPosts(newOrder)
-    console.log(posts)
+    setPosts(newOrder);
+    console.log(newOrder); 
   }
+
+  useEffect(() => {
+    // Any side effects you need when posts change
+    console.log('Posts have been updated', posts);
+}, [posts]);
 
   const handleClickPost = (postId: number) => {
     // event.stopPropagation(); // Prevent the click event from bubbling up to the parent div
@@ -303,18 +307,18 @@ const ClubPage = () => {
 
   const customDropdown = {
     "floating": {
-      "base": "z-10 w-fit divide-y divide-gray-100 rounded shadow focus:outline-none",
-      "content": "py-1 text-sm text-gray-700 dark:text-gray-200",
+      "base": "z-10 w-fit divide-y divide-gray-100 rounded shadow py-0 focus:outline-none",
+      "content": " text-sm text-gray-700 dark:text-gray-200",
       "divider": "my-1 h-px bg-gray-100 dark:bg-gray-600",
-      "header": "block px-3 py-1 text-sm text-gray-700 dark:text-gray-200",
+      "header": "block px-3 text-sm text-gray-700 dark:text-gray-200",
       "hidden": "invisible opacity-0",
       "item": {
         "container": "",
-        "base": " flex w-full cursor-pointer items-center justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:bg-gray-600 dark:focus:text-white",
+        "base": "font-poppinsMed text-darkbrown flex w-full cursor-pointer bg-offwhite items-center justify-start px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:bg-gray-600 dark:focus:text-white",
         "icon": "mr-2 h-4 w-4"
       },
       "style": {
-        "lightblue": "bg-teal-100 text-black text-lg font-mainFont",
+        "lightblue": "bg-teal-100 text-black text-lg font-poppinsMed",
         "dark": "bg-gray-900 text-white dark:bg-gray-700",
         "light": "border border-gray-200 bg-white text-gray-900",
         "auto": "bg-teal-100 border border-gray-200 bg-white text-gray-900 dark:border-none dark:bg-gray-700 dark:text-white"
@@ -510,7 +514,7 @@ const ClubPage = () => {
               )}
               <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                 {!selectedPostId && <div className='flex justify-end items-center'>
-                  <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
+                  <Dropdown theme={customDropdown} color="lightblue" className='!bg-offwhite' label="Sort Posts" dismissOnClick={false}>
                     <Dropdown.Item onClick={() => handleSortingPost("Popular")}>Popular</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Newest")}>Newest</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Oldest")}>Oldest</Dropdown.Item>
