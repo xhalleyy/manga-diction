@@ -38,6 +38,7 @@ const ClubPage = () => {
   const [editClub, setEditClub] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
   const [modalVisible, setModalVisible] = useState(false);
+  const [adultModal, setAdultModal] = useState<boolean>(false);
 
   const [addMember, setAddMember] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -249,6 +250,25 @@ const ClubPage = () => {
     }
   }, [isLeader, joined, displayedClub?.isPublic]);
 
+  useEffect(() => {
+    const userId = Number(localStorage.getItem("UserId"));
+    const checkAge = async (userId: number) => {
+      try {
+        const user = await getUserInfo(userId)
+        if(user.age > 18 && displayedClub?.isMature === true){
+          setAdultModal(false);
+        } else if (user.age < 18 && (displayedClub?.isMature === true)){
+          setAdultModal(true);
+        } else {
+          setAdultModal(false);
+        } 
+      } catch (error) {
+        console.error('Error: ', error)
+      }
+    }
+    checkAge(userId);
+  }, [joined, displayedClub?.isMature]);
+
   const goBackToClubs = () => {
     router.push('BrowseClubs')
   }
@@ -420,6 +440,23 @@ const ClubPage = () => {
       <div className='min-h-screen bg-offwhite'>
 
         <NavbarComponent />
+        
+        {/* modal for mature club? if(isMature == false) closemodal else showmodal, if(user.age < 18) description and redirect */}
+        {adultModal && (
+          <Modal show={adultModal} size="lg" onClose={() => setAdultModal(false)} popup>
+            <Modal.Body>
+              <div className='text-center py-10 font-mainFont'>
+                <h2 className='text-2xl pb-5'>This club is for mature members ONLY.</h2>
+                <h3 className='text-lg'>Please come back once you're over 18!</h3>
+                <div className='flex justify-center pt-10'>
+                  <button className='bg-darkerblue text-white px-4 py-2 rounded-xl' onClick={goBackToClubs}>
+                    Browse other clubs
+                  </button>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
+        )}
 
         {modalVisible && (
           <Modal show={modalVisible} size="lg" onClose={() => setModalVisible(false)} popup>

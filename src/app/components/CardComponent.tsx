@@ -6,7 +6,7 @@ import { useState } from "react";
 
 
 
-function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
+function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isMature: boolean, isPublic: boolean, clubName: string, isDeleted: boolean}) {
   
   const router = useRouter();
   
@@ -50,7 +50,12 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
 
     >
       <div>
+        <div className="flex justify-between">
         <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">{prop.isPublic ? "Public" : "Private"}</p>
+        {prop.isMature && (
+        <p className="text-sm px-3 bg-darkerblue text-white rounded-lg">M</p>
+        )}
+        </div>
         <h5 className="text-lg font-poppinsMed tracking-tight text-gray-900 m-0 dark:text-white">
           {prop.clubName}
         </h5>

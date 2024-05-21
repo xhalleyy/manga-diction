@@ -4,7 +4,7 @@ import { Button, Dropdown, FileInput, Modal } from "flowbite-react";
 import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import { IClubs } from "@/Interfaces/Interfaces";
-import { createClub, updateClubs } from "@/utils/DataServices";
+import { createClub, getUserInfo, updateClubs } from "@/utils/DataServices";
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -22,9 +22,30 @@ function ClubModalComponent() {
     const [clubDescription, setClubDescription] = useState<string>("");
     const [clubImg, setClubImg] = useState<any>("");
     const [privateClub, setPrivateClub] = useState<boolean>(false);
+    const [matureClub, setMatureClub] = useState<boolean>(false);
+    const [userAge, setUserAge] = useState<number>(0);
+    const [isOld, setIsOld] = useState<boolean>(false);
+    const userInfo = useClubContext();
 
     const router = useRouter();
 
+    const isMinor = async () => {
+        const userId = Number(localStorage.getItem("UserId"));
+        const user = await getUserInfo(userId);
+        setUserAge(user.age);
+        // console.log(user.age);
+        if(user.age < 18){
+            setIsOld(false);
+            setMatureClub(false);
+        }else {
+            setIsOld(true);
+        }
+        return userAge < 18;
+    }
+
+    useEffect(() => {
+        isMinor();
+    }, [])
     // useEffect(()=> {
     //     const fetchClubs = async () => {
     //         try {
@@ -48,6 +69,13 @@ function ClubModalComponent() {
     }
     const publicSettingOn = () => {
         setPrivateClub(false)
+    }
+
+    const matureSettingOn = () => {
+        setMatureClub(true)
+    }
+    const generalSettingOn = () => {
+        setMatureClub(false)
     }
 
     const handleClubName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +139,7 @@ function ClubModalComponent() {
             description: clubDescription,
             dateCreated: formattedDate,
             image: clubImg,
+            isMature: matureClub,
             isPublic: privateClub,
             isDeleted: false
         };
@@ -167,7 +196,7 @@ function ClubModalComponent() {
                             </div>
 
                             <div>
-                                <label className="opaqueWhite px-4 py-1 rounded-xl ms-2 font-mainFont">
+                                <label className={pageSize ? "opaqueWhite px-4 py-1 rounded-xl ms-2 font-mainFont" : "opaqueWhite px-2 py-1 rounded-xl ms-2 font-mainFont"}>
                                     Select File
                                     <input
                                         required
@@ -207,6 +236,18 @@ function ClubModalComponent() {
                             </Dropdown> */}
                             </div>
                         </div>
+                        {/* if user.age < 18 {generalSettingOn()}; + hide this div */}
+                        {isOld && (
+                        <div className="flex flex-1 pt-8">
+                            <label className="mt-1 font-mainFont text-lg">Maturity Settings: </label>
+                            <div className="rounded-xl dropdownBtn flex justify-center ms-2">
+                                <select name="" id="" className={pageSize ? "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none" : "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none ml-14"}>
+                                    <option value="general" className="font-mainFont" onClick={generalSettingOn}>General</option>
+                                    <option value="mature" className="font-mainFont" onClick={matureSettingOn}>Mature</option>
+                                </select>
+                            </div>
+                        </div>
+                        )}
                     </div>
                     <div className="flex flex-1 justify-end mt-48">
                         <Button className="darkBlue rounded-xl" onClick={() => { handleCreateClub(); setOpenModal(false) }}>

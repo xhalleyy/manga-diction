@@ -76,7 +76,7 @@ const SearchClub = () => {
 
   return (
     <>
-      <div className="bg-offwhite  min-h-screen">
+      <div className="bg-offwhite min-h-screen">
 
         <NavbarComponent />
 
@@ -148,6 +148,7 @@ const SearchClub = () => {
                     description={club.description}
                     dateCreated={club.dateCreated}
                     image={club.image}
+                    isMature={club.isMature}
                     isPublic={club.isPublic}
                     clubName={club.clubName}
                     isDeleted={club.isDeleted}

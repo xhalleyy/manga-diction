@@ -36,6 +36,7 @@ export interface IClubs {
     image: string;
     description: string;
     dateCreated: string;
+    isMature: boolean,
     isPublic: boolean;
     isDeleted: boolean;
 }
