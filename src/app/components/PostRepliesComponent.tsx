@@ -83,9 +83,6 @@ const PostRepliesComponent = () => {
                     topComments.map(async (comment: IComments) => {
                         const likes = await GetLikesByComment(comment.id);
                         const isUserLiked = likes.likedByUsers.some((likedUser: LikedUser) => likedUser.userId === userId);
-                        if (isUserLiked) {
-                            setIsLiked(true)
-                        }
                         return { commentId: comment.id, likes, isUserLiked };
                     })
                 );
@@ -110,9 +107,6 @@ const PostRepliesComponent = () => {
                         replies.map(async (reply: IComments) => {
                             const likes = await GetLikesByComment(reply.id);
                             const isUserLiked = likes.likedByUsers.some((likedUser: LikedUser) => likedUser.userId === userId);
-                            if (isUserLiked) {
-                                setIsLiked(true)
-                            }
                             return { replyId: reply.id, likes, isUserLiked };
                         })
                     )
@@ -181,14 +175,16 @@ const PostRepliesComponent = () => {
 
         if (isUserLiked) {
             await RemoveLikeFromComment(itemId, userId);
-            setIsLiked(false)
         } else {
             await AddLikeToComment(itemId, userId);
-            setIsLiked(true)
         }
 
         const updatedLikes = await GetLikesByComment(itemId);
         if (isParent) {
+            setUserLikedTopComments(prevState => ({
+                ...prevState,
+                [itemId]: !isUserLiked,
+            }))
             setAllLikesTopComments(prevState => ({
                 ...prevState,
                 [itemId]: updatedLikes,
@@ -198,6 +194,10 @@ const PostRepliesComponent = () => {
                 ...prevState,
                 [itemId]: updatedLikes,
             }));
+            setUserLikedReplies(prevState => ({
+                ...prevState,
+                [itemId]: !isUserLiked,
+            }))
         }
     };
 
@@ -263,6 +263,7 @@ const PostRepliesComponent = () => {
             }
         }
     };
+    
 
     return (
         <>
@@ -315,7 +316,8 @@ const PostRepliesComponent = () => {
                                     <h1 className='font-poppinsMed'>{comment.user.username}</h1>
                                     <p className='font-mainFont text-[15px]'>{comment.reply}</p>
                                     <div className='inline-flex gap-1 mb-3 mt-1.5 '>
-                                        <div onClick={() => toggleLike(comment.id, true)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
+                                        <div onClick={() => toggleLike(comment.id, true)} className={`flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer ${userLikedTopComments[comment.id] ? 'bg-darkblue text-white' : ''}`}
+>
                                             <ThumbUpOutlinedIcon sx={{ fontSize: '15px' }} />
                                             <div className='font-mainFont text-[15px]'><p>{allLikesTopComments[comment.id]?.likesCount}</p></div>
                                         </div>
@@ -364,7 +366,8 @@ const PostRepliesComponent = () => {
                                             <h1 className='font-poppinsMed'>{reply.user.username}</h1>
                                             <p className='font-mainFont text-[15px]'>{reply.reply}</p>
                                             <div className='inline-flex gap-1 mb-2 mt-1.5'>
-                                                <div onClick={() => toggleLike(reply.id, false)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
+                                                <div onClick={() => toggleLike(reply.id, false)}         className={`flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer ${userLikedReplies[reply.id] ? 'bg-darkblue text-white' : ''}`}
+>
                                                     <ThumbUpOutlinedIcon sx={{ fontSize: '15px' }} />
                                                     <div className='font-mainFont text-[15px]'><p>{allLikesReplies[reply.id]?.likesCount}</p></div>
                                                 </div>

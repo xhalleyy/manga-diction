@@ -89,6 +89,12 @@ const BrowseClubs = () => {
   const slicedOldestClubs = oldestClubs.slice(0, 12);
   // console.log('Recent Clubs:', slicedRecentClubs);
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+        handleClick();
+    }
+};
+
   // CUSTOM FLOWBITE CLASSES
   const customTabs: CustomFlowbiteTheme['tabs'] = {
     "base": "flex flex-col gap-3 mt-[-2px] w-full",
@@ -156,6 +162,7 @@ const BrowseClubs = () => {
                 }}
                 type="text"
                 placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+                onKeyDown={handleKeyPress}
                 className="border-ivory font-mainFont border-8 rounded-2xl focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
               />
 
@@ -193,6 +200,7 @@ const BrowseClubs = () => {
                     borderColor: "rgba(207, 198, 183, 1)",
                     height: 30,
                   }}
+                  onKeyDown={handleKeyPress}
                   type="text"
                   placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
                   className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"

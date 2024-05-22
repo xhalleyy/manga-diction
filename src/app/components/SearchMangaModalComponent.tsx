@@ -76,6 +76,12 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
         router.push('/SearchManga')
     }
 
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+    };
+
     return (
         <div>
 
@@ -92,13 +98,14 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Search Manga Title</label>
                             <div>
-                                <input value={title} className="opaqueWhite rounded-lg w-[50%] h-8 px-3 text-mainFont" id="titleSearch" onChange={(e) => setTitle(e.target.value)} />
+                                <input value={title} className="opaqueWhite rounded-lg w-[50%] h-8 px-3 text-mainFont" id="titleSearch" onKeyDown={handleKeyPress}
+                                onChange={(e) => setTitle(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2 hidden">
                             <label className="font-mainFont text-lg">Author Name</label>
                             <div>
-                                <input value={author} className="opaqueWhite rounded-xl w-[50%] h-8" onChange={(e) => setAuthor(e.target.value)} />
+                                <input value={author} className="opaqueWhite rounded-xl w-[50%] h-8" onKeyDown={handleKeyPress} onChange={(e) => setAuthor(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2">
