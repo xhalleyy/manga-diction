@@ -45,8 +45,11 @@ const ProfilePage = (props: any) => {
 
     const searchUser = async () => {
         try {
+            let userId = Number(localStorage.getItem("UserId"))
             const data = await getUsersByUsername(search);
-            setSearchedUsers(data);
+            const filteredUsers = data.filter(user => user.id !== userId);
+            
+            setSearchedUsers(filteredUsers);
             // setSearch(data);
         } catch (error) {
             console.error('Error searching users:', error);

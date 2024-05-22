@@ -319,6 +319,8 @@ const SearchedUser = () => {
                                     </div>
 
                                     <h2 className='text-[22px] font-mainFont'>{`${info.selectedUser?.firstName} ${info.selectedUser?.lastName}`}</h2>
+                                    {isFriend && <div className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed'> Friend
+                                        </div>}
                                     {(!isFriend && !requested) && <div className='mt-3 mb-5'>
                                         <button onClick={handleAddRequest} className='flex items-center justify-center darkBlue text-white font-mainFont py-1 px-3 rounded-2xl hover:bg-paleblue hover:text-darkblue hover:font-poppinsMed'>Add as Friend <AddIcon sx={{ fontSize: 20 }} />
                                         </button>
