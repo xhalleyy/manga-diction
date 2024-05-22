@@ -53,7 +53,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
         <div className="flex justify-between">
         <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">{prop.isPublic ? "Public" : "Private"}</p>
         {prop.isMature && (
-        <p className="text-sm px-3 bg-darkerblue text-white rounded-lg">M</p>
+        <p className="text-sm px-3 me-[-10px] sm:me-[-110px] md:me-[-90px] xl:me-[-30px] 2xl:me-[-125px] bg-red-700 text-white font-poppinsMed rounded-lg">Mature</p>
         )}
         </div>
         <h5 className="text-lg font-poppinsMed tracking-tight text-gray-900 m-0 dark:text-white">

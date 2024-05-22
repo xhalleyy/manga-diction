@@ -121,7 +121,7 @@ const Dashboard = () => {
               <div className='bg-paleblue px-5 py-3 rounded-lg'>
                 {posts.length === 0 ? (
                   <div className='col-span-1 py-2'>
-                    <h1 className='py-20 text-center font-poppinsMed text-2xl text-darkbrown'>There are no posts in your clubs or you're not in any clubs! <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
+                    <h1 className='py-20 text-center font-poppinsMed text-2xl text-darkbrown'>{"There are no posts in your clubs or you're not in any clubs!"} <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
                   </div>
                 ) : (
                   posts.map((post, idx) => (

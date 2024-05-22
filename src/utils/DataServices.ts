@@ -270,6 +270,13 @@ export const specificManga = async (mangaId: string) => {
     return data;
 }
 
+export const searchManga = async(mangaName: string) => {
+    const promise = await fetch(`${url}MangaDex/manga/${mangaName}`)
+    const data = await promise.json()
+    console.log(data)
+    return data;
+}
+
 // FAVORITED MANGA FETCHES 
 export const addMangaFav = async (manga: IFavManga) => {
     // console.log(manga.id);

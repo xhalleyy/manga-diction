@@ -1,12 +1,12 @@
 'use client'
 
 import { IToken } from "@/Interfaces/Interfaces";
-import { createUser, login } from "@/utils/DataServices";
+import { createUser, login, searchManga } from "@/utils/DataServices";
 import { log, profile } from "console";
 import { create } from "domain";
 import { Button, Label, TextInput, CustomFlowbiteTheme } from "flowbite-react";
 import { useRouter } from "next/navigation";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -139,6 +139,13 @@ export default function Home() {
       },
     }
   }
+
+  useEffect(()=>{
+    const fetchedData = async()=>{
+      const data= await searchManga("Tokyo")
+    }
+    fetchedData();
+  },[])
 
   return (
     <>

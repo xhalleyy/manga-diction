@@ -46,6 +46,7 @@ const ClubPage = () => {
 
   const router = useRouter();
 
+  // CLUB MEMBERS, JOINING, CHECKING IF JOINED
   const fetchClubMembers = async (clubId: number | undefined) => {
     try {
       const [leaderInfo, memberIds] = await Promise.all([
@@ -74,12 +75,13 @@ const ClubPage = () => {
     }
   };
 
-  const handleCreatePost = () => {
-    setCreatePost(!createPost);
-  }
-
   const handleSeeMembers = () => {
     setSeeMembers(!seeMembers);
+  }
+  
+  // EDITING POSTS AND EDITING CLUBS
+  const handleCreatePost = () => {
+    setCreatePost(!createPost);
   }
 
   const handleEditClub = () => {
@@ -115,10 +117,12 @@ const ClubPage = () => {
     }
   }
 
+  // GOING TO CERTAIN POSTS
   const handlePostPage = (postId: number) => {
     setSelectedPostId(postId)
   }
 
+  // SEARCH, ADDING MEMBER TO CLUB, MEMBER CLICKS TO PROFILE
   const handleMemberClick = (user: IUserData | null) => {
     setSelectedUser(user);
     router.push('/SearchedUser')
@@ -191,13 +195,12 @@ const ClubPage = () => {
     const fetchedData = async (clubId: number | undefined) => {
       try {
         if (clubId !== undefined) {
+          // POSTS
           const getPosts = await getPostsByClubId(clubId);
-          // console.log('Fetched Posts:', getPosts);
           setPosts(getPosts);
 
+          // MEMBER IDS OF EACH POSTS TO GET USER INFO
           const memberIds = getPosts.map((post) => post.userId);
-          // console.log('Member IDs:', memberIds);
-
           const membersInfo = await Promise.all(
             memberIds.map(async (memberId) => {
               const member = await getUserInfo(memberId);
@@ -450,8 +453,7 @@ const ClubPage = () => {
           <Modal show={adultModal} size="lg" onClose={() => setAdultModal(false)} popup>
             <Modal.Body>
               <div className='text-center py-10 font-mainFont'>
-                <h2 className='text-2xl pb-5'>This club is for mature members ONLY.</h2>
-                <h3 className='text-lg'>Please come back once you're over 18!</h3>
+                <h2 className='text-2xl pb-5'>You are not old enough to view this club</h2>
                 <div className='flex justify-center pt-10'>
                   <button className='bg-darkerblue text-white px-4 py-2 rounded-xl' onClick={goBackToClubs}>
                     Browse other clubs
@@ -468,7 +470,7 @@ const ClubPage = () => {
             <Modal.Body>
               <div className="text-center pt-20 pb-6">
                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                  Unfortunately, you cannot view this club as you're not a member.
+                  You are not able to view this private club.
                 </h3>
                 <div className="flex justify-center gap-4">
                   <Button color="gray" onClick={goBackToClubs}>
@@ -614,15 +616,15 @@ const ClubPage = () => {
                   {addMember ?
                     <>
                       <div className='grid grid-cols-6 items-center rounded-xl'>
-                        <div className='col-span-4'>
+                        <div className='col-span-3 xl:col-span-4 2xl:col-span-5'>
                           <p className=' text-[18px] font-poppinsMed text-darkbrown'>{`Search Results for '${search}'`}</p>
                         </div>
-                        <div className='col-span-2 darkBeige px-2 pb-1 pt-2 rounded-2xl'>
+                        <div className='col-span-3 xl:col-span-2 2xl:col-span-1 w-[285px] darkBeige px-2 py-0.5 rounded-2xl flex items-center 2xl:ms-[-100px] justify-end '>
                           <input
-                            className='rounded-xl h-8 ps-3'
+                            className='rounded-xl h-7 ps-3'
                             onChange={(e) => setSearch(e.target.value)}
                           />
-                          <SearchIcon className='text-4xl text-white cursor-pointer' onClick={searchUser} />
+                          <SearchIcon className='text-4xl text-white cursor-pointer flex float-right' onClick={searchUser} />
                         </div>
                       </div>
                       <div className='grid grid-cols-5'>
