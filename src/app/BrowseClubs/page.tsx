@@ -141,16 +141,16 @@ const BrowseClubs = () => {
 
   return (
     <>
-      <div className="bg-offwhite  min-h-screen font-mainFont" >
+      <div className="bg-offwhite  min-h-screen h-full font-mainFont" >
 
         <NavbarComponent />
 
         {/* header , search, create clubs modal start */}
-        <div className={pageSize ? "grid grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" : "grid grid-cols-1"}>
+        <div className={pageSize ? "grid grid-cols-3 gap-0 pt-5 px-16 items-center pb-4" : "grid grid-cols-1"}>
 
           {/* search bar hidden on lg, visible on mobile */}
-          <div className={pageSize ? "hidden" : "inline-flex pt-6"}>
-            <div className={pageSize ? "hidden" : " px-3"}>
+          <div className={pageSize ? "hidden" : " pt-6 grid grid-flow-row px-1"}>
+            <div className={pageSize ? "hidden" : " px-3 relative flex"}>
               <TextInput
                 ref={inputRef}
                 id="base"
@@ -167,7 +167,7 @@ const BrowseClubs = () => {
               />
 
 
-              <div style={{ marginLeft: '270px' }} className="absolute inset-y-28">
+              <div style={{ marginLeft: '270px' }} className="absolute -inset-y-1">
                 <Button
                   style={{ backgroundColor: "transparent" }}
                   className="bg-transparent focus:ring-0"
@@ -178,7 +178,7 @@ const BrowseClubs = () => {
               </div>
             </div>
 
-            <div className={pageSize ? "hidden" : ""}>
+            <div className={pageSize ? "hidden" : "flex justify-center mt-5"}>
               <ClubModalComponent />
             </div>
 
@@ -189,7 +189,7 @@ const BrowseClubs = () => {
           </div>
 
           {/* search bar visible on lg, hidden on mobile */}
-          <div className={pageSize ? "flex justify-end gap-5" : ""}>
+          <div className={pageSize ? "flex justify-end gap-5 col-span-2" : ""}>
             {/* <Tooltip content="Case Sensitive" placement="top" style="light"> */}
               <div className={pageSize ? "relative ml-20" : "hidden"}>
                 <TextInput

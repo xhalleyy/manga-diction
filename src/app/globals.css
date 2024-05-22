@@ -25,6 +25,10 @@
 
   }
 
+  body{
+    background-color: #ecead9;
+  }
+
 .hidden{
     display: none;
 }

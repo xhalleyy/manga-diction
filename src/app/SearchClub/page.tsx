@@ -76,20 +76,20 @@ const SearchClub = () => {
 
   return (
     <>
-      <div className="bg-offwhite min-h-screen">
+      <div className="bg-offwhite h-screen">
 
         <NavbarComponent />
 
         <div className="bg-offwhite h-full">
 
-          <div className={pageSize ? "grid lg:grid-cols-2 gap-0 pt-5 px-16 items-center pb-4" : "" }>
+          <div className={pageSize ? "grid lg:grid-cols-3 gap-0 pt-5 px-16 items-center pb-4" : "" }>
           <div className={pageSize ? "contents" : "hidden"}>
-              <h1 className='text-[26px] font-poppinsMed text-darkbrown px-5'>Club Results for &apos;{searchClub}&apos;</h1>
+              <h1 className='text-[26px] font-poppinsMed text-darkbrown ps-5'>Club Results for &apos;{searchClub}&apos;</h1>
             </div>
 
             {/* search bar hidden on lg, visible on mobile */}
-            <div className={pageSize ? "flex justify-end gap-5" : "pt-6"}>
-              <div className={pageSize ? "relative ml-20" : " px-3"}>
+            <div className={pageSize ? "flex justify-end gap-5 col-span-2" : "pt-6 flex justify-center"}>
+              <div className={pageSize ? "relative ml-20" : " px-3 relative w-full flex justify-center"}>
                 <TextInput
                   ref={inputRef}
                   id="base"
@@ -100,14 +100,14 @@ const SearchClub = () => {
                     }}
                   type="text"
                   placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
-                  className={pageSize ? "border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0" : " border-ivory font-mainFont border-8 w-96 ml-2 rounded-2xl focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"}
+                  className={pageSize ? "border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0" : " border-ivory font-mainFont border-8 w-[340] ml-2 rounded-2xl focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"}
                 />
 
 
-                <div style={pageSize ? {} : { marginLeft: '325px' }} className={pageSize ? "absolute ml-80 inset-y-0 flex items-center" : "absolute inset-y-28"}>
+                <div style={pageSize ? {} : { marginLeft: '325px' }} className={pageSize ? "absolute ml-80 inset-y-0 flex items-center" : "flex items-center absolute inset-y-0 ml-72 mr-10"}>
                   <Button
                     style={{ backgroundColor: "transparent" }}
-                    className="bg-transparent focus:ring-0"
+                    className="bg-transparent focus:ring-0 "
                     onClick={handleClick}
                   >
                     <SearchIcon className="text-4xl text-white" />
