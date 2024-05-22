@@ -102,6 +102,7 @@ export interface IManga {
         id: string,
         type: string
         attributes: {
+            name: string
             volume: string,
             fileName: string
         }

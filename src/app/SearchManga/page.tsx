@@ -4,7 +4,7 @@ import React, { MouseEventHandler, useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import Link from 'next/link'
 import axios from 'axios';
-import { getAuthorIds, getTags, getTagsIds, mangaSearch, searchManga, specificManga } from '@/utils/DataServices';
+import { getTags, getTagsIds, mangaSearch, searchManga, specificManga } from '@/utils/DataServices';
 import { IGetManga, IManga } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import { useRouter } from 'next/navigation';
@@ -54,7 +54,7 @@ const SearchManga = () => {
                             {/* 1st result */}
                             {
                                 mangaInfo.map((manga: IManga, index: number) => {
-                                   console.log(`https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`)
+                                //    console.log(`https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`)
                                     return (
                                         <div key={index} className='flex justify-center' onClick={() => handleMangaSubmit(manga.id)}>
                                         <div className='px-0 mx-0 cursor-pointer'>

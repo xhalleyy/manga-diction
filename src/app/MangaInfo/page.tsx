@@ -3,7 +3,7 @@ import React, { use, useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Badge, Button, Dropdown } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext'
-import { addMangaFav, getAuthorName, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
+import { addMangaFav, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
 import { IFavManga, IManga } from '@/Interfaces/Interfaces'
 
 
@@ -11,7 +11,7 @@ const MangaInfo = () => {
 
     const { mangaId } = useClubContext();
     const [manga, setManga] = useState<IManga | null>(null); //null to handle intitial state
-    const [authorName, setAuthorName] = useState<string>("");
+    // const [authorName, setAuthorName] = useState<string>("");
     const [fileName, setFileName] = useState<string | undefined>("");
     // need to capitalize: Status and Demographic - manga possibly undefined, declare inside func
     const [favBool, setFavBool] = useState<boolean>(false);
@@ -35,17 +35,7 @@ const MangaInfo = () => {
                 const data = await specificManga(mangaId);
                 setManga(data.data);
                 findCoverArt(data.data);
-                const authorRel = data?.data.relationships;
-                const authorTruthy = authorRel?.find((auth: { type: string }) => auth.type === "author");
-                if (authorTruthy) {
-                    if (authorTruthy) {
-                        const theAuthor = authorTruthy.id;
-                        // console.log(theAuthor);
-                        fetchAuthor(theAuthor);
-                    } else {
-                        return undefined
-                    }
-                }
+                
             } catch (error) {
                 console.log('Error fetching data:', error);
             }
@@ -92,12 +82,12 @@ const MangaInfo = () => {
     //     }
     // }, [isFavManga]);
 
-    const fetchAuthor = async (authorId: string) => {
-        const aData = await getAuthorName(authorId);
-        // console.log(aData);
-        setAuthorName(aData.data.attributes.name);
-        console.log(aData.data.attributes.name);
-    };
+    // const fetchAuthor = async (authorId: string) => {
+    //     const aData = await getAuthorName(authorId);
+    //     // console.log(aData);
+    //     setAuthorName(aData.data.attributes.name);
+    //     console.log(aData.data.attributes.name);
+    // };
 
     const findCoverArt = (manga: IManga) => {
         const relationships = manga.relationships;
@@ -324,13 +314,14 @@ const MangaInfo = () => {
                             </div>
 
                             {/* manga author, demographic, chapters, last updated */}
+                            {/* https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art" */}
                             <div className='bg-ivory leading-loose text-darkbrown border-2 border-t-0 border-darkbrown rounded-b-lg font-mainFont p-5'>
                                 <p className='font-bold'> Author:
-                                    <span className='font-normal'> {authorName}</span>
+                                    <span className='font-normal'> {manga.relationships.find(rel => rel.type === "author")?.attributes.name}</span>
                                 </p>
 
                                 <p className='font-bold'> Demographics:
-                                    <span className='font-normal'> {formattedDemographics}</span>
+                                    <span className='font-normal'> {manga.attributes.publicationDemographic ? formattedDemographics : 'N/A'}</span>
                                 </p>
 
                                 <p className='font-bold'> Chapters:
