@@ -187,13 +187,13 @@ export const getTagsIds = async (tags: string[]) => {
 
 
 // Get Author List
-export const getAuthorIds = async (authorInput: string) => {
-    const res = await axios.get(`${mangaUrl}/author?limit=1&name=${authorInput}&order%5Bname%5D=asc`);
-    // const data = await res.json();
-    // Axios already parses to JSON format 
-    // console.log(res.data);
-    return res.data;
-}
+// export const getAuthorIds = async (authorInput: string) => {
+//     const res = await axios.get(`${mangaUrl}/author?limit=1&name=${authorInput}&order%5Bname%5D=asc`);
+//     // const data = await res.json();
+//     // Axios already parses to JSON format 
+//     // console.log(res.data);
+//     return res.data;
+// }
 
 
 export const getTags = async (includedTagNames: string[]) => {
@@ -262,11 +262,11 @@ export const mangaSearch = async (
 //     const data = await promise.json();
 //     return data;
 // }
-export const getAuthorName = async (authorId: string) => {
-    const promise = await fetch(`${url}GetMangaAuthor/${authorId}`);
-    const data = await promise.json();
-    return data;
-}
+// export const getAuthorName = async (authorId: string) => {
+//     const promise = await fetch(`${url}GetMangaAuthor/${authorId}`);
+//     const data = await promise.json();
+//     return data;
+// }
 
 // GET MANGA BY ID
 // export const specificManga = async (mangaId: string) => {
