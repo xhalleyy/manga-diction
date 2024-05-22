@@ -216,15 +216,15 @@ const SearchedUser = () => {
 
 
     const coverArtUrl = (manga: IManga): string => {
-        if (!manga || !manga.data || !manga.data.relationships) {
+        if (!manga || !manga|| !manga.relationships) {
             return ''; // Return an empty string if manga data or relationships are not available
         }
-        const relationships = manga.data.relationships;
+        const relationships = manga.relationships;
         const coverArt = relationships.find(rel => rel.type === "cover_art");
         if (!coverArt) {
             return ''; // Return an empty string if cover art is not available
         }
-        const mangaId = manga.data.id;
+        const mangaId = manga.id;
         const coverFileName = coverArt.attributes.fileName;
         return `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}`; // Construct the complete cover art URL
     };

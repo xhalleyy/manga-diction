@@ -140,13 +140,6 @@ export default function Home() {
     }
   }
 
-  useEffect(()=>{
-    const fetchedData = async()=>{
-      const data= await searchManga("Tokyo")
-    }
-    fetchedData();
-  },[])
-
   return (
     <>
       <div className="hidden md:flex  ">

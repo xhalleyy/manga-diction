@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { Chips, ChipsChangeEvent } from 'primereact/chips'
 import { useClubContext } from '@/context/ClubContext';
 import { useRouter } from 'next/navigation';
+import { IGetManga } from '@/Interfaces/Interfaces';
+import { searchManga } from '@/utils/DataServices';
 
 interface SearchMangaModalProps {
     open: boolean;
@@ -14,7 +16,7 @@ interface SearchMangaModalProps {
 // React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
 const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
 
-    const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags } = useClubContext();
+    const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, setMangaInfo, mangaInfo } = useClubContext();
     // const [titleInput, setTitleInput] = useState<string>('');
     // const [authorInput, setAuthorInput] = useState<string>('');
     // const [tagsInput, setTagsInput] = useState<string>('');
@@ -23,6 +25,23 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
     const [value, setValue] = useState<any>([]);
     const [pageSize, setPageSize] = useState<boolean>(false);
     const router = useRouter();
+
+    const fetchManga = async () => {
+        try {
+            const searchInfo: IGetManga = {
+                name: title,
+                tagInput: tags,
+                demographic: demographics,
+                status: publication
+            }
+
+            const searchedManga = await searchManga(searchInfo)
+            console.log(searchedManga)
+            setMangaInfo(searchedManga.data)
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -51,6 +70,8 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
             publication,
             tags
         })
+        fetchManga()
+        console.log(mangaInfo)
         setOpen(false)
         router.push('/SearchManga')
     }

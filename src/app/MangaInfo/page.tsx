@@ -33,8 +33,8 @@ const MangaInfo = () => {
         const fetchMangaInfo = async () => {
             try {
                 const data = await specificManga(mangaId);
-                setManga(data);
-                findCoverArt(data);
+                setManga(data.data);
+                findCoverArt(data.data);
                 const authorRel = data?.data.relationships;
                 const authorTruthy = authorRel?.find((auth: { type: string }) => auth.type === "author");
                 if (authorTruthy) {
@@ -100,7 +100,7 @@ const MangaInfo = () => {
     };
 
     const findCoverArt = (manga: IManga) => {
-        const relationships = manga.data.relationships;
+        const relationships = manga.relationships;
         const coverArt = relationships.find(rel => rel.type === "cover_art");
         if (coverArt) {
             setFileName(coverArt.attributes.fileName);
@@ -108,15 +108,15 @@ const MangaInfo = () => {
             return undefined;
         }
         // less complicated than making a separate function just to format and set 2 variables 
-        const status = manga.data.attributes.status;
+        const status = manga.attributes.status;
         setFormattedStatus(status.charAt(0).toUpperCase() + status.slice(1))
 
-        const demographics = manga.data.attributes.publicationDemographic;
+        const demographics = manga.attributes.publicationDemographic;
         setFormattedDemographics(demographics.charAt(0).toUpperCase() + demographics.slice(1))
     };
 
     const updateDT = () => {
-        const dateTimeString = manga?.data.attributes.updatedAt;
+        const dateTimeString = manga?.attributes.updatedAt;
         // will return empty string if value is undefined
         if (!dateTimeString) return "";
         const dateTime = new Date(dateTimeString);
@@ -182,7 +182,7 @@ const MangaInfo = () => {
                 const favMangaData: IFavManga = {
                     id: isFavManga ? isFavManga.id : 0,
                     userId: user,
-                    mangaId: manga.data.id,
+                    mangaId: manga.id,
                     completed: true
                 };
 
@@ -214,7 +214,7 @@ const MangaInfo = () => {
                 const favMangaData: IFavManga = {
                     id: isFavManga ? isFavManga.id : 0,
                     userId: user,
-                    mangaId: manga.data.id,
+                    mangaId: manga.id,
                     completed: false
                 };
 
@@ -251,7 +251,7 @@ const MangaInfo = () => {
                         <div  className='col-span-2 flex flex-col justify-center'>
                             <div className=' flex justify-end xl:justify-center pt-10 w-full'>
 
-                                {fileName && <img className='rounded-lg max-h-[555px]' src={`https://uploads.mangadex.org/covers/${manga.data.id}/${fileName}`} />}
+                                {fileName && <img className='rounded-lg max-h-[555px]' src={`https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
                             </div>
 
                             <div className='flex justify-end xl:justify-center pt-8 flex-col w-full text xl:w-[300px] mx-auto '>
@@ -299,7 +299,7 @@ const MangaInfo = () => {
                             <div className='bg-white border-darkbrown border-2 rounded-t-lg'>
                                 <div className='p-5 inline-flex'>
                                     {/* title */}
-                                    <p className='text-3xl text-darkbrown font-bold'>{manga.data.attributes.title.en}</p>
+                                    <p className='text-3xl text-darkbrown font-bold'>{manga.attributes.title.en}</p>
                                     <div className='p-2'>
                                         {/* publication status */}
                                         <Badge className='bg-darkblue rounded-xl text-white px-2 mr-1 font-mainFont'>{formattedStatus}</Badge>
@@ -309,7 +309,7 @@ const MangaInfo = () => {
                                 <div className='px-5'>
                                     <div className='inline-flex flex-wrap'>
                                         {/* all applicable tags, .map */}
-                                        {manga.data.attributes.tags.map((tag: any, index: number) => (
+                                        {manga.attributes.tags.map((tag: any, index: number) => (
                                             <Badge key={index} className='bg-ivory font-normal rounded-md font-mainFont text-black text-sm px-3 py-1 mr-1 truncate my-1'>{tag.attributes.name.en}</Badge>
                                         ))}
 
@@ -318,7 +318,7 @@ const MangaInfo = () => {
                                 </div>
 
                                 <div className='p-5'>
-                                    <span className="font-mainFont">{trimDescription(manga.data.attributes.description.en)}</span>
+                                    <span className="font-mainFont">{trimDescription(manga.attributes.description.en)}</span>
 
                                 </div>
                             </div>
@@ -334,7 +334,7 @@ const MangaInfo = () => {
                                 </p>
 
                                 <p className='font-bold'> Chapters:
-                                    <span className='font-normal'> {manga.data.attributes.lastChapter}</span>
+                                    <span className='font-normal'> {manga.attributes.lastChapter}</span>
                                 </p>
 
                                 <p className='font-bold'> Last Updated:

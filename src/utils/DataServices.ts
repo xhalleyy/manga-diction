@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -248,6 +248,7 @@ export const mangaSearch = async (
     }
 
     try {
+        console.log(`${mangaUrl}/manga?${queryParams}`)
         const res = await axios.get(`${mangaUrl}/manga?${queryParams}`);
         return res.data.data.map((manga: any) => manga.id);
     } catch (error) {
@@ -256,24 +257,45 @@ export const mangaSearch = async (
     }
 };
 
+// export const getAuthorName = async (authorId: string) => {
+//     const promise = await fetch(`${mangaUrl}/author/${authorId}`);
+//     const data = await promise.json();
+//     return data;
+// }
 export const getAuthorName = async (authorId: string) => {
-    const promise = await fetch(`${mangaUrl}/author/${authorId}`);
+    const promise = await fetch(`${url}GetMangaAuthor/${authorId}`);
     const data = await promise.json();
     return data;
 }
-
 
 // GET MANGA BY ID
+// export const specificManga = async (mangaId: string) => {
+//     const promise = await fetch(`https://api.mangadex.org/manga/${mangaId}?includes%5B%5D=cover_art`)
+//     const data = await promise.json();
+//     return data;
+// }
 export const specificManga = async (mangaId: string) => {
-    const promise = await fetch(`https://api.mangadex.org/manga/${mangaId}?includes%5B%5D=cover_art`)
+    const promise = await fetch(`${url}GetMangaById/${mangaId}`)
     const data = await promise.json();
     return data;
 }
 
-export const searchManga = async(mangaName: string) => {
-    const promise = await fetch(`${url}MangaDex/manga/${mangaName}`)
-    const data = await promise.json()
-    console.log(data)
+// BACKEND'S MANGADEX POST ENDPOINT
+export const searchManga = async(manga: IGetManga) => {
+    const res = await fetch(url + 'GetManga', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(manga)
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.json();
     return data;
 }
 

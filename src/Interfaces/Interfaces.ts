@@ -25,7 +25,7 @@ export interface ILoginUserInfo {
 }
 
 export interface IToken {
-    token: string, 
+    token: string,
     userId: number
 }
 
@@ -52,7 +52,7 @@ export interface IPostData {
     image: string | null,
     dateCreated?: string,
     dateUpdated: string | null,
-    isDeleted: boolean 
+    isDeleted: boolean
 }
 
 export interface IPosts {
@@ -78,37 +78,34 @@ export interface IMemberToClubAssociation {
 }
 
 export interface IManga {
-    data: {
-        id: string,
-        type: string,
-        attributes: {
-            altTitles: [{}],
-            description: {
-                en: string
-            },
-            createdAt: string,
-            updatedAt: string,
-            lastChapter: string,
-            lastVolume: string,
-            publicationDemographic: string,
-            state: string,
-            status: string,
-            tags: [{}],
-            title: {
-                en: string
-            },
-            year: number
+    id: string,
+    type: string,
+    attributes: {
+        altTitles: [{}],
+        description: {
+            en: string
         },
-        relationships: [{
-            id: string,
-            type: string
-            attributes: {
-                volume: string,
-                fileName: string
-            }
-        }]
+        createdAt: string,
+        updatedAt: string,
+        lastChapter: string,
+        lastVolume: string,
+        publicationDemographic: string,
+        state: string,
+        status: string,
+        tags: [{}],
+        title: {
+            en: string
+        },
+        year: number
     },
-    result: string
+    relationships: [{
+        id: string,
+        type: string
+        attributes: {
+            volume: string,
+            fileName: string
+        }
+    }]
 }
 
 export interface IGetLikes {
@@ -181,4 +178,11 @@ export interface IPendingMembers {
             profilepic: string
         }
     ]
+}
+
+export interface IGetManga {
+    name: string,
+    tagInput: string[],
+    demographic: string,
+    status: string
 }
