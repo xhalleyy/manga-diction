@@ -21,7 +21,6 @@ const BrowseClubs = () => {
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const [pageSize, setPageSize] = useState<boolean>(true);
-  let getToken;
 
   const [randomClubs, setRandomClubs] = useState<IClubs[]>([]);
   const [recentClubs, setRecentClubs] = useState<IClubs[]>([]);
@@ -115,20 +114,8 @@ const BrowseClubs = () => {
     }
   };
 
-  useEffect(()=>{
-    const hasToken = () =>{
-      const token = localStorage.getItem("Token")
-      if(token){
-        return getToken = true;
-      }else{
-        return getToken = false;
-      }
-    }
-    hasToken()
-    
-  },[])
 
-  if(!getToken){
+  if (!checkToken()) {
     notFound();
   }
 

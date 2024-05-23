@@ -17,6 +17,7 @@ import { useClubContext } from '@/context/ClubContext'
 import { checkToken } from '@/utils/token'
 
 
+
 const Dashboard = () => {
 
   const [posts, setPosts] = useState<IPosts[]>([]);
@@ -25,7 +26,6 @@ const Dashboard = () => {
   const [clubsMap, setClubsMap] = useState<Map<number, IClubs>>(new Map());
   const router = useRouter();
   const { setDisplayedClub } = useClubContext();
-  let getToken;
 
 
   useEffect(() => {
@@ -70,20 +70,9 @@ const Dashboard = () => {
       return () => window.removeEventListener('resize', handleResize);
     }
 
-
-    const hasToken = () =>{
-      const token = localStorage.getItem("Token")
-      if(token){
-        return getToken = true;
-      }else{
-        return getToken = false;
-      }
-    }
-    
-    hasToken()
   }, [])
 
-  if(!getToken){
+  if (!checkToken()) {
     notFound();
   }
 

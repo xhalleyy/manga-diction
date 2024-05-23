@@ -27,8 +27,6 @@ const MangaInfo = () => {
     const [completedChecked, setCompletedChecked] = useState<boolean>(false);
     const [readingChecked, setReadingChecked] = useState<boolean>(false);
     const [isChecked, setIsChecked] = useState<'completed' | 'ongoing' | ''>('');
-    let getToken;
-
 
     useEffect(() => {
 
@@ -37,7 +35,7 @@ const MangaInfo = () => {
                 const data = await specificManga(mangaId);
                 setManga(data.data);
                 findCoverArt(data.data);
-                
+
             } catch (error) {
                 console.log('Error fetching data:', error);
             }
@@ -165,15 +163,6 @@ const MangaInfo = () => {
             setIsChecked('');
         }
 
-        const hasToken = () =>{
-            const token = localStorage.getItem("Token")
-            if(token){
-              return getToken = true;
-            }else{
-              return getToken = false;
-            }
-          }
-          hasToken()
     }, []);
 
     const handleCompleted = async (manga: IManga) => {
@@ -240,10 +229,10 @@ const MangaInfo = () => {
         setFave(!fav);
     };
 
-    if(!getToken){
+    if (!checkToken()) {
         notFound();
-      }
-    
+    }
+
     return (
         <>
             <div className='bg-offwhite  min-h-screen'>
@@ -254,7 +243,7 @@ const MangaInfo = () => {
                     // all variables rendering dependent on successful fetch
 
                     <div className='grid grid-cols-7 ms-1 lg:px-16 '>
-                        <div  className='col-span-2 flex flex-col justify-center'>
+                        <div className='col-span-2 flex flex-col justify-center'>
                             <div className=' flex justify-end xl:justify-center pt-10 w-full'>
 
                                 {fileName && <img className='rounded-lg max-h-[555px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}

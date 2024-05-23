@@ -30,7 +30,6 @@ const SearchedUser = () => {
     const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
-    let getToken;
 
 
     // Click a club, routes them to clubpage
@@ -215,23 +214,13 @@ const SearchedUser = () => {
                 setOngoing(allOngoing);
             };
         }
-        const hasToken = () =>{
-            const token = localStorage.getItem("Token")
-            if(token){
-              return getToken = true;
-            }else{
-              return getToken = false;
-            }
-          }
-          
-          hasToken()
 
         fetchManga();
     }, []);
 
-    if(!getToken){
+    if (!checkToken()) {
         notFound();
-      }
+    }
 
     const customTabs: CustomFlowbiteTheme["tabs"] = {
         "base": "flex flex-col gap-2",

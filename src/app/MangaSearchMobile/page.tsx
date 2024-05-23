@@ -13,7 +13,6 @@ const MangaSearchMobile = () => {
     const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags } = useClubContext();
 
     const router = useRouter();
-    let getToken;
 
     const handleSubmit = () => {
         console.log({
@@ -26,19 +25,7 @@ const MangaSearchMobile = () => {
         router.push('/SearchManga')
     }
 
-    useEffect(() => {
-        const hasToken = () =>{
-            const token = localStorage.getItem("Token")
-            if(token){
-              return getToken = true;
-            }else{
-              return getToken = false;
-            }
-          }
-        hasToken()
-    }, [])
-
-    if(!getToken){
+    if (!checkToken()) {
         notFound();
       }
     

@@ -46,7 +46,6 @@ const ClubPage = () => {
   const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
 
   const router = useRouter();
-  let getToken;
 
   // CLUB MEMBERS, JOINING, CHECKING IF JOINED
   const fetchClubMembers = async (clubId: number | undefined) => {
@@ -155,15 +154,6 @@ const ClubPage = () => {
   }
 
   useEffect(() => {
-    const hasToken = () =>{
-      const token = localStorage.getItem("Token")
-      if(token){
-        return getToken = true;
-      }else{
-        return getToken = false;
-      }
-    }
-    hasToken()
     // set Selected Post null so that all the posts show instead of the full posts
     setSelectedPostId(null);
     // responsiveness
@@ -338,7 +328,7 @@ const ClubPage = () => {
     }
   };
 
-  if(!getToken){
+  if (!checkToken()) {
     notFound();
   }
 

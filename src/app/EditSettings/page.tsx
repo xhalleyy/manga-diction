@@ -23,7 +23,6 @@ const EditSettings = () => {
     const [newPass, setNewPass] = useState<string | null>(null);
     const [currentPass, setCurrentPass] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<boolean | undefined>(false);
-    let getToken;
     // useEffect(() => {
     //     let userId = Number(localStorage.getItem("UserId"));
     //     const fetchedUser = async () => {
@@ -38,15 +37,6 @@ const EditSettings = () => {
     // }, [success, setDisplayedUser]);
 
     useEffect(() => {
-        const hasToken = () =>{
-            const token = localStorage.getItem("Token")
-            if(token){
-              return getToken = true;
-            }else{
-              return getToken = false;
-            }
-          }
-        hasToken()
 
         if (typeof window !== 'undefined') {
             setPageSize(window.innerWidth > 768)
@@ -59,7 +49,7 @@ const EditSettings = () => {
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
 
-        
+
     }, [])
 
 
@@ -99,7 +89,7 @@ const EditSettings = () => {
         }
     };
 
-    const handleAgeChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         if (displayedUser) {
             if (value.trim() !== '') {
@@ -199,10 +189,10 @@ const EditSettings = () => {
         }
     };
 
-    if(!getToken){
+    if (!checkToken()) {
         notFound();
-      }
-
+    }
+    
     const customInput = {
         "field": {
             "input": {
@@ -243,7 +233,7 @@ const EditSettings = () => {
                                     height={250}
                                     className='settingsImg shadow-md'
                                 />
-                                
+
                                 <div className={pageSize ? 'flex flex-col justify-center items-center gap-2 py-2 mt-4' : "grid grid-cols-1"}>
                                     <div className={pageSize ? "flex" : "col-span-1 text-center"}>
                                         <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right' />
@@ -261,7 +251,7 @@ const EditSettings = () => {
                                     {/* <Label htmlFor="base" value="Age:" className='text-lg font-mainFont flex-shrink-0 text-right pr-2' /> */}
                                     <TextInput onChange={handleAgeChange} theme={customInput} placeholder='Age' id="base" type="number" sizing="post" className='w-1/3 text-center flex justify-center items-center' />
                                 </div>
-                                
+
                             </div>
 
                         </div>

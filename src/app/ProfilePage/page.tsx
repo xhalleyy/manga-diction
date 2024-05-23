@@ -40,14 +40,13 @@ const ProfilePage = (props: any) => {
 
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
-    let getToken;
 
     const searchUser = async () => {
         try {
             let userId = Number(localStorage.getItem("UserId"))
             const data = await getUsersByUsername(search);
             const filteredUsers = data.filter(user => user.id !== userId);
-            
+
             setSearchedUsers(filteredUsers);
             // setSearch(data);
         } catch (error) {
@@ -271,16 +270,6 @@ const ProfilePage = (props: any) => {
             // console.log(allOngoing)
         };
 
-        const hasToken = () =>{
-            const token = localStorage.getItem("Token")
-            if(token){
-              return getToken = true;
-            }else{
-              return getToken = false;
-            }
-        }
-
-        hasToken()
 
         fetchManga();
     }, []);
@@ -319,9 +308,9 @@ const ProfilePage = (props: any) => {
         }
     };
 
-    if(!getToken){
+    if (!checkToken()) {
         notFound();
-      }
+    }
 
     return (
         <>
@@ -406,14 +395,14 @@ const ProfilePage = (props: any) => {
                                 <div className="grid grid-cols-2">
                                     {searchedUsers && searchedUsers.map(user => (
                                         <div key={user.id}>
-                                            <div className='my-7 mx-auto' onClick={() => { handleUserClick(user)}}>
-                                            <Avatar
+                                            <div className='my-7 mx-auto' onClick={() => { handleUserClick(user) }}>
+                                                <Avatar
                                                     img={user.profilePic || ''}
                                                     rounded
                                                     theme={customAvatar}
                                                     size="lg"
                                                 />
-                                                
+
                                                 <div className='text-center mt-2'>
                                                     <p className='text-lg font font-poppinsMed'>{user.username}</p>
                                                     <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>

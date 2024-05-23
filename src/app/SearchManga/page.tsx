@@ -20,8 +20,6 @@ const SearchManga = () => {
     const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1);
     const maxTitleLength = 30;
     const router = useRouter();
-    let getToken;
-
 
     const findCoverArt = (manga: IManga): string | undefined => {
         const relationships = manga.relationships;
@@ -33,30 +31,17 @@ const SearchManga = () => {
         }
     };
 
-    const handleMangaSubmit =  (mangaId: string) => {
-       setMangaId(mangaId);
+    const handleMangaSubmit = (mangaId: string) => {
+        setMangaId(mangaId);
         router.push('/MangaInfo');
     }
 
-    useEffect(()=>{
-        const hasToken = () =>{
-            const token = localStorage.getItem("Token")
-            if(token){
-              return getToken = true;
-            }else{
-              return getToken = false;
-            }
-          }
-          
-          hasToken()
-    },[])
-
-    if(!getToken){
+    if (!checkToken()) {
         notFound();
-      }
+    }
 
     return (
-        
+
         <>
             <div className='bg-offwhite  min-h-screen'>
 
@@ -73,19 +58,19 @@ const SearchManga = () => {
                             {/* 1st result */}
                             {
                                 mangaInfo.map((manga: IManga, index: number) => {
-                                //    console.log(`https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`)
+                                    //    console.log(`https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`)
                                     return (
                                         <div key={index} className='flex justify-center' onClick={() => handleMangaSubmit(manga.id)}>
-                                        <div className='px-0 mx-0 cursor-pointer'>
-                                            <img src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`} alt='Title of Manga' className='w-[177px] h-64' />
-                                            <h2 className='text-center text-xl font-semibold max-w-[170px] mt-2 text-darkbrown font-mainFont'>
-                                                {manga.attributes.title.en.length > maxTitleLength
-                                                    ? `${manga.attributes.title.en.substring(0, maxTitleLength)}...`
-                                                    : manga.attributes.title.en
-                                                }
-                                            </h2>
+                                            <div className='px-0 mx-0 cursor-pointer'>
+                                                <img src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`} alt='Title of Manga' className='w-[177px] h-64' />
+                                                <h2 className='text-center text-xl font-semibold max-w-[170px] mt-2 text-darkbrown font-mainFont'>
+                                                    {manga.attributes.title.en.length > maxTitleLength
+                                                        ? `${manga.attributes.title.en.substring(0, maxTitleLength)}...`
+                                                        : manga.attributes.title.en
+                                                    }
+                                                </h2>
+                                            </div>
                                         </div>
-                                </div>
                                     )
                                 })
                             }
