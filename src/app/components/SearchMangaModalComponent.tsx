@@ -17,11 +17,11 @@ interface SearchMangaModalProps {
 const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
 
     const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, setMangaInfo, mangaInfo } = useClubContext();
-    // const [titleInput, setTitleInput] = useState<string>('');
+    const [titleInput, setTitleInput] = useState<string>('');
     // const [authorInput, setAuthorInput] = useState<string>('');
-    // const [tagsInput, setTagsInput] = useState<string>('');
-    // const [demographicOptions, setDemographicOptions] = useState<string>('');
-    // const [publishStatus, setPublishStatus] = useState<string>('');
+    const [tagsInput, setTagsInput] = useState<string[]>([]);
+    const [demographicOptions, setDemographicOptions] = useState<string>('');
+    const [publishStatus, setPublishStatus] = useState<string>('');
     const [value, setValue] = useState<any>([]);
     const [pageSize, setPageSize] = useState<boolean>(false);
     const router = useRouter();
@@ -29,10 +29,10 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
     const fetchManga = async () => {
         try {
             const searchInfo: IGetManga = {
-                name: title,
-                tagInput: tags,
-                demographic: demographics,
-                status: publication
+                name: titleInput,
+                tagInput: tagsInput,
+                demographic: demographicOptions,
+                status: publishStatus
             }
 
             const searchedManga = await searchManga(searchInfo)
@@ -63,6 +63,12 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
     }
 
     const handleSubmit = () => {
+        // set context values
+        setTitle(titleInput);
+        setTags(tagsInput);
+        setDemographics(demographicOptions);
+        setPublication(publishStatus);
+
         console.log({
             title,
             author,
@@ -70,10 +76,17 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
             publication,
             tags
         })
+
         fetchManga()
         console.log(mangaInfo)
         setOpen(false)
         router.push('/SearchManga')
+
+        // clear input fields
+        setTitleInput('');
+        setTagsInput([]);
+        setDemographicOptions('');
+        setPublishStatus('');
     }
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -98,8 +111,8 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Search Manga Title</label>
                             <div>
-                                <input value={title} className="opaqueWhite rounded-lg w-[50%] h-8 px-3 text-mainFont" id="titleSearch" onKeyDown={handleKeyPress}
-                                onChange={(e) => setTitle(e.target.value)} />
+                                <input placeholder='Series Title' value={titleInput} className="opaqueWhite rounded-lg w-[50%] h-8 px-3 text-mainFont" id="titleSearch" onKeyDown={handleKeyPress}
+                                onChange={(e) => setTitleInput(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2 hidden">
@@ -113,8 +126,8 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             <div>
                                 {/* wider + taller than club name input */}
                                 {/* <input className="opaqueWhite rounded-xl w-[100%] h-14" onChange={(e) => setTagsInput(e.target.value)} /> */}
-                                <Chips className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={tags} // Ensure value is an array of strings
-                                    onChange={(e) => setTags(e.value || [])} separator="," />
+                                <Chips placeholder='Tags (ex: Drama, Isekai...)' className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={tagsInput} // Ensure value is an array of strings
+                                    onChange={(e) => setTagsInput(e.value || [])} separator="," />
                             </div>
                         </div>
                         <div className={pageSize ? "flex gap-3 pt-3 " : "grid grid-cols-1"}>
@@ -122,7 +135,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             {/* dropdown, 2 options (public, private) */}
 
                             <div className={pageSize ? "col-span-1" : "pt-4"}>
-                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setDemographics(e.target.value)}>
+                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" value={demographicOptions} onChange={(e) => setDemographicOptions(e.target.value)}>
                                     <option value="" className="font-mainFont">Demographics</option>
                                     <option value="shounen" className="font-mainFont">Shounen</option>
                                     <option value="shoujo" className="font-mainFont">Shoujo</option>
@@ -132,7 +145,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             </div>
 
                             <div className={pageSize ? "col-span-1" : "pt-3"}>
-                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" onChange={(e) => setPublication(e.target.value)}>
+                                <select className="rounded-xl text-sm opaqueWhite font-mainFont h-10 border-none" value={publishStatus} onChange={(e) => setPublishStatus(e.target.value)}>
                                     <option value="" className="font-mainFont">Publication Status</option>
                                     <option value="ongoing" className="font-mainFont">Ongoing</option>
                                     <option value="hiatus" className="font-mainFont">Hiatus</option>
