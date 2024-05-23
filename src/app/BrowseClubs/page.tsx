@@ -31,7 +31,7 @@ const BrowseClubs = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console
+
     const fetchedData = async () => {
       const getClubs = await publicClubsApi();
       setClubs(getClubs);
