@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Button } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext';
@@ -13,6 +13,7 @@ const MangaSearchMobile = () => {
     const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags } = useClubContext();
 
     const router = useRouter();
+    let getToken;
 
     const handleSubmit = () => {
         console.log({
@@ -25,7 +26,22 @@ const MangaSearchMobile = () => {
         router.push('/SearchManga')
     }
 
-    checkToken();
+    useEffect(() => {
+        const hasToken = () =>{
+            const token = localStorage.getItem("Token")
+            if(token){
+              return getToken = true;
+            }else{
+              return getToken = false;
+            }
+          }
+        hasToken()
+    }, [])
+
+    if(!getToken){
+        notFound();
+      }
+    
 
   return (
     <div className=' darkBlue h-screen'>

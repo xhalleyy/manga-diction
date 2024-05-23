@@ -19,8 +19,8 @@ const SearchClub = () => {
   const { searchClub, setSearchClub, setDisplayedClub } = useClubContext();
   const [fetchedClubs, setFetchedClubs] = useState<any>(null);
   const [clubs, setClubs] = useState<IClubs[]>([]);
-  const [pageSize, setPageSize] = useState<boolean>(false);
-  
+  const [pageSize, setPageSize] = useState<boolean>(true);
+  let getToken;
 
   // This useEffect gets Clubs by name, using the useContext where we saved the value from the input field
   useEffect(() => {
@@ -75,7 +75,22 @@ const SearchClub = () => {
     }
   };
 
-  checkToken();
+  useEffect(()=>{
+    const hasToken = () =>{
+      const token = localStorage.getItem("Token")
+      if(token){
+        return getToken = true;
+      }else{
+        return getToken = false;
+      }
+    }
+    
+    hasToken()
+  },[])
+
+  if(!getToken){
+    notFound();
+  }
 
   return (
     <>

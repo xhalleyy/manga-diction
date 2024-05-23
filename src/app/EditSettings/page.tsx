@@ -23,7 +23,7 @@ const EditSettings = () => {
     const [newPass, setNewPass] = useState<string | null>(null);
     const [currentPass, setCurrentPass] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<boolean | undefined>(false);
-
+    let getToken;
     // useEffect(() => {
     //     let userId = Number(localStorage.getItem("UserId"));
     //     const fetchedUser = async () => {
@@ -38,6 +38,16 @@ const EditSettings = () => {
     // }, [success, setDisplayedUser]);
 
     useEffect(() => {
+        const hasToken = () =>{
+            const token = localStorage.getItem("Token")
+            if(token){
+              return getToken = true;
+            }else{
+              return getToken = false;
+            }
+          }
+        hasToken()
+
         if (typeof window !== 'undefined') {
             setPageSize(window.innerWidth > 768)
         }
@@ -48,6 +58,8 @@ const EditSettings = () => {
 
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
+
+        
     }, [])
 
 
@@ -187,7 +199,9 @@ const EditSettings = () => {
         }
     };
 
-    checkToken();
+    if(!getToken){
+        notFound();
+      }
 
     const customInput = {
         "field": {

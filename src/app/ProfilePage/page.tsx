@@ -40,6 +40,7 @@ const ProfilePage = (props: any) => {
 
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
+    let getToken;
 
     const searchUser = async () => {
         try {
@@ -270,6 +271,17 @@ const ProfilePage = (props: any) => {
             // console.log(allOngoing)
         };
 
+        const hasToken = () =>{
+            const token = localStorage.getItem("Token")
+            if(token){
+              return getToken = true;
+            }else{
+              return getToken = false;
+            }
+        }
+
+        hasToken()
+
         fetchManga();
     }, []);
 
@@ -307,7 +319,9 @@ const ProfilePage = (props: any) => {
         }
     };
 
-    checkToken();
+    if(!getToken){
+        notFound();
+      }
 
     return (
         <>

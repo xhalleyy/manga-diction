@@ -20,6 +20,7 @@ const SearchManga = () => {
     const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1);
     const maxTitleLength = 30;
     const router = useRouter();
+    let getToken;
 
 
     const findCoverArt = (manga: IManga): string | undefined => {
@@ -37,7 +38,22 @@ const SearchManga = () => {
         router.push('/MangaInfo');
     }
 
-    checkToken();
+    useEffect(()=>{
+        const hasToken = () =>{
+            const token = localStorage.getItem("Token")
+            if(token){
+              return getToken = true;
+            }else{
+              return getToken = false;
+            }
+          }
+          
+          hasToken()
+    },[])
+
+    if(!getToken){
+        notFound();
+      }
 
     return (
         

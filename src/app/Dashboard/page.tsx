@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [clubsMap, setClubsMap] = useState<Map<number, IClubs>>(new Map());
   const router = useRouter();
   const { setDisplayedClub } = useClubContext();
+  let getToken;
 
 
   useEffect(() => {
@@ -69,9 +70,22 @@ const Dashboard = () => {
       return () => window.removeEventListener('resize', handleResize);
     }
 
+
+    const hasToken = () =>{
+      const token = localStorage.getItem("Token")
+      if(token){
+        return getToken = true;
+      }else{
+        return getToken = false;
+      }
+    }
+    
+    hasToken()
   }, [])
 
-checkToken();
+  if(!getToken){
+    notFound();
+  }
 
   const handleClubClick = (clubId: number) => () => {
     // Fetch club data based on clubId and set it as the displayed club

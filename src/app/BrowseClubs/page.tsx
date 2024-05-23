@@ -21,6 +21,7 @@ const BrowseClubs = () => {
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const [pageSize, setPageSize] = useState<boolean>(true);
+  let getToken;
 
   const [randomClubs, setRandomClubs] = useState<IClubs[]>([]);
   const [recentClubs, setRecentClubs] = useState<IClubs[]>([]);
@@ -108,16 +109,28 @@ const BrowseClubs = () => {
   }, [clubs]);
 
 
-
-  // console.log('Recent Clubs:', slicedRecentClubs);
-
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleClick();
     }
   };
 
-  checkToken();
+  useEffect(()=>{
+    const hasToken = () =>{
+      const token = localStorage.getItem("Token")
+      if(token){
+        return getToken = true;
+      }else{
+        return getToken = false;
+      }
+    }
+    hasToken()
+    
+  },[])
+
+  if(!getToken){
+    notFound();
+  }
 
   // CUSTOM FLOWBITE CLASSES
   const customTabs: CustomFlowbiteTheme['tabs'] = {

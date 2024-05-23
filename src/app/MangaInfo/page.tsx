@@ -27,7 +27,7 @@ const MangaInfo = () => {
     const [completedChecked, setCompletedChecked] = useState<boolean>(false);
     const [readingChecked, setReadingChecked] = useState<boolean>(false);
     const [isChecked, setIsChecked] = useState<'completed' | 'ongoing' | ''>('');
-
+    let getToken;
 
 
     useEffect(() => {
@@ -164,6 +164,16 @@ const MangaInfo = () => {
         } else {
             setIsChecked('');
         }
+
+        const hasToken = () =>{
+            const token = localStorage.getItem("Token")
+            if(token){
+              return getToken = true;
+            }else{
+              return getToken = false;
+            }
+          }
+          hasToken()
     }, []);
 
     const handleCompleted = async (manga: IManga) => {
@@ -230,7 +240,9 @@ const MangaInfo = () => {
         setFave(!fav);
     };
 
-    checkToken();
+    if(!getToken){
+        notFound();
+      }
     
     return (
         <>
