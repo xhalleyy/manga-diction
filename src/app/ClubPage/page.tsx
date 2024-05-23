@@ -239,7 +239,7 @@ const ClubPage = () => {
     }
 
     checkJoined(displayedClub?.id)
-  }, [displayedClub?.id])
+  }, [displayedClub?.id, posts])
 
   useEffect(() => {
     if(displayedClub?.isPublic === true){

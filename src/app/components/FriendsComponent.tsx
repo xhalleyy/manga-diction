@@ -77,9 +77,9 @@ const FriendsComponent = ({searchedUser}: FriendsType) => {
                 friends.map(friend => (
                     <div key={friend.id} onClick={() => {handleFriendClick(friend)}} className={pageSize ? "bg-white pt-[5px] mb-1 flex rounded-t-md cursor-pointer" : "flex justify-center pt-2 pb-2 text-center"}>
                         {pageSize ? (
-                            <div className='flex flex-row flex-1 justify-center  lg:border-b-4 lg:border-ivory pb-3'>
-                                <Avatar img={friend.profilePic} rounded theme={customAvatar} size="md" />
-                                <div className='ms-10'>
+                            <div className='grid grid-cols-6 items-center lg:border-b-4 w-full lg:border-ivory pb-3'>
+                                <Avatar className='col-span-2 flex justify-end' img={friend.profilePic} rounded theme={customAvatar} size="md" />
+                                <div className='ms-10 col-span-4'>
                                     <h4 className='font-poppinsMed text-lg text-darkbrown'>{friend.username}</h4>
                                     <p className='font-mainFont text-darkbrown'>{friend.firstName} {friend.lastName}</p>
                                 </div>

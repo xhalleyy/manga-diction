@@ -241,7 +241,7 @@ const MangaInfo = () => {
                         <div  className='col-span-2 flex flex-col justify-center'>
                             <div className=' flex justify-end xl:justify-center pt-10 w-full'>
 
-                                {fileName && <img className='rounded-lg max-h-[555px]' src={`https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
+                                {fileName && <img className='rounded-lg max-h-[555px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
                             </div>
 
                             <div className='flex justify-end xl:justify-center pt-8 flex-col w-full text xl:w-[300px] mx-auto '>

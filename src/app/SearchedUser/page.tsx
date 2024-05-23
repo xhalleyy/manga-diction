@@ -185,8 +185,9 @@ const SearchedUser = () => {
                 const completedManga = await getCompletedManga(user);
                 const allCompleted = await Promise.all(
                     completedManga.map(async (manga: IFavManga) => {
-                        const mangaData = await specificManga(manga.mangaId);
-                        const coverArt = coverArtUrl(mangaData);
+                        const mangaResponse = await specificManga(manga.mangaId);
+                        const mangaData: IManga = mangaResponse.data;
+                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
                         return {
                             manga: mangaData,
                             coverArtUrl: coverArt
@@ -198,8 +199,9 @@ const SearchedUser = () => {
                 const ongoingManga = await getInProgessManga(user);
                 const allOngoing = await Promise.all(
                     ongoingManga.map(async (manga: IFavManga) => {
-                        const mangaData = await specificManga(manga.mangaId);
-                        const coverArt = coverArtUrl(mangaData);
+                        const mangaResponse = await specificManga(manga.mangaId);
+                        const mangaData: IManga = mangaResponse.data;
+                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
                         return {
                             manga: mangaData,
                             coverArtUrl: coverArt
@@ -215,19 +217,6 @@ const SearchedUser = () => {
     }, []);
 
 
-    const coverArtUrl = (manga: IManga): string => {
-        if (!manga || !manga|| !manga.relationships) {
-            return ''; // Return an empty string if manga data or relationships are not available
-        }
-        const relationships = manga.relationships;
-        const coverArt = relationships.find(rel => rel.type === "cover_art");
-        if (!coverArt) {
-            return ''; // Return an empty string if cover art is not available
-        }
-        const mangaId = manga.id;
-        const coverFileName = coverArt.attributes.fileName;
-        return `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}`; // Construct the complete cover art URL
-    };
 
     const customTabs: CustomFlowbiteTheme["tabs"] = {
         "base": "flex flex-col gap-2",
@@ -320,7 +309,7 @@ const SearchedUser = () => {
 
                                     <h2 className='text-[22px] font-mainFont'>{`${info.selectedUser?.firstName} ${info.selectedUser?.lastName}`}</h2>
                                     {isFriend && <div className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed'> Friend
-                                        </div>}
+                                    </div>}
                                     {(!isFriend && !requested) && <div className='mt-3 mb-5'>
                                         <button onClick={handleAddRequest} className='flex items-center justify-center darkBlue text-white font-mainFont py-1 px-3 rounded-2xl hover:bg-paleblue hover:text-darkblue hover:font-poppinsMed'>Add as Friend <AddIcon sx={{ fontSize: 20 }} />
                                         </button>
@@ -428,7 +417,7 @@ const SearchedUser = () => {
                                             <div className={!showClubs ? "" : "border-ivory bg-white border-8 rounded-lg"}>
 
                                                 <div className='grid grid-cols-2'>
-                                                    
+
                                                     {completed.map((manga, index) => {
                                                         return (
                                                             <div key={index}>
@@ -497,27 +486,27 @@ const SearchedUser = () => {
                                     <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* current reads */}
-                                        {ongoing.length === 0 ?  <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>{info.selectedUser?.username} has no mangas that they are currently reading.</p> 
-                                        : 
-                                        ongoing.map((manga, index) => {
-                                            return (
-                                                <div key={index}>
-                                                    <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
-                                            );
-                                        })}
+                                        {ongoing.length === 0 ? <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>{info.selectedUser?.username} has no mangas that they are currently reading.</p>
+                                            :
+                                            ongoing.map((manga, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                                );
+                                            })}
 
                                     </div>
                                     <p className='font-mainFont text-lg mb-4'>Completed:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* finished reads */}
-                                        {completed.length === 0 ?  <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>{info.selectedUser?.username} has no mangas that they are finished reading.</p> 
-                                        : 
-                                        completed.map((manga, index) => {
-                                            return (
-                                                <div key={index}>
-                                                    <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
-                                            );
-                                        })}
+                                        {completed.length === 0 ? <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>{info.selectedUser?.username} has no mangas that they are finished reading.</p>
+                                            :
+                                            completed.map((manga, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                                );
+                                            })}
                                     </div>
                                 </div>
 

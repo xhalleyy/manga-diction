@@ -40,9 +40,6 @@ const ProfilePage = (props: any) => {
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
 
-
-
-
     const searchUser = async () => {
         try {
             let userId = Number(localStorage.getItem("UserId"))
@@ -181,8 +178,6 @@ const ProfilePage = (props: any) => {
         }
     }, []);
 
-
-
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
             const memberIds = await getUserClubs(userId);
@@ -246,8 +241,9 @@ const ProfilePage = (props: any) => {
             const completedManga = await getCompletedManga(user);
             const allCompleted = await Promise.all(
                 completedManga.map(async (manga: IFavManga) => {
-                    const mangaData = await specificManga(manga.mangaId);
-                    const coverArt = coverArtUrl(mangaData);
+                    const mangaResponse = await specificManga(manga.mangaId);
+                    const mangaData: IManga = mangaResponse.data;
+                    const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
                     return {
                         manga: mangaData,
                         coverArtUrl: coverArt
@@ -260,8 +256,9 @@ const ProfilePage = (props: any) => {
             const ongoingManga = await getInProgessManga(user);
             const allOngoing = await Promise.all(
                 ongoingManga.map(async (manga: IFavManga) => {
-                    const mangaData = await specificManga(manga.mangaId);
-                    const coverArt = coverArtUrl(mangaData);
+                    const mangaResponse = await specificManga(manga.mangaId);
+                    const mangaData: IManga = mangaResponse.data;
+                    const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
                     return {
                         manga: mangaData,
                         coverArtUrl: coverArt
@@ -274,21 +271,6 @@ const ProfilePage = (props: any) => {
 
         fetchManga();
     }, []);
-
-
-    const coverArtUrl = (manga: IManga): string => {
-        if (!manga || !manga.relationships) {
-            return ''; // Return an empty string if manga data or relationships are not available
-        }
-        const relationships = manga.relationships;
-        const coverArt = relationships.find(rel => rel.type === "cover_art");
-        if (!coverArt) {
-            return ''; // Return an empty string if cover art is not available
-        }
-        const mangaId = manga.id;
-        const coverFileName = coverArt.attributes.fileName;
-        return `https://uploads.mangadex.org/covers/${mangaId}/${coverFileName}`; // Construct the complete cover art URL
-    };
 
     const handleMangaClick = (newMangaId: string) => {
         info.setMangaId(newMangaId)
@@ -380,9 +362,6 @@ const ProfilePage = (props: any) => {
                                 <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                     {/* displays 4 friends at a time ? */}
                                     <FriendsComponent searchedUser={info.displayedUser?.id} />
-                                    {/* <FriendsComponent /> */}
-                                    {/* <FriendsComponent /> */}
-                                    {/* <FriendsComponent /> */}
                                 </div>
                             </div>
 
@@ -479,7 +458,8 @@ const ProfilePage = (props: any) => {
                                                 {completed.map((manga, index) => {
                                                     return (
                                                         <div key={index}>
-                                                            <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                                            <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
+                                                        </div>
                                                     );
                                                 })}
 
@@ -531,13 +511,7 @@ const ProfilePage = (props: any) => {
                                                     theme={customAvatar}
                                                     size="lg"
                                                 />
-                                                {/* <Image
-                                                    src={user.profilePic | ''}
-                                                    alt='profile picture'
-                                                    height={110}
-                                                    width={110}
-                                                    className='searchPfp'
-                                                /> */}
+
                                                 <div className='text-center mt-2'>
                                                     <p className='text-lg font font-poppinsMed'>{user.username}</p>
                                                     <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
@@ -566,13 +540,6 @@ const ProfilePage = (props: any) => {
                                         )}
                                     </div>
                                 ))}
-                                {/* <SearchedFriendsComponent />
-                                <SearchedFriendsComponent />
-                                <SearchedFriendsComponent />
-                                <SearchedFriendsComponent />
-                                <SearchedFriendsComponent />
-                                <SearchedFriendsComponent />
-                                <SearchedFriendsComponent /> */}
 
                             </div>
 
@@ -619,26 +586,26 @@ const ProfilePage = (props: any) => {
 
                                 <div className={!showClubs ? favbox : noFavbox}>
                                     <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
-                                    <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 xl:gap-5 ps-2 mb-5'>
+                                    <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 xl:gap-3 ps-2 mb-5'>
                                         {/* current reads */}
-                                        {ongoing.length === 0 ? <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you are currently reading.</p>
+                                        {ongoing.length === 0 ? <p className='text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you are currently reading.</p>
                                             :
                                             (ongoing.map((manga, index) => (
-                                                <div key={index} onClick={() => handleMangaClick(manga.manga.data.id)}>
-                                                    <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} alt={manga.manga.title} />
+                                                <div key={index} onClick={() => handleMangaClick(manga.manga.id)}>
+                                                    <img className='h-[300px] w-[195px] xl:h-[280px] xl:w-[200px] 2xl:h-[300px] 2xl:w-[220px] rounded-lg cursor-pointer' src={manga.coverArtUrl} alt={manga.manga.title} />
                                                 </div>
                                             )))}
 
 
                                     </div>
                                     <p className='font-mainFont text-lg mb-4'>{'Completed:'}</p>
-                                    <div className='grid grid-cols-5 gap-5 ps-2 mb-5'>
+                                    <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 xl:gap-3 ps-2 mb-5'>
                                         {/* finished reads */}
 
                                         {/* finished reads */}
-                                        {completed.length === 0 ? <p className='col-span-5 text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you have completed.</p> : (completed.map((manga, index) => (
-                                            <div key={index} onClick={() => handleMangaClick(manga.manga.data.id)}>
-                                                <img className='w-[177px] h-64 rounded-lg' src={manga.coverArtUrl} alt={manga.manga.title} />
+                                        {completed.length === 0 ? <p className=' text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you have completed.</p> : (completed.map((manga, index) => (
+                                            <div key={index} onClick={() => handleMangaClick(manga.manga.id)}>
+                                                <img className='h-[300px] w-[195px] xl:h-[280px] xl:w-[200px] 2xl:h-[300px] 2xl:w-[220px] rounded-lg cursor-pointer' src={manga.coverArtUrl} alt={manga.manga.title} />
                                             </div>
                                         )))}
                                     </div>
