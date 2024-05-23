@@ -315,9 +315,9 @@ const ClubPage = () => {
     console.log(newOrder); 
   }
 
-  useEffect(() => {
-    console.log('Posts have been updated', posts);
-}, [posts]);
+//   useEffect(() => {
+//     console.log('Posts have been updated', posts);
+// }, [posts]);
 
   const handleClickPost = (postId: number) => {
     // event.stopPropagation(); // Prevent the click event from bubbling up to the parent div

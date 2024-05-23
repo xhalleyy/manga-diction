@@ -1,17 +1,20 @@
 import { useClubContext } from '@/context/ClubContext';
 import React, { useEffect, useRef, useState } from 'react';
-import { AddLikeToComment, GetLikesByComment, RemoveLikeFromComment, addCommentToPost, addReplyToComment, getComments, getPostById, getRepliesFromComment, getUserInfo, specifiedClub } from '@/utils/DataServices';
+import { AddLikeToComment, GetLikesByComment, RemoveLikeFromComment, addCommentToPost, addReplyToComment, deleteComment, getComments, getPostById, getRepliesFromComment, getUserInfo, specifiedClub } from '@/utils/DataServices';
 import PostsComponent from './PostsComponent';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import { IClubs, IComments, IGetLikes, IPostData, IUserData, LikedUser } from '@/Interfaces/Interfaces';
 import TurnLeftIcon from '@mui/icons-material/TurnLeft';
-import { Avatar, CustomFlowbiteTheme } from 'flowbite-react';
+import { Avatar, Button, CustomFlowbiteTheme, Modal } from 'flowbite-react';
 import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
+import DeleteIcon from '@mui/icons-material/Delete';
 import Image from 'next/image';
+import { Tooltip } from '@mui/material';
 
 
 const PostRepliesComponent = () => {
+    const info = useClubContext();
     const { selectedPostId } = useClubContext();
     const [post, setPost] = useState<IPostData | null>(null);
     const [club, setClub] = useState<IClubs | null>(null);
@@ -38,7 +41,10 @@ const PostRepliesComponent = () => {
     // const [newReplies, setNewReplies] = useState<{ [key: string]: boolean }>({});
     const [validReply, setValidReply] = useState(false);
     const [selectedCommentId, setSelectedCommentId] = useState<number | null>(null);
+    const [commentToDeleteId, setCommentToDeleteId] = useState<number | null>(null);
+    const [openModal, setOpenModal] = useState(false);
     const maxCharacters = 300;
+    const userId = Number(localStorage.getItem("UserId"));
 
     useAutosizeTextArea(textAreaRef.current, expandValue);
 
@@ -201,6 +207,21 @@ const PostRepliesComponent = () => {
         }
     };
 
+    const handleDeleteComment = async () => {
+        try {
+            if (commentToDeleteId) {
+                await deleteComment(commentToDeleteId);
+                setOpenModal(false);
+                fetchedPost();
+                console.log(commentToDeleteId); // Log the correct comment ID
+            }
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+        }
+    };
+
+
+
     // const handleLikes = async (event: React.MouseEvent<HTMLDivElement>, commentId: number) => {
     //     event.stopPropagation();
     //     try {
@@ -263,7 +284,7 @@ const PostRepliesComponent = () => {
             }
         }
     };
-    
+
 
     return (
         <>
@@ -308,16 +329,17 @@ const PostRepliesComponent = () => {
                                 {/* <div className='arrow inline-block ms-10 place-content-end mt-6'>
                                     <TurnLeftIcon sx={{ fontSize: 30 }} />
                                 </div> */}
-                                
+
                                 <div className='flex flex-col place-content-start mt-3'>
                                     <Avatar img={comment.user.profilePic} rounded theme={customAvatar} size="md" className='px-2' />
                                 </div>
+
                                 <div className='flex flex-col place-content-center px-3'>
                                     <h1 className='font-poppinsMed'>{comment.user.username}</h1>
                                     <p className='font-mainFont text-[15px]'>{comment.reply}</p>
                                     <div className='inline-flex gap-1 mb-3 mt-1.5 '>
                                         <div onClick={() => toggleLike(comment.id, true)} className={`flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer ${userLikedTopComments[comment.id] ? 'bg-darkblue text-white' : ''}`}
->
+                                        >
                                             <ThumbUpOutlinedIcon sx={{ fontSize: '15px' }} />
                                             <div className='font-mainFont text-[15px]'><p>{allLikesTopComments[comment.id]?.likesCount}</p></div>
                                         </div>
@@ -327,6 +349,40 @@ const PostRepliesComponent = () => {
                                         </div>
                                     </div>
                                 </div>
+
+                                {comment.userId === userId && (
+                                    <div className="absolute top-1 right-1 p-3">
+                                        <Tooltip onClick={() => {
+                                            setCommentToDeleteId(comment.id);
+                                            setOpenModal(true);
+                                        }} title='Delete Post' placement='right' content={undefined}>
+                                            <DeleteIcon />
+                                        </Tooltip>
+
+                                        <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
+                                            <Modal.Header />
+                                            <Modal.Body>
+                                                <div className="text-center">
+                                                    <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                                        <div>
+                                                            Are you sure you want to delete this comment?
+                                                        </div>
+
+                                                    </h3>
+                                                    <div className="flex justify-center gap-4">
+                                                        <Button color="failure" onClick={handleDeleteComment}>
+                                                            {"Yes, I'm sure"}
+                                                        </Button>
+                                                        <Button color="gray" onClick={() => setOpenModal(false)}>
+                                                            No, cancel
+                                                        </Button>
+                                                    </div>
+
+                                                </div>
+                                            </Modal.Body>
+                                        </Modal>
+                                    </div>
+                                )}
                             </div>
                             {selectedCommentId === comment.id && (
                                 <div className='py-3 px-8 relative'>
@@ -359,18 +415,54 @@ const PostRepliesComponent = () => {
                                             />
 
                                         </div>
-                                        <div  className='flex flex-col place-content-start mt-3'>
+                                        <div className='flex flex-col place-content-start mt-3'>
                                             <Avatar img={reply.user.profilePic} rounded theme={customAvatar} size="md" className='px-2' />
                                         </div>
                                         <div className='flex flex-col place-content-center px-3'>
-                                            <h1 className='font-poppinsMed'>{reply.user.username}</h1>
+                                            <div className='grid grid-cols-2'>
+                                                <h1 className='font-poppinsMed'>{reply.user.username}</h1>
+                                            </div>
                                             <p className='font-mainFont text-[15px]'>{reply.reply}</p>
                                             <div className='inline-flex gap-1 mb-2 mt-1.5'>
-                                                <div onClick={() => toggleLike(reply.id, false)}         className={`flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer ${userLikedReplies[reply.id] ? 'bg-darkblue text-white' : ''}`}
->
+                                                <div onClick={() => toggleLike(reply.id, false)} className={`flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer ${userLikedReplies[reply.id] ? 'bg-darkblue text-white' : ''}`}
+                                                >
                                                     <ThumbUpOutlinedIcon sx={{ fontSize: '15px' }} />
                                                     <div className='font-mainFont text-[15px]'><p>{allLikesReplies[reply.id]?.likesCount}</p></div>
                                                 </div>
+
+                                                {reply.userId === userId && (
+                                                    <div className="absolute top-1 right-1 p-3">
+                                                        <Tooltip onClick={() => {
+                                                            setCommentToDeleteId(reply.id);
+                                                            setOpenModal(true);
+                                                        }} title='Delete Post' placement='right' content={undefined}>
+                                                            <DeleteIcon />
+                                                        </Tooltip>
+
+                                                        <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
+                                                            <Modal.Header />
+                                                            <Modal.Body>
+                                                                <div className="text-center">
+                                                                    <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                                                        <div>
+                                                                            Are you sure you want to delete this comment?
+                                                                        </div>
+
+                                                                    </h3>
+                                                                    <div className="flex justify-center gap-4">
+                                                                        <Button color="failure" onClick={handleDeleteComment}>
+                                                                            {"Yes, I'm sure"}
+                                                                        </Button>
+                                                                        <Button color="gray" onClick={() => setOpenModal(false)}>
+                                                                            No, cancel
+                                                                        </Button>
+                                                                    </div>
+
+                                                                </div>
+                                                            </Modal.Body>
+                                                        </Modal>
+                                                    </div>
+                                                )}
                                                 {/* <div className='flex border border-black rounded-xl h-[22px] text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
                                                     <ModeCommentOutlinedIcon sx={{ fontSize: '15px' }} />
                                                     <p className='font-mainFont text-[15px]'>{allReplies[reply.id]?.length || 0}</p>

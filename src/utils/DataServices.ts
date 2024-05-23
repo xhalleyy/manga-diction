@@ -357,7 +357,7 @@ export const removeFavManga = async (userId: number, mangaId: string) => {
 export const getPostsByClubId = async (clubId: number | undefined) => {
     const res = await fetch(url + 'Post/GetAllPostsInClub/' + clubId)
     const data: IPosts[] = await res.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -557,7 +557,7 @@ export const GetLikesByPost = async (postId: number) => {
 export const GetLikesByComment = async (commentId: number) => {
     const promise = await fetch(`${url}Likes/GetLikesForComment/${commentId}`)
     const data: IGetLikes = await promise.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -635,7 +635,7 @@ export const RemoveLikeFromComment = async (commentId: number, userId: number) =
 export const getComments = async (postId: number) => {
     const promise = await fetch(url + 'Comment/GetPostReplies/' + postId);
     const data = await promise.json();
-    // console.log(data)
+    console.log(data)
     return data;
 }
 
@@ -643,7 +643,7 @@ export const getComments = async (postId: number) => {
 export const getRepliesFromComment = async (commentId: number) => {
     const promise = await fetch(url + 'Comment/GetRepliesFromComment/' + commentId)
     const data = await promise.json();
-    // console.log(data);
+    console.log(data);
     return data;
 }
 
@@ -680,6 +680,25 @@ export const addReplyToComment = async (commentId: number, userId: number, reply
 
     const data = await res.text()
     return data;
+}
+
+export const deleteComment = async (commentId: number) => {
+    const res = await fetch(`${url}Comment/DeleteComment/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(commentId)
+    })
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+
+    const data = await res.text()
+    return data;
+
 }
 
 // --------------------- FRIENDS API FETCHES ----------------------
@@ -730,27 +749,4 @@ export const handlePendingFriends = async (id: number, decision: string) => {
 
     const data = await res.text()
     return data;
-}
-
-// ------------------- LOCAL STORAGE FETCHES -----------------------
-export const getLocalStorage = () => {
-    let localStorageData = localStorage.getItem('Favorites')
-
-    if (localStorageData == null) {
-        return [];
-    }
-
-    return JSON.parse(localStorageData);
-}
-
-export const saveToLocalStorage = (manga: IFavManga) => {
-    let favorites: string[] = getLocalStorage() || [];
-
-    const mangaName = manga.mangaId;
-
-    if (!favorites?.includes(mangaName)) {
-        favorites.push(mangaName);
-    }
-
-    localStorage.setItem("Favorites", JSON.stringify(favorites));
 }
