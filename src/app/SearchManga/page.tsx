@@ -64,10 +64,9 @@ const SearchManga = () => {
                                             <div className='px-0 mx-0 cursor-pointer'>
                                                 <img src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`} alt='Title of Manga' className='w-[177px] h-64' />
                                                 <h2 className='text-center text-xl font-semibold max-w-[170px] mt-2 text-darkbrown font-mainFont'>
-                                                    {manga.attributes.title.en.length > maxTitleLength
+                                                    {manga.attributes.title?.en && manga.attributes.title.en.length > maxTitleLength
                                                         ? `${manga.attributes.title.en.substring(0, maxTitleLength)}...`
-                                                        : manga.attributes.title.en
-                                                    }
+                                                        : manga.attributes.title?.en || 'Default Title'}
                                                 </h2>
                                             </div>
                                         </div>

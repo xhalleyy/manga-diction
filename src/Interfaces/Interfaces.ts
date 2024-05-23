@@ -117,6 +117,13 @@ export interface IGetLikes {
     }]
 }
 
+export interface IUserLikes {
+    postId: number
+    commentId: number
+    userId: number
+    likes: IGetLikes
+}
+
 export interface IComments {
     id: number,
     userId: number,

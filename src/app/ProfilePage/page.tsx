@@ -182,9 +182,11 @@ const ProfilePage = (props: any) => {
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
             const memberIds = await getUserClubs(userId);
-            const promises = memberIds.map((clubId: number) => specifiedClub(clubId)); // Assuming specifiedClub returns club info
+            const promises = memberIds.map((clubId: number) => specifiedClub(clubId));
             const usersInfo = await Promise.all(promises);
-            return usersInfo;
+            const activeClubs = usersInfo.filter(club => !club.isDeleted);
+        
+            return activeClubs;
         } catch (error) {
             console.error('Error fetching club members:', error);
             return [];

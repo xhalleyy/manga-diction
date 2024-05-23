@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { CustomFlowbiteTheme, Dropdown, DropdownDivider } from "flowbite-react";
-import { getPendingFriends, getPendingMemberRequests, getUserInfo, handlePendingFriends, handlePendingMemberRequests } from '@/utils/DataServices';
-import { IPendingFriends, IUserDataWithRequestId, IUpdateUser, IUserData, IPendingMembers } from '@/Interfaces/Interfaces';
+import { getPendingFriends, getPendingMemberRequests, getPostById, getUserInfo, getUserPostLikes, handlePendingFriends, handlePendingMemberRequests } from '@/utils/DataServices';
+import { IPendingFriends, IUserDataWithRequestId, IUpdateUser, IUserData, IPendingMembers, IUserLikes, IPostData } from '@/Interfaces/Interfaces';
 import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
 import { red } from '@mui/material/colors';
@@ -12,8 +12,9 @@ const NotificationComponent = () => {
     const [requestedFriends, setRequestedFriends] = useState<IUserDataWithRequestId[]>([]);
     const [requestsIds, setRequestsIds] = useState<IPendingFriends[]>([]);
     const [pendingMembers, setPendingMembers] = useState<IPendingMembers[]>([]);
-    const [combinedRequests, setCombinedRequests] = useState([]);
-    const [confirmationMessages, setConfirmationMessages] = useState<string[]>([]);
+    const [postLikes, setPostLikes] = useState<IUserLikes[]>([]);
+    const [userPosts, setUserPosts] = useState<IPostData[]>([])
+    const [commentLikes, setCommentLikes] = useState<IUserLikes[]>([]);
 
     // SEE PENDING FRIEND REQUESTS
     const seePendingFriends = async () => {
@@ -50,10 +51,37 @@ const NotificationComponent = () => {
     }
 
     // SEE MOST RECENT LIKES OF YOUR POSTS
+    // const seePostLikes = async () => {
+    //     try {
+    //         let userId = Number(localStorage.getItem("UserId"));
+    //         const userPostLikes = await getUserPostLikes(userId);
+    //         console.log(userPostLikes)
+    //         setPostLikes(userPostLikes);
+
+    //         userPostLikes.forEach(like => {
+    //             const post = posts.find(p => p.id === like.postId);
+        
+    //             if (post) {
+    //                 const usernames = like.likes.likedByUsers.map(user => user.username);
+    //                 const firstUsername = usernames[0];
+    //                 const othersCount = usernames.length - 1;
+    //                 const othersText = othersCount > 0 ? ` and ${othersCount} other${othersCount > 1 ? 's' : ''}` : '';
+        
+    //                 const message = `${firstUsername}${othersText} liked your post "${post.title}"`;
+    //                 messages.push(message);
+    //             }
+    //         });
+        
+    //         return messages;
+    //     } catch (error) {
+    //         console.error("Error fetching pending requests:", error);
+    //     }
+    // }
 
     useEffect(() => {
         seePendingRequests();
         seePendingFriends();
+        // seePostLikes();
     }, []);
 
     const handleFriends = async (requestId: number, decision: string) => {

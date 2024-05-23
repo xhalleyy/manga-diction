@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -421,7 +421,7 @@ export const createPost = async (postData: IPostData) => {
 export const getRecentPosts = async (userId: number) => {
     const promise = await fetch(`${url}Post/GetRecentPostsForUserClubs/${userId}`)
     const data: IPosts[] = await promise.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -628,6 +628,20 @@ export const RemoveLikeFromComment = async (commentId: number, userId: number) =
     const data = await res.json()
     return data;
 }
+
+// GET USER'S RECENT LIKES (NOTIFICATIONS)
+export const getUserPostLikes = async(userId: number) => {
+    const promise = await fetch(url + 'Likes/GetPostRecentLikes/' + userId);
+    const data: IUserLikes[] = await promise.json()
+    return data;
+}
+
+export const getUserCommentLikes = async(userId:number) =>{
+    const promise = await fetch(url + '/Likes/GetCommentRecentLikes/' + userId);
+    const data: IUserLikes[] = await promise.json()
+    return data;
+}
+
 
 // ------------------- COMMENTS API FETCHES -----------------------
 
