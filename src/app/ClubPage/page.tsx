@@ -19,6 +19,7 @@ import PostRepliesComponent from '../components/PostRepliesComponent';
 import { notFound, useRouter } from 'next/navigation';
 import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
+import { checkToken } from '@/utils/token';
 
 const ClubPage = () => {
   const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser } = useClubContext();
@@ -326,10 +327,7 @@ const ClubPage = () => {
     }
   };
 
-  const token = localStorage.getItem('Token');
-  if (!token) {
-    notFound()
-  }
+  checkToken();
 
   const customDropdown = {
     "floating": {

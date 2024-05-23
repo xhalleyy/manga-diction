@@ -6,6 +6,7 @@ import { useClubContext } from '@/context/ClubContext'
 import { addMangaFav, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
 import { IFavManga, IManga } from '@/Interfaces/Interfaces'
 import { notFound } from 'next/navigation'
+import { checkToken } from '@/utils/token'
 
 
 const MangaInfo = () => {
@@ -229,10 +230,7 @@ const MangaInfo = () => {
         setFave(!fav);
     };
 
-    const token = localStorage.getItem('Token');
-    if (!token) {
-      notFound()
-    }
+    checkToken();
     
     return (
         <>

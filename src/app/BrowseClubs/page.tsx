@@ -14,6 +14,7 @@ import { Tabs } from "flowbite-react";
 import { notFound, useRouter } from "next/navigation";
 import { MouseEventHandler } from 'react';
 import CardComponent2 from "../components/CardComponent2";
+import { checkToken } from "@/utils/token";
 
 const BrowseClubs = () => {
   const clubData = useClubContext();
@@ -85,12 +86,6 @@ const BrowseClubs = () => {
     return slicedOldestClubs
   }
 
-  // useEffect(() => {
-  //   randomizedClubs();
-  //   recentClubsMade();
-  //   oldestClubsMade();
-  // }, [])
-
   useEffect(() => {
     const shuffledClubs = clubs.filter(club => club.isPublic == true).sort(() => Math.random() - 0.5);
     setRandomClubs(shuffledClubs.slice(0, 12));
@@ -122,10 +117,7 @@ const BrowseClubs = () => {
     }
   };
 
-  const token = localStorage.getItem('Token');
-  if (!token) {
-    notFound()
-  }
+  checkToken();
 
   // CUSTOM FLOWBITE CLASSES
   const customTabs: CustomFlowbiteTheme['tabs'] = {

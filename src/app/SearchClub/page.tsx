@@ -11,6 +11,7 @@ import CardComponent from "../components/CardComponent";
 import { TextInput, Button } from "flowbite-react";
 import ClubModalComponent from "../components/ClubModalComponent";
 import CardProfPgComponent from "../components/CardProfPgComponent";
+import { checkToken } from "@/utils/token";
 
 const SearchClub = () => {
   const router = useRouter();
@@ -74,10 +75,7 @@ const SearchClub = () => {
     }
   };
 
-  const token = localStorage.getItem('Token');
-  if (!token) {
-    notFound()
-  }
+  checkToken();
 
   return (
     <>

@@ -9,6 +9,7 @@ import { IGetManga, IManga } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import { notFound, useRouter } from 'next/navigation';
 import MangaInfo from '../MangaInfo/page';
+import { checkToken } from '@/utils/token';
 
 
 const SearchManga = () => {
@@ -36,10 +37,7 @@ const SearchManga = () => {
         router.push('/MangaInfo');
     }
 
-    const token = localStorage.getItem('Token');
-    if (!token) {
-      notFound()
-    }
+    checkToken();
 
     return (
         

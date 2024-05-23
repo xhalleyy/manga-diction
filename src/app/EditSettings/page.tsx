@@ -10,6 +10,7 @@ import Alert from '@mui/material/Alert'
 import { notFound, useRouter } from 'next/navigation'
 import { useClubContext } from '@/context/ClubContext'
 import { Planet } from 'react-kawaii'
+import { checkToken } from '@/utils/token'
 
 
 const EditSettings = () => {
@@ -186,10 +187,7 @@ const EditSettings = () => {
         }
     };
 
-    const token = localStorage.getItem('Token');
-    if (!token) {
-      notFound()
-    }
+    checkToken();
 
     const customInput = {
         "field": {

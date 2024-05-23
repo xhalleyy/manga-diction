@@ -19,6 +19,7 @@ import { Tooltip } from '@mui/material';
 import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import FriendsComponent from '../components/FriendsComponent';
+import { checkToken } from '@/utils/token';
 
 const ProfilePage = (props: any) => {
 
@@ -306,12 +307,7 @@ const ProfilePage = (props: any) => {
         }
     };
 
-    const token = localStorage.getItem('Token');
-    if (!token) {
-      notFound()
-    }
-
-
+    checkToken();
 
     return (
         <>

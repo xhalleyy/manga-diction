@@ -15,6 +15,7 @@ import { addFriend, getAcceptedFriends, getClubsByLeader, getCompletedManga, get
 import CardComponent from '../components/CardComponent';
 import ClubModalComponent from '../components/ClubModalComponent';
 import { notFound } from 'next/navigation';
+import { checkToken } from '@/utils/token';
 
 const SearchedUser = () => {
     const info = useClubContext();
@@ -217,11 +218,8 @@ const SearchedUser = () => {
         fetchManga();
     }, []);
 
-    const token = localStorage.getItem('Token');
-    if (!token) {
-      notFound()
-    }
-
+    checkToken();
+    
     const customTabs: CustomFlowbiteTheme["tabs"] = {
         "base": "flex flex-col gap-2",
         "tablist": {

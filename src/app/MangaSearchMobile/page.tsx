@@ -6,6 +6,7 @@ import { Button } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext';
 import { notFound, useRouter } from 'next/navigation';
 import { Chips } from 'primereact/chips';
+import { checkToken } from '@/utils/token';
 
 const MangaSearchMobile = () => {
 
@@ -24,10 +25,7 @@ const MangaSearchMobile = () => {
         router.push('/SearchManga')
     }
 
-    const token = localStorage.getItem('Token');
-    if (!token) {
-      notFound()
-    }
+    checkToken();
 
   return (
     <div className=' darkBlue h-screen'>
