@@ -7,7 +7,7 @@ import axios from 'axios';
 import { getTags, getTagsIds, mangaSearch, searchManga, specificManga } from '@/utils/DataServices';
 import { IGetManga, IManga } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import MangaInfo from '../MangaInfo/page';
 
 
@@ -34,6 +34,11 @@ const SearchManga = () => {
     const handleMangaSubmit =  (mangaId: string) => {
        setMangaId(mangaId);
         router.push('/MangaInfo');
+    }
+
+    const token = localStorage.getItem('Token');
+    if (!token) {
+      notFound()
     }
 
     return (

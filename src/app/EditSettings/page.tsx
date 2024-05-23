@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Button, Label, TextInput } from 'flowbite-react'
 import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
-import { useRouter } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
 import { useClubContext } from '@/context/ClubContext'
 import { Planet } from 'react-kawaii'
 
@@ -186,7 +186,10 @@ const EditSettings = () => {
         }
     };
 
-
+    const token = localStorage.getItem('Token');
+    if (!token) {
+      notFound()
+    }
 
     const customInput = {
         "field": {

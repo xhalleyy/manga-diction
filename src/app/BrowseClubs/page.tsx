@@ -11,7 +11,7 @@ import { getClubsByName, publicClubsApi, specifiedClub } from "@/utils/DataServi
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import { Tabs } from "flowbite-react";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { MouseEventHandler } from 'react';
 import CardComponent2 from "../components/CardComponent2";
 
@@ -20,6 +20,10 @@ const BrowseClubs = () => {
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [searchInput, setSearchInput] = useState<string>("");
   const [pageSize, setPageSize] = useState<boolean>(true);
+
+  const [randomClubs, setRandomClubs] = useState<IClubs[]>([]);
+  const [recentClubs, setRecentClubs] = useState<IClubs[]>([]);
+  const [oldestClubs, setOldestClubs] = useState<IClubs[]>([]);
 
   const router = useRouter();
   // useRef: used for accessing and persiting mutable values; doesn't cause a re-render when value is changed
@@ -70,30 +74,58 @@ const BrowseClubs = () => {
   };
 
 
-  const shuffledClubs = clubs.filter(club => club.isPublic== true).sort(() => Math.random() - 0.5);
-  const randomClubs = shuffledClubs.slice(0, 12);
-  const recentClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
-    const dateA = new Date(a.dateCreated);
-    const dateB = new Date(b.dateCreated);
-    const comparisonResult = dateB.getTime() - dateA.getTime();
-    return comparisonResult;
-  }).filter(club => club.isPublic == true);
-  const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
-    const dateA = new Date(a.dateCreated);
-    const dateB = new Date(b.dateCreated);
-    const comparisonResult = dateA.getTime() - dateB.getTime();
-    return comparisonResult;
-  }).filter(club => club.isPublic == true);
+  const oldestClubsMade = () => {
+    const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
+      const dateA = new Date(a.dateCreated);
+      const dateB = new Date(b.dateCreated);
+      const comparisonResult = dateA.getTime() - dateB.getTime();
+      return comparisonResult;
+    }).filter(club => club.isPublic == true);
+    const slicedOldestClubs = oldestClubs.slice(0, 12);
+    return slicedOldestClubs
+  }
 
-  const slicedRecentClubs = recentClubs.slice(0, 12);
-  const slicedOldestClubs = oldestClubs.slice(0, 12);
+  // useEffect(() => {
+  //   randomizedClubs();
+  //   recentClubsMade();
+  //   oldestClubsMade();
+  // }, [])
+
+  useEffect(() => {
+    const shuffledClubs = clubs.filter(club => club.isPublic == true).sort(() => Math.random() - 0.5);
+    setRandomClubs(shuffledClubs.slice(0, 12));
+  
+    const recentClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
+      const dateA = new Date(a.dateCreated);
+      const dateB = new Date(b.dateCreated);
+      const comparisonResult = dateB.getTime() - dateA.getTime();
+      return comparisonResult;
+    }).filter(club => club.isPublic == true);
+    setRecentClubs(recentClubs.slice(0, 12));
+  
+    const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
+      const dateA = new Date(a.dateCreated);
+      const dateB = new Date(b.dateCreated);
+      const comparisonResult = dateA.getTime() - dateB.getTime();
+      return comparisonResult;
+    }).filter(club => club.isPublic == true);
+    setOldestClubs(oldestClubs.slice(0, 12));
+  }, [clubs]);
+
+
+
   // console.log('Recent Clubs:', slicedRecentClubs);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-        handleClick();
+      handleClick();
     }
-};
+  };
+
+  const token = localStorage.getItem('Token');
+  if (!token) {
+    notFound()
+  }
 
   // CUSTOM FLOWBITE CLASSES
   const customTabs: CustomFlowbiteTheme['tabs'] = {
@@ -191,32 +223,32 @@ const BrowseClubs = () => {
           {/* search bar visible on lg, hidden on mobile */}
           <div className={pageSize ? "flex justify-end gap-5 col-span-2" : ""}>
             {/* <Tooltip content="Case Sensitive" placement="top" style="light"> */}
-              <div className={pageSize ? "relative ml-20" : "hidden"}>
-                <TextInput
-                  ref={inputRef}
-                  id="base"
-                  style={{
-                    borderRightWidth: "50px",
-                    borderColor: "rgba(207, 198, 183, 1)",
-                    height: 30,
-                  }}
-                  onKeyDown={handleKeyPress}
-                  type="text"
-                  placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
-                  className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
-                />
+            <div className={pageSize ? "relative ml-20" : "hidden"}>
+              <TextInput
+                ref={inputRef}
+                id="base"
+                style={{
+                  borderRightWidth: "50px",
+                  borderColor: "rgba(207, 198, 183, 1)",
+                  height: 30,
+                }}
+                onKeyDown={handleKeyPress}
+                type="text"
+                placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+                className="border-ivory font-mainFont border-8 rounded-2xl w-96 focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+              />
 
 
-                <div className="absolute ml-80 inset-y-0 flex items-center">
-                  <Button
-                    style={{ backgroundColor: "transparent" }}
-                    className="bg-transparent focus:ring-0"
-                    onClick={handleClick}
-                  >
-                    <SearchIcon className="text-4xl text-white" />
-                  </Button>{" "}
-                </div>
+              <div className="absolute ml-80 inset-y-0 flex items-center">
+                <Button
+                  style={{ backgroundColor: "transparent" }}
+                  className="bg-transparent focus:ring-0"
+                  onClick={handleClick}
+                >
+                  <SearchIcon className="text-4xl text-white" />
+                </Button>{" "}
               </div>
+            </div>
 
             {/* </Tooltip> */}
 
@@ -263,7 +295,7 @@ const BrowseClubs = () => {
               </Tabs.Item>
               <Tabs.Item title="Most Recently Created">
                 <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] ">
-                  {slicedRecentClubs.map((club, idx) => (
+                  {recentClubs.map((club, idx) => (
                     <div
                       key={idx}
                       className="col-span-1"
@@ -286,7 +318,7 @@ const BrowseClubs = () => {
               </Tabs.Item>
               <Tabs.Item title="Least Recently Created">
                 <div className="grid grid-cols-4 gap-4 pb-8 ms-[-250px] px-[130px] ">
-                  {slicedOldestClubs.map((club, idx) => (
+                  {oldestClubs.map((club, idx) => (
                     <div
                       key={idx}
                       className="col-span-1"
@@ -313,7 +345,7 @@ const BrowseClubs = () => {
 
         {/* more public clubs mobile */}
         <div className={pageSize ? "hidden" : "grid grid-cols-1 rounded-xl p-5 bg-ivory m-4"}>
-          {slicedRecentClubs.map((club, idx) => (
+          {recentClubs.map((club, idx) => (
             <div
               key={idx}
               className="col-span-1 py-1 border-0"

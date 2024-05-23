@@ -14,6 +14,7 @@ import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
 import { addFriend, getAcceptedFriends, getClubsByLeader, getCompletedManga, getInProgessManga, getPendingFriends, getUserClubs, getUserInfo, specificManga, specifiedClub } from '@/utils/DataServices';
 import CardComponent from '../components/CardComponent';
 import ClubModalComponent from '../components/ClubModalComponent';
+import { notFound } from 'next/navigation';
 
 const SearchedUser = () => {
     const info = useClubContext();
@@ -216,7 +217,10 @@ const SearchedUser = () => {
         fetchManga();
     }, []);
 
-
+    const token = localStorage.getItem('Token');
+    if (!token) {
+      notFound()
+    }
 
     const customTabs: CustomFlowbiteTheme["tabs"] = {
         "base": "flex flex-col gap-2",

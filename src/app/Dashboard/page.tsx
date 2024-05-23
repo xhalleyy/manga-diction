@@ -11,7 +11,7 @@ import { Badge, Button, Card } from "flowbite-react";
 import { getPostsByClubId, getRecentPosts, getUserInfo, specifiedClub } from '@/utils/DataServices'
 import { IClubs, IPosts, IUserData } from '@/Interfaces/Interfaces'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import LatestUpdatesComponent from '../components/LatestUpdatesComponent'
 import { useClubContext } from '@/context/ClubContext'
 
@@ -69,6 +69,11 @@ const Dashboard = () => {
     }
 
   }, [])
+
+  const token = localStorage.getItem('Token');
+  if (!token) {
+    notFound()
+  }
 
   const handleClubClick = (clubId: number) => () => {
     // Fetch club data based on clubId and set it as the displayed club

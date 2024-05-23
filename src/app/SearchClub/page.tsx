@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
 import SearchIcon from "@mui/icons-material/Search";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { getClubsByName, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
@@ -73,6 +73,11 @@ const SearchClub = () => {
       console.error(error);
     }
   };
+
+  const token = localStorage.getItem('Token');
+  if (!token) {
+    notFound()
+  }
 
   return (
     <>

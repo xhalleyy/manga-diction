@@ -5,6 +5,7 @@ import { Badge, Button, Dropdown } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext'
 import { addMangaFav, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
 import { IFavManga, IManga } from '@/Interfaces/Interfaces'
+import { notFound } from 'next/navigation'
 
 
 const MangaInfo = () => {
@@ -228,6 +229,11 @@ const MangaInfo = () => {
         setFave(!fav);
     };
 
+    const token = localStorage.getItem('Token');
+    if (!token) {
+      notFound()
+    }
+    
     return (
         <>
             <div className='bg-offwhite  min-h-screen'>

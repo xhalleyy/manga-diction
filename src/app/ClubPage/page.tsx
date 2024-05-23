@@ -16,7 +16,7 @@ import EditClubSettingsComponent from '../components/EditClubSettingsComponent';
 import { Chocolate, Planet } from 'react-kawaii';
 import { Alert } from '@mui/material';
 import PostRepliesComponent from '../components/PostRepliesComponent';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 
@@ -289,9 +289,9 @@ const ClubPage = () => {
   }
 
   const handleSortingPost = (option: string) => {
-    let newOrder = [...posts];  // Create a copy of the posts array
+    let newOrder = [...posts];  
     if (option === "Popular") {
-        // Implement your logic for sorting by popularity
+      // STILL NEED TO DO
     } else if (option === "Newest") {
         newOrder.sort((a, b) => {
             return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
@@ -314,7 +314,6 @@ const ClubPage = () => {
   }
 
   useEffect(() => {
-    // Any side effects you need when posts change
     console.log('Posts have been updated', posts);
 }, [posts]);
 
@@ -327,6 +326,10 @@ const ClubPage = () => {
     }
   };
 
+  const token = localStorage.getItem('Token');
+  if (!token) {
+    notFound()
+  }
 
   const customDropdown = {
     "floating": {

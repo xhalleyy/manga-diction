@@ -8,7 +8,7 @@ import CardComponent from '../components/CardComponent';
 import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
 import { GetLikesByPost, getClubsByLeader, getCompletedManga, getInProgessManga, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
 // import FriendsDesktopComponent from '../components/FriendsComponent';
 import { Avatar, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
@@ -306,7 +306,10 @@ const ProfilePage = (props: any) => {
         }
     };
 
-
+    const token = localStorage.getItem('Token');
+    if (!token) {
+      notFound()
+    }
 
 
 

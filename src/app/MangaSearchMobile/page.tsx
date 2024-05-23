@@ -4,7 +4,7 @@ import React from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Button } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { Chips } from 'primereact/chips';
 
 const MangaSearchMobile = () => {
@@ -22,6 +22,11 @@ const MangaSearchMobile = () => {
             tags
         })
         router.push('/SearchManga')
+    }
+
+    const token = localStorage.getItem('Token');
+    if (!token) {
+      notFound()
     }
 
   return (
