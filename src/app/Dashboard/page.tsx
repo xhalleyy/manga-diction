@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
   const [clubsMap, setClubsMap] = useState<Map<number, IClubs>>(new Map());
   const router = useRouter();
-  const { setDisplayedClub } = useClubContext();
+  const { setDisplayedClub, setDisplayedPosts } = useClubContext();
 
 
   useEffect(() => {
@@ -84,7 +84,9 @@ const Dashboard = () => {
     // Fetch club data based on clubId and set it as the displayed club
     const fetchAndSetClubData = async () => {
       const clubData = await specifiedClub(clubId);
+      const postsData = await getPostsByClubId(clubId);
       setDisplayedClub(clubData);
+      setDisplayedPosts(postsData)
       router.push('/ClubPage')
     };
 
@@ -125,7 +127,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className={pageSize ? 'px-[70px] grid grid-cols-4 2xl:gap-12 xl:gap-7 lg:gap-4' : 'px-4'}>
+          <div className={pageSize ? 'px-[70px] grid grid-cols-4 xl:gap-7 lg:gap-4' : 'px-4'}>
             <div className='col-span-3'>
               <p style={pageSize ? { fontSize: '18px' } : { fontSize: '26px' }} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
               <div className='bg-paleblue px-5 py-3 rounded-lg'>
@@ -151,6 +153,9 @@ const Dashboard = () => {
                         dateUpdated={post.dateUpdated}
                         isDeleted={post.isDeleted}
                         displayClubName={true}
+                        shouldSort={false}
+                        onSortCategory={() => {}}
+                        onSortTag={() => {}}
                       />
                     </div>
                   ))

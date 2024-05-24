@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import { Category } from '@mui/icons-material';
-import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost, deletePosts, updatePosts } from '@/utils/DataServices';
+import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost, deletePosts, getPostsByCategory, getPostsByTags, updatePosts } from '@/utils/DataServices';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Tooltip } from '@mui/material';
@@ -30,7 +30,10 @@ interface PostsProps {
     dateUpdated: string
     isDeleted: boolean
     displayClubName: boolean
-    // onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+    shouldSort: boolean
+    onSortCategory: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, category: string) => void;
+    onSortTag: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, tag: string) => void;
+
 }
 
 interface likedUser {
@@ -43,7 +46,7 @@ interface successProps {
 }
 
 
-const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName }: PostsProps, { updateSuccess }: successProps) => {
+const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName, shouldSort, onSortCategory, onSortTag }: PostsProps, { updateSuccess }: successProps) => {
 
     const info = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
@@ -320,9 +323,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
 
                             <div>
                                 <div className='inline-flex'>
-                                    <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white px-2 mr-1'>{initialCategory}</Badge>
+                                    <Badge onClick={(event) => shouldSort && onSortCategory(event, clubId, initialCategory)}  className='bg-darkblue rounded-lg text-white px-2 mr-1'>{initialCategory}</Badge>
                                     {
-                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => event.stopPropagation()} key={idx} className='bg-darkblue rounded-lg text-white me-1.5'>{tag}</Badge>)
+                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => shouldSort && onSortTag(event, clubId, tag)}  key={idx} className='bg-darkblue rounded-lg text-white me-1.5'>{tag}</Badge>)
                                     }
                                 </div>
 

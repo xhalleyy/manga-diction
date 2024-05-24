@@ -39,6 +39,19 @@ export interface IClubs {
     isMature: boolean,
     isPublic: boolean;
     isDeleted: boolean;
+    memberCount: number
+    clubId: string
+}
+
+export interface IPopularClubs {
+    clubId: number
+    clubName: string
+    image: string
+    description: string
+    dateCreated: string
+    isMature: boolean
+    isPublic:boolean
+    memberCount: number
 }
 
 export interface IPostData {
