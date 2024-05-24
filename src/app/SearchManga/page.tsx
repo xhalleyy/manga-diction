@@ -4,7 +4,7 @@ import React, { MouseEventHandler, useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import Link from 'next/link'
 import axios from 'axios';
-import { getTags, getTagsIds, mangaSearch, searchManga, specificManga } from '@/utils/DataServices';
+import { searchManga, specificManga } from '@/utils/DataServices';
 import { IGetManga, IManga } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import { notFound, useRouter } from 'next/navigation';

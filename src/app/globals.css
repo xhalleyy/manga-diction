@@ -164,6 +164,9 @@
 .cardTxt > .p-6 {
     padding: 10px !important;
 }
+.cardTxt > .gap-4 {
+    gap: 0.25rem !important;
+}
 
 .cardImg > .p-6 {
     padding: 0 !important;

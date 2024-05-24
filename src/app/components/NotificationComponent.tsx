@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { CustomFlowbiteTheme, Dropdown, DropdownDivider } from "flowbite-react";
-import { getPendingFriends, getPendingMemberRequests, getPostById, getUserInfo, getUserPostLikes, handlePendingFriends, handlePendingMemberRequests } from '@/utils/DataServices';
+import { getCommentById, getPendingFriends, getPendingMemberRequests, getPostById, getUserCommentLikes, getUserInfo, getUserPostLikes, handlePendingFriends, handlePendingMemberRequests } from '@/utils/DataServices';
 import { IPendingFriends, IUserDataWithRequestId, IUpdateUser, IUserData, IPendingMembers, IUserLikes, IPostData } from '@/Interfaces/Interfaces';
 import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
@@ -12,9 +12,8 @@ const NotificationComponent = () => {
     const [requestedFriends, setRequestedFriends] = useState<IUserDataWithRequestId[]>([]);
     const [requestsIds, setRequestsIds] = useState<IPendingFriends[]>([]);
     const [pendingMembers, setPendingMembers] = useState<IPendingMembers[]>([]);
-    const [postLikes, setPostLikes] = useState<IUserLikes[]>([]);
-    const [userPosts, setUserPosts] = useState<IPostData[]>([])
-    const [commentLikes, setCommentLikes] = useState<IUserLikes[]>([]);
+    const [messages, setMessages] = useState<{ profilePic: string| null; firstUsername: string; othersText: string; postTitle: string; }[]>([]);
+    const [commentMessage, setCommentMessage] = useState<{ profilePic: string| null; firstUsername: string; othersText: string; reply: string; }[]>([]);
 
     // SEE PENDING FRIEND REQUESTS
     const seePendingFriends = async () => {
@@ -51,37 +50,88 @@ const NotificationComponent = () => {
     }
 
     // SEE MOST RECENT LIKES OF YOUR POSTS
-    // const seePostLikes = async () => {
-    //     try {
-    //         let userId = Number(localStorage.getItem("UserId"));
-    //         const userPostLikes = await getUserPostLikes(userId);
-    //         console.log(userPostLikes)
-    //         setPostLikes(userPostLikes);
+    const seePostLikes = async () => {
+        try {
+            const userId = Number(localStorage.getItem("UserId"));
+            const userPostLikes = await getUserPostLikes(userId);
+    
+            if (!userPostLikes || userPostLikes.length === 0) {
+                // console.error("User Post Likes is empty or undefined");
+                return;
+            }
+    
+            const messagesArr: { profilePic: string|null; firstUsername: string; othersText: string; postTitle: string; }[] = []; 
+    
+            for (const like of userPostLikes) {
+    
+                const post = await getPostById(like.postId);
+                if (post) {
+                    const ids = like.likes.likedByUsers.map(user => user.userId);
+                    const firstId = await getUserInfo(ids[0])
+                    const profilePic = firstId.profilePic
+                    const usernames = like.likes.likedByUsers.map(user => user.username);
+                    const firstUsername = usernames[0];
+                    const othersCount = usernames.length - 1;
+                    const othersText = othersCount > 0 ? ` and ${othersCount} other${othersCount > 1 ? 's ' : ' '}` : ' ';
+    
+                    const message = { profilePic, firstUsername, othersText, postTitle: post.title };
+                    messagesArr.push(message);
+                } else {
+                    // console.log('Skipping this like because post is invalid');
+                }
+            }
+    
+            setMessages(messagesArr);
+        } catch (error) {
+            console.error("Error fetching pending requests:", error);
+            return [];
+        }
+    };
 
-    //         userPostLikes.forEach(like => {
-    //             const post = posts.find(p => p.id === like.postId);
-        
-    //             if (post) {
-    //                 const usernames = like.likes.likedByUsers.map(user => user.username);
-    //                 const firstUsername = usernames[0];
-    //                 const othersCount = usernames.length - 1;
-    //                 const othersText = othersCount > 0 ? ` and ${othersCount} other${othersCount > 1 ? 's' : ''}` : '';
-        
-    //                 const message = `${firstUsername}${othersText} liked your post "${post.title}"`;
-    //                 messages.push(message);
-    //             }
-    //         });
-        
-    //         return messages;
-    //     } catch (error) {
-    //         console.error("Error fetching pending requests:", error);
-    //     }
-    // }
+    const seeCommentLikes = async () => {
+        try {
+            const userId = Number(localStorage.getItem("UserId"));
+            const userCommentLikes = await getUserCommentLikes(userId);
+
+            if (!userCommentLikes || userCommentLikes.length === 0) {
+                // console.error("User Post Likes is empty or undefined");
+                return;
+            }
+
+            const messagesArr: { profilePic: string|null; firstUsername: string; othersText: string; reply: string; }[] = []; 
+    
+            for (const like of userCommentLikes) {
+    
+                const comment = await getCommentById(like.commentId);
+                if (comment) {
+                    const ids = like.likes.likedByUsers.map(user => user.userId);
+                    const firstId = await getUserInfo(ids[0])
+                    const profilePic = firstId.profilePic
+                    const usernames = like.likes.likedByUsers.map(user => user.username);
+                    const firstUsername = usernames[0];
+                    const othersCount = usernames.length - 1;
+                    const othersText = othersCount > 0 ? ` and ${othersCount} other${othersCount > 1 ? 's ' : ' '}` : ' ';
+    
+                    const message = { profilePic, firstUsername, othersText, reply: ` "${comment.reply}" ` };
+                    messagesArr.push(message);
+                } else {
+                    console.log('Skipping this like because post is invalid');
+                }
+            }
+    
+            setCommentMessage(messagesArr);
+            
+        } catch (error) {
+            console.error("Error fetching pending requests:", error);
+            return [];
+        }
+    }
 
     useEffect(() => {
         seePendingRequests();
         seePendingFriends();
-        // seePostLikes();
+        seePostLikes();
+        seeCommentLikes();
     }, []);
 
     const handleFriends = async (requestId: number, decision: string) => {
@@ -90,7 +140,7 @@ const NotificationComponent = () => {
         seePendingFriends();
     };
 
-    const handleClubRequests = async (requestId:number, decision: string) => {
+    const handleClubRequests = async (requestId: number, decision: string) => {
         const data = await handlePendingMemberRequests(requestId, decision);
         console.log(data)
         seePendingRequests();
@@ -112,7 +162,7 @@ const NotificationComponent = () => {
     return (
         <div>
             <Box sx={{ color: 'action.active' }}>
-                {((requestedFriends.length !== 0) || (pendingMembers.length !== 0)) ?
+                {((requestedFriends.length !== 0) || (pendingMembers.length !== 0) || (messages.length !== 0) || (commentMessage.length !==0)) ?
                     <Badge color='info' variant="dot" badgeContent=" ">
                         <Dropdown theme={customDropdown} className=" border-8 rounded-xl border-offwhite w-96"
                             arrowIcon={false}
@@ -188,6 +238,42 @@ const NotificationComponent = () => {
                                             <p key={index}>{member.name} requested to join club {request.clubId}</p> */}
                                         </div>
                                     ))}
+                                </div>
+                            ))}
+                            {messages.map((message, idx) => (
+                                <div key={idx}>
+                                    <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3'>
+                                        <img
+                                            src={message.profilePic || '/noprofile.jpg'}
+                                            alt={`User liked your post`}
+                                            className="col-span-1 cursor-pointer w-12 h-12 shadow-lg rounded-3xl"
+                                        />
+                                        <div className='col-span-3 flex flex-col justify-center'>
+                                            <p className='font-mainFont text-[15px] text-start'> <span className='font-poppinsBold'>{message.firstUsername} {message.othersText}</span>
+                                                liked your post 
+                                                <span className='font-poppinsMed'>{message.postTitle.length > 10 ? ` ${message.postTitle.substring(0, 20)}...` : message.postTitle}</span>
+                                            </p>
+                                        </div>
+                                    </Dropdown.Item>
+                                    <DropdownDivider className="border-2 my-0 border-offwhite" />
+                                </div>
+                            ))}
+                            {commentMessage.map((comment, idx) => (
+                                <div key={idx}>
+                                    <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3'>
+                                        <img
+                                            src={comment.profilePic || '/noprofile.jpg'}
+                                            alt={`User liked your post`}
+                                            className="col-span-1 cursor-pointer w-12 h-12 shadow-lg rounded-3xl"
+                                        />
+                                        <div className='col-span-3 flex flex-col justify-center'>
+                                            <p className='font-mainFont text-[15px] text-start'> <span className='font-poppinsBold'>{comment.firstUsername} {comment.othersText}</span>
+                                                liked your comment 
+                                                <span className='font-poppinsMed'>{comment.reply.length > 10 ? ` ${comment.reply.substring(0, 20)}...` : comment.reply}</span>
+                                            </p>
+                                        </div>
+                                    </Dropdown.Item>
+                                    <DropdownDivider className="border-2 my-0 border-offwhite" />
                                 </div>
                             ))}
                         </Dropdown>

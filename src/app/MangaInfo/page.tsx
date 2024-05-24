@@ -102,7 +102,8 @@ const MangaInfo = () => {
         setFormattedStatus(status.charAt(0).toUpperCase() + status.slice(1))
 
         const demographics = manga.attributes.publicationDemographic;
-        setFormattedDemographics(demographics.charAt(0).toUpperCase() + demographics.slice(1))
+        const formatDemo = demographics.charAt(0).toUpperCase() + demographics.slice(1)
+        setFormattedDemographics(formatDemo)
     };
 
     const updateDT = () => {

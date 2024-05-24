@@ -117,14 +117,6 @@ export const deleteClub = async (Club: IClubs) => {
     return data;
 }
 
-// FETCH FOR GETTING CLUB BY ID OF CLUB
-
-// getClubItemsByLeaderId(1);
-
-// export const loggedInData = () => {
-//     return userData;
-// }
-
 // Get Public Clubs
 export const publicClubsApi = async () => {
     const promise = await fetch('https://mangadictionapi.azurewebsites.net/Club/GetAllClubs');
@@ -169,111 +161,7 @@ publicClubsApi();
 
 // ----------------- MANGADEX API -------------------------
 // for example: https://api.mangadex.org/manga?limit=10&title=shingeki&includedTags%5B%5D=391b0423-d847-456f-aff0-8b0cfc03066b&includedTagsMode=AND&excludedTagsMode=OR&status%5B%5D=completed&publicationDemographic%5B%5D=shounen&contentRating%5B%5D=safe&contentRating%5B%5D=suggestive&contentRating%5B%5D=erotica&order%5BlatestUploadedChapter%5D=desc
-const mangaUrl: string = 'https://api.mangadex.org';
 
-export const getTagsIds = async (tags: string[]) => {
-    const tagsResponse = await axios.get(`${mangaUrl}/manga/tag`);
-
-    // Filter tags to only include those present in your input tags array
-    const includedTags = tagsResponse.data.data.filter((tag: any) =>
-        tags.includes(tag.attributes.name.en)
-    );
-
-    // Extract IDs from included tags
-    const includedTagIDs = includedTags.map((tag: any) => tag.id);
-
-    return includedTagIDs;
-};
-
-
-// Get Author List
-// export const getAuthorIds = async (authorInput: string) => {
-//     const res = await axios.get(`${mangaUrl}/author?limit=1&name=${authorInput}&order%5Bname%5D=asc`);
-//     // const data = await res.json();
-//     // Axios already parses to JSON format 
-//     // console.log(res.data);
-//     return res.data;
-// }
-
-
-export const getTags = async (includedTagNames: string[]) => {
-    const tagsResponse = await axios.get(`${mangaUrl}/manga/tag`);
-    const includedTagIDs: string[] = tagsResponse.data.data
-        .filter((tag: any) => includedTagNames.includes(tag.attributes.name.en))
-        .map((tag: any) => tag.id);
-    return { includedTagIDs };
-};
-
-export const mangaSearch = async (
-    title: string,
-    includedTagIDs: string[] = [],
-    publicationDemographic: string[] = [],
-    status: string[] = [],
-    contentRating: string[] = []
-) => {
-    const queryParams = new URLSearchParams({
-        limit: '15',
-        title: title.toLowerCase(), // Ensure lowercase title
-        includedTagsMode: 'AND',
-        excludedTagsMode: 'OR',
-        'order[latestUploadedChapter]': 'desc',
-    });
-
-    // Add includedTagIDs to query string if present
-    if (includedTagIDs && includedTagIDs.length > 0) {
-        includedTagIDs.forEach(tagId => {
-            queryParams.append('includedTags[]', tagId);
-        });
-    }
-
-    // Add Publication Demographics to query string if present
-    if (publicationDemographic && publicationDemographic.length > 0) {
-        publicationDemographic.forEach(demo => {
-            queryParams.append('publicationDemographic[]', demo);
-        });
-    }
-
-    // Add status to query string if present
-    if (status && status.length > 0) {
-        status.forEach(s => {
-            queryParams.append('status[]', s);
-        });
-    }
-
-    // Add contentRating to query string if present
-    if (contentRating && contentRating.length > 0) {
-        contentRating.forEach(rating => {
-            queryParams.append('contentRating[]', rating);
-        });
-    }
-
-    try {
-        console.log(`${mangaUrl}/manga?${queryParams}`)
-        const res = await axios.get(`${mangaUrl}/manga?${queryParams}`);
-        return res.data.data.map((manga: any) => manga.id);
-    } catch (error) {
-        console.error('Error fetching manga:', error);
-        return []; // Return empty array or handle error as needed
-    }
-};
-
-// export const getAuthorName = async (authorId: string) => {
-//     const promise = await fetch(`${mangaUrl}/author/${authorId}`);
-//     const data = await promise.json();
-//     return data;
-// }
-// export const getAuthorName = async (authorId: string) => {
-//     const promise = await fetch(`${url}GetMangaAuthor/${authorId}`);
-//     const data = await promise.json();
-//     return data;
-// }
-
-// GET MANGA BY ID
-// export const specificManga = async (mangaId: string) => {
-//     const promise = await fetch(`https://api.mangadex.org/manga/${mangaId}?includes%5B%5D=cover_art`)
-//     const data = await promise.json();
-//     return data;
-// }
 export const specificManga = async (mangaId: string) => {
     const promise = await fetch(`${url}GetMangaById/${mangaId}`)
     const data = await promise.json();
@@ -644,6 +532,13 @@ export const getUserCommentLikes = async(userId:number) =>{
 
 
 // ------------------- COMMENTS API FETCHES -----------------------
+
+// GET COMMENT BY ID
+export const getCommentById = async (commentId: number)=> {
+    const promise = await fetch(url + 'Comment/GetCommentById/' + commentId)
+    const data = await promise.json();
+    return data;
+}
 
 // GET TOP LEVEL REPLIES
 export const getComments = async (postId: number) => {

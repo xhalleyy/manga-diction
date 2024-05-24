@@ -31,29 +31,33 @@ const Dashboard = () => {
   useEffect(() => {
     let userId = Number(localStorage.getItem("UserId"))
     const fetchedData = async () => {
-      const recentPosts = await getRecentPosts(userId);
-      const memberIds = recentPosts.map((post) => post.userId);
-      const clubIds = recentPosts.map((post) => post.clubId);
-
-      // Fetch users' info
-      const membersInfo = await Promise.all(
-        memberIds.map(async (memberId) => {
-          const member = await getUserInfo(memberId)
-          return [memberId, member] as const;
-        })
-      )
-      const usersMap = new Map<number, IUserData>(membersInfo)
-
-      // Fetch clubs' info
-      const clubsInfo = await Promise.all(
-        clubIds.map(async (clubId) => specifiedClub(clubId))
-      );
-      const clubsMap = new Map<number, IClubs>(
-        clubsInfo.map((club) => [club.id, club])
-      );
-      setPosts(recentPosts);
-      setUsersMap(usersMap);
-      setClubsMap(clubsMap);
+      try {
+        const recentPosts = await getRecentPosts(userId);
+        const memberIds = recentPosts.map((post) => post.userId);
+        const clubIds = recentPosts.map((post) => post.clubId);
+  
+        // Fetch users' info
+        const membersInfo = await Promise.all(
+          memberIds.map(async (memberId) => {
+            const member = await getUserInfo(memberId)
+            return [memberId, member] as const;
+          })
+        )
+        const usersMap = new Map<number, IUserData>(membersInfo)
+  
+        // Fetch clubs' info
+        const clubsInfo = await Promise.all(
+          clubIds.map(async (clubId) => specifiedClub(clubId))
+        );
+        const clubsMap = new Map<number, IClubs>(
+          clubsInfo.map((club) => [club.id, club])
+        );
+        setPosts(recentPosts);
+        setUsersMap(usersMap);
+        setClubsMap(clubsMap);
+      } catch (error) {
+        console.log('User does not have any recent posts')
+      }
     }
     fetchedData();
 
@@ -157,10 +161,10 @@ const Dashboard = () => {
             <div className={pageSize ? 'col-span-1' : ''}>
               <p style={pageSize ? { fontSize: '18px' } : { fontSize: '26px' }} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Latest Updates:</p>
               {/* latest updates component */}
-              <div className='bg-ivory rounded-lg p-3'>
+              <div className='bg-ivory rounded-lg p-3 h-[447px]'>
 
                 <LatestUpdatesComponent />
-                <LatestUpdatesComponent />
+                {/* <LatestUpdatesComponent /> */}
 
               </div>
             </div>

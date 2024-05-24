@@ -22,7 +22,7 @@ import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import { checkToken } from '@/utils/token';
 
 const ClubPage = () => {
-  const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser } = useClubContext();
+  const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser, setDisplayedPosts, displayedPosts } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
@@ -198,11 +198,11 @@ const ClubPage = () => {
       try {
         if (clubId !== undefined) {
           // POSTS
-          const getPosts = await getPostsByClubId(clubId);
-          setPosts(getPosts);
+          // const getPosts = await getPostsByClubId(clubId);
+          setPosts(displayedPosts);
 
           // MEMBER IDS OF EACH POSTS TO GET USER INFO
-          const memberIds = getPosts.map((post) => post.userId);
+          const memberIds = displayedPosts.map((post) => post.userId);
           const membersInfo = await Promise.all(
             memberIds.map(async (memberId) => {
               const member = await getUserInfo(memberId);
@@ -241,7 +241,7 @@ const ClubPage = () => {
     }
 
     checkJoined(displayedClub?.id)
-  }, [displayedClub?.id, posts])
+  }, [displayedClub?.id])
 
   useEffect(() => {
     if(displayedClub?.isPublic === true){

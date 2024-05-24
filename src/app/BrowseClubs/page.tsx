@@ -7,7 +7,7 @@ import { Button, CustomFlowbiteTheme, TextInput, Tooltip } from "flowbite-react"
 import ClubModalComponent from "../components/ClubModalComponent";
 import { CarouselComponent } from "../components/CarouselComponent";
 import CardComponent from "../components/CardComponent";
-import { getClubsByName, publicClubsApi, specifiedClub } from "@/utils/DataServices";
+import { getClubsByName, getPostsByClubId, publicClubsApi, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import { Tabs } from "flowbite-react";
@@ -67,7 +67,9 @@ const BrowseClubs = () => {
   const handleClubCardClick = async (club: IClubs) => {
     try {
       const clubDisplayedInfo = await specifiedClub(club.id);
+      const postInfo = await getPostsByClubId(club.id)
       clubData.setDisplayedClub(clubDisplayedInfo);
+      clubData.setDisplayedPosts(postInfo)
     } catch (error) {
       alert("Error fetching club information");
       console.error(error);

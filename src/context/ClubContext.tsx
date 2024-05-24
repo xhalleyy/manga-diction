@@ -1,6 +1,6 @@
 'use client'
 
-import { IClubs, IGetManga, IManga, IUserData } from "@/Interfaces/Interfaces";
+import { IClubs, IGetManga, IManga, IPostData, IPosts, IUserData } from "@/Interfaces/Interfaces";
 import { SetStateAction, createContext, useContext, useState } from "react"
 
 type ClubContextType = {
@@ -28,6 +28,8 @@ type ClubContextType = {
     setSelectedUser: React.Dispatch<React.SetStateAction<IUserData | null>>
     mangaInfo: IManga[],
     setMangaInfo: React.Dispatch<React.SetStateAction<IManga[]>>
+    displayedPosts: IPosts[]
+    setDisplayedPosts: React.Dispatch<React.SetStateAction<IPosts[]>>
 }
 
 export const ClubContext = createContext<ClubContextType>({} as ClubContextType);
@@ -49,9 +51,10 @@ export const AppWrapper = ({
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
     const [selectedUser, setSelectedUser] = useState<IUserData | null> (null);
     const [mangaInfo, setMangaInfo] = useState<IManga[]>([])
+    const [displayedPosts, setDisplayedPosts] = useState<IPosts[]>([])
 
     return (
-        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, mangaId, setMangaId, selectedPostId, setSelectedPostId, selectedUser, setSelectedUser, mangaInfo, setMangaInfo}}>
+        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, mangaId, setMangaId, selectedPostId, setSelectedPostId, selectedUser, setSelectedUser, mangaInfo, setMangaInfo, displayedPosts, setDisplayedPosts}}>
             {children}
         </ClubContext.Provider>
     )
