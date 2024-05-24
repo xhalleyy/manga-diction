@@ -219,9 +219,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                 {displayClubName && (<p className='text-[20px] font-poppinsMed'>{clubName}</p>)}
             </div>
 
-            <div className={pageSize ? 'flex' : 'hidden'}>
+            <div className={pageSize ? 'flex' : 'flex'}>
 
-                <div style={{ width: '10%' }} className='flex flex-col place-content-center mt-[-35px]'>
+                <div style={pageSize ? { width: '12%' } : {width: '30%'}} className='flex flex-col place-content-center mt-[-35px]'>
                     <Avatar img={image} rounded theme={customAvatar} size="md" />
                 </div>
 
@@ -266,7 +266,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                     </Modal>
 
                     {isEditing ? (
-                        <div onClick={(event) => {event.stopPropagation()}} className=' rounded-lg pr-8 '>
+                        <div onClick={(event) => { event.stopPropagation() }} className=' rounded-lg pr-8 '>
                             <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-2' : "grid grid-cols-5 pb-2"}>
                                 <Label htmlFor="base" value="Title:" className='col-span-1 text-lg mt-1' />
                                 <TextInput onChange={(e) => setNewTitle(e.target.value)} value={newTitle} placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
@@ -352,47 +352,6 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                 </div>
 
             </div>
-
-            <div className={pageSize ? 'hidden' : 'contents '}>
-                <div>
-                    <div className='grid grid-cols-3'>
-                        <div className='col-span-1'>
-                            <Avatar img={image} rounded theme={customAvatar} size="md" />
-                        </div>
-
-                        <div className='col-span-2'>
-                            <div className=''>
-                                <p className='text-xl'>{username}</p>
-                                <div className=' w-auto inline-flex'>
-                                    <Badge onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg inline-block text-white px-2 mr-1'>{initialCategory}</Badge>
-                                    {
-                                        initialTags && initialTags.map((tag, idx) => <Badge key={idx} onClick={(event) => event.stopPropagation()} className='bg-darkblue rounded-lg text-white'>{tag}</Badge>)
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='px-10 pt-2'>
-                        <p className='font-bold text-lg mb-1'> {initialTitle} </p>
-                        <p onClick={(event) => event.stopPropagation()} className='ps-1 pb-2 font-normal text-md'> {initialDescription && (initialDescription.length < 150 ? initialDescription : `${initialDescription.substring(0, 150)} (see more)`)}</p>
-                    </div>
-
-                    <div className='inline-flex gap-1 mb-2 pl-10 pb-1'>
-                        <div onClick={(event) => isLiked ? removeLikes(event) : handleLikes(event)} className={isLiked ? 'flex border border-black rounded-xl h-6 text-white bg-darkblue font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer' : 'flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'}>
-                            <ThumbUpOutlinedIcon sx={{ fontSize: '16px' }} />
-                            <div> <p> {likes} </p> </div>
-                        </div>
-
-
-                        <div className='flex border border-black rounded-xl h-6 text-black font-normal mr-1 px-5 justify-around items-center gap-3 cursor-pointer'>
-                            <ModeCommentOutlinedIcon sx={{ fontSize: '16px' }} />
-                            <p>comments</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 
 
 

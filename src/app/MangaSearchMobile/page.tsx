@@ -1,18 +1,56 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Button } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext';
 import { notFound, useRouter } from 'next/navigation';
 import { Chips } from 'primereact/chips';
 import { checkToken } from '@/utils/token';
+import { IGetManga } from '@/Interfaces/Interfaces';
+import { searchManga } from '@/utils/DataServices';
 
 const MangaSearchMobile = () => {
 
-    const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags } = useClubContext();
-
+    const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, setMangaInfo, mangaInfo } = useClubContext();
+    const [pageSize, setPageSize] = useState<boolean>(false);
     const router = useRouter();
+
+    const fetchManga = async () => {
+        try {
+            const searchInfo: IGetManga = {
+                name: title,
+                tagInput: tags,
+                demographic: demographics,
+                status: publication
+            }
+
+            const searchedManga = await searchManga(searchInfo)
+            console.log(searchedManga)
+            setMangaInfo(searchedManga.data)
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setPageSize(window.innerWidth > 768);
+
+            const handleResize = () => {
+                setPageSize(window.innerWidth > 768);
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, [])
+
+    const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const inputTags = e.target.value.trim(); // Remove leading/trailing whitespace
+        const newTagsArray = inputTags.split(',').map(tag => tag.trim()); // Split by comma and trim whitespace
+        setTags(newTagsArray);
+    }
 
     const handleSubmit = () => {
         console.log({
@@ -22,8 +60,16 @@ const MangaSearchMobile = () => {
             publication,
             tags
         })
+        fetchManga()
+        console.log(mangaInfo)
         router.push('/SearchManga')
     }
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+    };
 
     if (!checkToken()) {
         notFound();
@@ -41,13 +87,13 @@ const MangaSearchMobile = () => {
                         <div className="py-2">
                             <label className="font-mainFont text-lg">Search Manga Title</label>
                             <div>
-                                <input value={title} className="opaqueWhite rounded-lg w-[60%] h-8 px-3 text-mainFont" id="titleSearch" onChange={(e) => setTitle(e.target.value)} />
+                                <input value={title} onKeyDown={handleKeyPress} className="opaqueWhite rounded-lg w-[60%] h-8 px-3 text-mainFont" id="titleSearch" onChange={(e) => setTitle(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2 hidden">
                             <label className="font-mainFont text-lg">Author Name</label>
                             <div>
-                                <input value={author} className="opaqueWhite rounded-xl w-[50%] h-8" onChange={(e) => setAuthor(e.target.value)} />
+                                <input value={author} className="opaqueWhite rounded-xl w-[50%] h-8" onKeyDown={handleKeyPress} onChange={(e) => setAuthor(e.target.value)} />
                             </div>
                         </div>
                         <div className="py-2">

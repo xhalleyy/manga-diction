@@ -52,7 +52,7 @@ const SearchManga = () => {
                     <div className='pt-6'>
                         <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown '>Manga Results for &apos;{formattedTitle}&apos;</h1>
 
-                        <div className="grid lg:grid-cols-5 grid-cols-1 px-[70px] mt-8 pb-6 gap-4">
+                        <div className="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 lg:px-[70px] mt-8 pb-6 gap-4">
                             {/* search results, 5 per 'row' */}
                             {/* if no matches found, display 'hidden' h1 with a message similar to "Can't find what you're looking for? Double check your spelling" */}
                             {/* 1st result */}
