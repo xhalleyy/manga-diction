@@ -158,9 +158,9 @@ const ClubPage = () => {
     setSelectedPostId(null);
     // responsiveness
     if (typeof window !== 'undefined') {
-      setPageSize(window.innerWidth > 768);
+      setPageSize(window.innerWidth > 769);
       const handleResize = () => {
-        setPageSize(window.innerWidth > 768)
+        setPageSize(window.innerWidth > 769)
       }
       window.addEventListener('resize', handleResize)
       return () => window.removeEventListener('resize', handleResize)
@@ -321,6 +321,8 @@ const ClubPage = () => {
 
   const handleClickPost = (postId: number) => {
     // event.stopPropagation(); // Prevent the click event from bubbling up to the parent div
+    console.log("Post clicked:", postId);  // Add this line
+
     if (!isLeader && !joined) {
       alert("You need to join the club to view this post.");
     } else {
@@ -767,11 +769,17 @@ const ClubPage = () => {
                       </Dropdown>
                     </div>
                     <div className='opacity-90 py-3'>
-                      {posts.map((post, idx) => {
-
-                        return (
-
-                          <div key={idx} className='col-span-1 py-2'>
+                    {selectedPostId ?
+                    ((isLeader || joined) ? (
+                      <div>
+                        <Button theme={customButton} gradientDuoTone="purpleToBlue" onClick={() => setSelectedPostId(null)}>Back</Button>
+                        <PostRepliesComponent />
+                      </div>
+                    ) : null)
+                    : (
+                      posts.length > 0 ? (
+                        posts.map((post, idx) => (
+                          <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handleClickPost(post.id)}>
                             <PostsComponent
                               id={post.id}
                               userId={post.userId}
@@ -787,11 +795,14 @@ const ClubPage = () => {
                               dateUpdated={post.dateUpdated}
                               isDeleted={post.isDeleted}
                               displayClubName={false}
+                            // onClick = {() => handleClickPost(post.id)}
                             />
                           </div>
-                        )
-                      })
-                      }
+                        ))
+                      ) : (
+                        <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts &#41;:</h1>
+                      )
+                    )}
                     </div>
                   </div>
 

@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DrawerComponent from "./DrawerComponent";
-import { profile } from "console";
 import { useClubContext } from "@/context/ClubContext";
 import SearchMangaModalComponent from "./SearchMangaModalComponent";
 import NotificationComponent from "./NotificationComponent";
@@ -65,39 +64,21 @@ export function NavbarComponent() {
   }
 
   return (
-    <Navbar className={pageSize ? " bg-offwhite font-mainFont text-darkbrown !pt-6 !px-8 " : 'font-mainFont bg-ivory !pt-6 text-darkbrown drop-shadow-md'} fluid rounded>
+    <Navbar className={pageSize ? "bg-offwhite font-mainFont text-darkbrown !pt-6 !px-8" : 'font-mainFont bg-ivory !pt-6 text-darkbrown drop-shadow-md'} fluid rounded>
       <Navbar.Brand onClick={homePage} className="cursor-pointer">
         <div className="flex items-center sm:grid-cols-3">
           <img className={pageSize ? "w-14 h-14" : "w-10 h-10"} src='./logo.png' alt="Logo" />
           <span style={pageSize ? {fontSize: '30px'} : {fontSize: '27px'}} className={pageSize ? "self-center whitespace-nowrap font-semibold dark:text-white pl-4" : "self-center whitespace-nowrap font-semibold dark:text-white pl-2"}>MangaDiction!</span>
         </div>
-
-       
       </Navbar.Brand>
 
-      <Navbar.Collapse className="ml-auto">
+      <Navbar.Collapse className="hidden md:hidden lg:flex lg:flex-grow lg:items-center xl:content-end lg:justify-end">
         <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-darkbrown navhover" as={Link} href="BrowseClubs">Browse Clubs</Navbar.Link>
-       <Navbar.Link onClick={handleSearchModal} className="text-xl text-darkbrown font-bold mr-3 mt-2 navhover" href="#">Search Manga</Navbar.Link>
+        <Navbar.Link onClick={handleSearchModal} className="text-xl text-darkbrown font-bold mr-3 mt-2 navhover" href="#">Search Manga</Navbar.Link>
 
         <div className="mt-2">
-          <NotificationComponent/>
-          {/* <Dropdown className=" border-8 rounded-xl border-offwhite w-96"
-            arrowIcon={false}
-            inline
-            label={
-              <img src="/Bell.png" />
-            }
-          >
-            <Dropdown.Item className="text-xl text-darkbrown">notification</Dropdown.Item>
-            <DropdownDivider className="border-2 border-offwhite" />
-            <Dropdown.Item className="text-xl text-darkbrown">notification</Dropdown.Item>
-            <DropdownDivider className="border-2 border-offwhite" />
-            <Dropdown.Item className="text-xl text-darkbrown">notification</Dropdown.Item>
-          </Dropdown> */}
+          <NotificationComponent />
         </div>
-          <Navbar.Toggle />
-
-        {/* onClick={() => {router.push('/ProfilePage')} */}
 
         <div className="flex gap-2.5">
           <img src={info.displayedUser?.profilePic || '/noprofile.jpg'} alt="Profile Picture" className="cursor-pointer w-11 h-11 shadow-lg rounded-3xl" onClick={() => router.push('/ProfilePage')} />
@@ -106,31 +87,23 @@ export function NavbarComponent() {
             <Dropdown className="border-8 border-offwhite rounded-xl w-56"
               arrowIcon={false}
               inline
-              label={
-                <img src="/down.png" />
-              }
+              label={<img src="/down.png" />}
             >
-
               <Dropdown.Item className="text-lg flex justify-center text-darkbrown" as={Link} href="ProfilePage">Profile</Dropdown.Item>
               <DropdownDivider className="border-2 border-offwhite" />
-              <Dropdown.Item className="text-lg flex justify-center text-darkbrown" onClick={settings}> Edit Settings</Dropdown.Item>
+              <Dropdown.Item className="text-lg flex justify-center text-darkbrown" onClick={settings}>Edit Settings</Dropdown.Item>
               <DropdownDivider className="border-2 border-offwhite" />
               <Dropdown.Item className="text-lg flex justify-center text-darkbrown" onClick={handleLogout}>Sign Out</Dropdown.Item>
             </Dropdown>
-            <Navbar.Toggle />
           </div>
-
         </div>
-
       </Navbar.Collapse>
 
       <div className={pageSize ? "hidden" : "ml-auto"}>
-          <DrawerComponent />
-        </div>
+        <DrawerComponent />
+      </div>
 
-        {/* passing in props */}
-        <SearchMangaModalComponent open={openModal} setOpen={setOpenModal}/>
-
+      <SearchMangaModalComponent open={openModal} setOpen={setOpenModal} />
     </Navbar>
   );
 }
