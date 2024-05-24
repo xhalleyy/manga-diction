@@ -7,6 +7,7 @@ import { useClubContext } from '@/context/ClubContext';
 import { useRouter } from 'next/navigation';
 import { IGetManga } from '@/Interfaces/Interfaces';
 import { searchManga } from '@/utils/DataServices';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 interface SearchMangaModalProps {
     open: boolean;
@@ -122,13 +123,22 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             </div>
                         </div>
                         <div className="py-2">
+                            <div className='flex'>
                             <label className="font-mainFont text-lg">Tags</label>
+                            <div className='relativeBox'>
+                            <InfoOutlinedIcon fontSize='small' className='ms-2 mb-1'/>
+                        <div className="tooltip">
+                            <p>Available tags are: Oneshot, Thriller, Award Winning, Reincarnation, Sci-Fi, Time Travel, Genderswap, Loli, Traditional Games, Official Colored, Historical, Monster, Action, Demons, Psychological, Ghosts, Animals, Long Strip, Romance, Ninja, Comedy, Mecha, Anthology, Boys' Love, Incest, Crime, Survival, Zombies, Reverse Harem, Sports, Superhero, Martial Arts, Fan Colored, Samurai, Magical Girls, Mafia, Adventure, Self-Published, Virtual Reality, Office Workers, Video Games, Post Apocalyptic, Sexual Violence, Crossdressing, Magic, Girls' Love, Harem, Military, Wuxia, Isekai, 4-Koma, Doujinshi, Philosophical, Gore, Drama, Medical, School Life, Horror, Fantasy, Villainess, Vampires, Delinquents, Monster Girls, Shota, Police, Web Comic, Slice of Life, Aliens, Cooking, Supernatural, Mystery, Adaptation, Music, Full Color, Tragedy, Gyaru</p>
+                        </div>
+                            </div>
+                            </div>
                             <div>
                                 {/* wider + taller than club name input */}
                                 {/* <input className="opaqueWhite rounded-xl w-[100%] h-14" onChange={(e) => setTagsInput(e.target.value)} /> */}
                                 <Chips placeholder='Tags (ex: Drama, Isekai...)' className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={tagsInput} // Ensure value is an array of strings
                                     onChange={(e) => setTagsInput(e.value || [])} separator="," />
                             </div>
+
                         </div>
                         <div className={pageSize ? "flex gap-3 pt-3 " : "grid grid-cols-1"}>
 

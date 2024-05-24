@@ -183,7 +183,7 @@
 .favdrop{
     display: none;
     justify-content: center;
-    width: 94%;
+    /* width: 94%; */
     overflow: auto;
     box-shadow: 0px 6px 12px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -206,6 +206,30 @@
 
 .mobileBgColor {
     background-color: none;
+}
+
+.relativeBox{
+    position: relative;
+}
+
+.relativeBox:hover>.tooltip{
+    display: block;
+}
+
+.tooltip{
+    display: none;
+    position: absolute;
+    height: 50px;
+    width: 1250%;
+    margin-inline-start: 10%;
+    overflow-y: auto;
+    bottom: 95%;
+    background-color: rgba(39, 48, 67, .9);
+    color: white;
+    padding-right: 7px;
+    padding-left: 7px;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 @media screen and (max-width: 1024px) {

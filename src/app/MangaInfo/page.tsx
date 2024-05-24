@@ -243,21 +243,21 @@ const MangaInfo = () => {
                 {manga && (
                     // all variables rendering dependent on successful fetch
 
-                    <div className='grid grid-cols-7 ms-1 lg:px-16 '>
-                        <div className='col-span-2 flex flex-col justify-center'>
-                            <div className=' flex justify-end xl:justify-center pt-10 w-full'>
+                    <div className='grid lg:grid-cols-7 lg:grid-rows-1 grid-rows-2 lg:ms-1 lg:px-16 '>
+                        <div className='lg:col-span-2 row-span-1 lg:flex lg:flex-col lg:justify-center w-full mt-20 lg:mt-0'>
+                            <div className='flex lg:justify-end xl:justify-center justify-center lg:pt-10 lg:px-0 pt-0 px-2'>
 
-                                {fileName && <img className='rounded-lg max-h-[555px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
+                                {fileName && <img className='rounded-lg max-h-[455px] max-w-[342px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
                             </div>
 
-                            <div className='flex justify-end xl:justify-center pt-8 flex-col w-full text xl:w-[300px] mx-auto '>
+                            <div className='flex lg:justify-end xl:justify-center justify-center items-center lg:pt-8 lg:mt-0 mt-10 flex-col w-full text xl:w-[300px] mx-auto '>
                                 {/* favorites button */}
-                                <div className='flex justify-center '>
-                                    <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 xl:px-12 px-8 font-mainFont' onClick={favBtnDisplay}>
+                                <div className='flex justify-center lg:px-0 px-5'>
+                                    <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 xl:px-12 px-8 font-mainFont lg:w-auto w-full' onClick={favBtnDisplay}>
                                         <span className='text-xl lg:text-nowrap'>{isFavManga && fav ? "Favorited ✔" : "Favorite Manga +"}</span>
                                     </Button>
                                 </div>
-                                <div id='dropCont' className={"favdrop bg-ivory mx-auto"}>
+                                <div id='dropCont' className={"favdrop bg-ivory mx-auto lg:w-[94%] w-[70%]"}>
                                     {/* will fix formatting */}
                                     <div className='mt-1 ms-4'>
 
@@ -290,7 +290,7 @@ const MangaInfo = () => {
                         </div>
 
 
-                        <div className='col-span-5 flex flex-col mt-10 ml-5 mr-10 rounded-lg '>
+                        <div className='lg:col-span-5 row-span-1 flex flex-col lg:mt-10 lg:ml-5 lg:mr-10 lg:px-0 px-5 rounded-lg pb-5 lg:pb-0'>
                             {/* manga name, tags, sypnosis */}
                             <div className='bg-white border-darkbrown border-2 rounded-t-lg'>
                                 <div className='p-5 inline-flex'>
