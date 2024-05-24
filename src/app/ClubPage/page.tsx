@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs, Avatar } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByClubId, getUserInfo, getUsersByUsername } from '@/utils/DataServices';
+import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByCategory, getPostsByClubId, getPostsByTags, getPostsbyComments, getPostsbyMostLiked, getUserInfo, getUsersByUsername } from '@/utils/DataServices';
 import { IPosts, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
@@ -21,11 +21,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import { checkToken } from '@/utils/token';
 
+
 const ClubPage = () => {
   const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser, setDisplayedPosts, displayedPosts } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
+  const [initialPosts, setInitialPosts] = useState<IPosts[]>([])
   const [seeMembers, setSeeMembers] = useState<boolean>(false);
   const [members, setMembers] = useState<IUserData[]>([]);
   const [leader, setLeader] = useState<IUserData | null>(null);
@@ -79,7 +81,7 @@ const ClubPage = () => {
   const handleSeeMembers = () => {
     setSeeMembers(!seeMembers);
   }
-  
+
   // EDITING POSTS AND EDITING CLUBS
   const handleCreatePost = () => {
     setCreatePost(!createPost);
@@ -176,7 +178,7 @@ const ClubPage = () => {
     return () => {
       document.removeEventListener('SettingsTabClicked', handleSettingsTabClick);
     };
-    
+
   }, [])
 
   // if seeMembers is true, then we fetch the club members based on club's id and it rerenders when seeMembers is changed
@@ -200,6 +202,7 @@ const ClubPage = () => {
           // POSTS
           // const getPosts = await getPostsByClubId(clubId);
           setPosts(displayedPosts);
+          setInitialPosts(displayedPosts)
 
           // MEMBER IDS OF EACH POSTS TO GET USER INFO
           const memberIds = displayedPosts.map((post) => post.userId);
@@ -244,12 +247,12 @@ const ClubPage = () => {
   }, [displayedClub?.id])
 
   useEffect(() => {
-    if(displayedClub?.isPublic === true){
+    if (displayedClub?.isPublic === true) {
       setModalVisible(false);
-    }else{
-      if(isLeader || joined){
+    } else {
+      if (isLeader || joined) {
         setModalVisible(false);
-      }else{
+      } else {
         setModalVisible(true);
       }
     }
@@ -260,13 +263,13 @@ const ClubPage = () => {
     const checkAge = async (userId: number) => {
       try {
         const user = await getUserInfo(userId)
-        if(user.age > 18 && displayedClub?.isMature === true){
+        if (user.age > 18 && displayedClub?.isMature === true) {
           setAdultModal(false);
-        } else if (user.age < 18 && (displayedClub?.isMature === true)){
+        } else if (user.age < 18 && (displayedClub?.isMature === true)) {
           setAdultModal(true);
         } else {
           setAdultModal(false);
-        } 
+        }
       } catch (error) {
         console.error('Error: ', error)
       }
@@ -290,34 +293,48 @@ const ClubPage = () => {
     }
   }
 
-  const handleSortingPost = (option: string) => {
-    let newOrder = [...posts];  
-    if (option === "Popular") {
-      // STILL NEED TO DO
-    } else if (option === "Newest") {
-        newOrder.sort((a, b) => {
-            return new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime();
-        });
-    } else if (option === "Oldest") {
-        newOrder.sort((a, b) => {
-            return new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime();
-        });
-    } else if (option === "Recently Updated") {
-        newOrder.sort((a, b) => {
-            return new Date(b.dateUpdated).getTime() - new Date(a.dateUpdated).getTime();
-        });
-    } else if (option === "Least Recently Updated") {
-        newOrder.sort((a, b) => {
-            return new Date(a.dateUpdated).getTime() - new Date(b.dateUpdated).getTime();
-        });
-    }
-    setPosts(newOrder);
-    console.log(newOrder); 
-  }
+  const handleSortingPost = async (option: string) => {
+    let newOrder = [...initialPosts];
 
-//   useEffect(() => {
-//     console.log('Posts have been updated', posts);
-// }, [posts]);
+    try {
+      if (option === "Mostlikes") {
+        const getPostsbyLikes = await getPostsbyMostLiked(displayedClub!.id);
+        newOrder = getPostsbyLikes;
+      } else if (option === "Newest") {
+        newOrder.sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
+      } else if (option === "Oldest") {
+        newOrder.sort((a, b) => new Date(a.dateCreated).getTime() - new Date(b.dateCreated).getTime());
+      } else if (option === "Recently Updated") {
+        newOrder.sort((a, b) => new Date(b.dateUpdated).getTime() - new Date(a.dateUpdated).getTime());
+      } else if (option === "Least Recently Updated") {
+        newOrder.sort((a, b) => new Date(a.dateUpdated).getTime() - new Date(b.dateUpdated).getTime());
+      } else if (option === "Mostcomments") {
+        const getPostsbyMostComments = await getPostsbyComments(displayedClub!.id);
+        newOrder = getPostsbyMostComments;
+      }
+
+      // Fetch user info for the sorted posts
+      const memberIds = newOrder.map((post) => post.userId);
+      const membersInfo = await Promise.all(
+        memberIds.map(async (memberId) => {
+          const member = await getUserInfo(memberId);
+          return [memberId, member] as const;
+        })
+      );
+
+      const usersMap = new Map<number, IUserData>(membersInfo);
+      setUsersMap(usersMap);
+
+      // Update the state with the sorted posts
+      setPosts(newOrder);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //   useEffect(() => {
+  //     console.log('Posts have been updated', posts);
+  // }, [posts]);
 
   const handleClickPost = (postId: number) => {
     // event.stopPropagation(); // Prevent the click event from bubbling up to the parent div
@@ -329,6 +346,30 @@ const ClubPage = () => {
       handlePostPage(postId);
     }
   };
+
+  const handleSortCategory = async (event: React.MouseEvent<HTMLSpanElement>, clubId: number, category: string) => {
+
+    event.stopPropagation();
+    try {
+      const postsByCategory = await getPostsByCategory(clubId, category)
+      setPosts(postsByCategory)
+      console.log(postsByCategory)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  const handleSortTag = async (event: React.MouseEvent<HTMLSpanElement>, clubId: number, tag: string) => {
+    event.stopPropagation();
+    try {
+      const postsByTag = await getPostsByTags(clubId, tag)
+      setPosts(postsByTag)
+      console.log(postsByTag)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   if (!checkToken()) {
     notFound();
@@ -454,7 +495,7 @@ const ClubPage = () => {
       <div className='min-h-screen bg-offwhite'>
 
         <NavbarComponent />
-        
+
         {/* modal for mature club? if(isMature == false) closemodal else showmodal, if(user.age < 18) description and redirect */}
         {adultModal && (
           <Modal show={adultModal} size="lg" onClose={() => setAdultModal(false)} popup>
@@ -561,9 +602,10 @@ const ClubPage = () => {
               <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                 {!selectedPostId && <div className='flex justify-end items-center'>
                   <Dropdown theme={customDropdown} color="lightblue" className='!bg-offwhite' label="Sort Posts" dismissOnClick={false}>
-                    <Dropdown.Item onClick={() => handleSortingPost("Popular")}>Popular</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Newest")}>Newest</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Oldest")}>Oldest</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSortingPost("Mostlikes")}>Most Likes</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSortingPost("Mostcomments")}>Most Comments</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Recently Updated")}>Recently Updated</Dropdown.Item>
                     <Dropdown.Item onClick={() => handleSortingPost("Least Recently Updated")}>Least Recently Updated</Dropdown.Item>
                   </Dropdown>
@@ -602,6 +644,9 @@ const ClubPage = () => {
                               dateUpdated={post.dateUpdated}
                               isDeleted={post.isDeleted}
                               displayClubName={false}
+                              shouldSort={true}
+                              onSortCategory={handleSortCategory}
+                              onSortTag={handleSortTag}
                             // onClick = {() => handleClickPost(post.id)}
                             />
                           </div>
@@ -769,40 +814,43 @@ const ClubPage = () => {
                       </Dropdown>
                     </div>
                     <div className='opacity-90 py-3'>
-                    {selectedPostId ?
-                    ((isLeader || joined) ? (
-                      <div>
-                        <Button theme={customButton} gradientDuoTone="purpleToBlue" onClick={() => setSelectedPostId(null)}>Back</Button>
-                        <PostRepliesComponent />
-                      </div>
-                    ) : null)
-                    : (
-                      posts.length > 0 ? (
-                        posts.map((post, idx) => (
-                          <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handleClickPost(post.id)}>
-                            <PostsComponent
-                              id={post.id}
-                              userId={post.userId}
-                              username={usersMap.get(post.userId)?.username || "Unknown User"}
-                              clubId={post.clubId}
-                              clubName={post.clubName || "Default Club Name"}
-                              title={post.title}
-                              category={post.category}
-                              tags={post.tags ? post.tags.split(',') : null}
-                              description={post.description}
-                              image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
-                              dateCreated={post.dateCreated}
-                              dateUpdated={post.dateUpdated}
-                              isDeleted={post.isDeleted}
-                              displayClubName={false}
-                            // onClick = {() => handleClickPost(post.id)}
-                            />
+                      {selectedPostId ?
+                        ((isLeader || joined) ? (
+                          <div>
+                            <Button theme={customButton} gradientDuoTone="purpleToBlue" onClick={() => setSelectedPostId(null)}>Back</Button>
+                            <PostRepliesComponent />
                           </div>
-                        ))
-                      ) : (
-                        <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts &#41;:</h1>
-                      )
-                    )}
+                        ) : null)
+                        : (
+                          posts.length > 0 ? (
+                            posts.map((post, idx) => (
+                              <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handleClickPost(post.id)}>
+                                <PostsComponent
+                                  id={post.id}
+                                  userId={post.userId}
+                                  username={usersMap.get(post.userId)?.username || "Unknown User"}
+                                  clubId={post.clubId}
+                                  clubName={post.clubName || "Default Club Name"}
+                                  title={post.title}
+                                  category={post.category}
+                                  tags={post.tags ? post.tags.split(',') : null}
+                                  description={post.description}
+                                  image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
+                                  dateCreated={post.dateCreated}
+                                  dateUpdated={post.dateUpdated}
+                                  isDeleted={post.isDeleted}
+                                  displayClubName={false}
+                                  shouldSort={true}
+                                  onSortCategory={handleSortCategory}
+                                  onSortTag={handleSortTag}
+                                // onClick = {() => handleClickPost(post.id)}
+                                />
+                              </div>
+                            ))
+                          ) : (
+                            <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts &#41;:</h1>
+                          )
+                        )}
                     </div>
                   </div>
 

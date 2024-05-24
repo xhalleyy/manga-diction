@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes, IPopularClubs } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -157,6 +157,13 @@ export const getClubsByLeader = async (userId: number) => {
     }
 }
 
+// GET POPULAR CLUBS
+export const getPopularClubs = async() => {
+    const promise = await fetch(url + 'Club/GetPopularClubs')
+    const data: IClubs[] = await promise.json()
+    return data;
+}
+
 publicClubsApi();
 
 // ----------------- MANGADEX API -------------------------
@@ -281,6 +288,32 @@ export const deletePosts = async (postData: IPostData) => {
     const data = await res.json();
     console.log(data);
     return data;
+}
+
+// GET POSTS BY CATEGORY
+export const getPostsByCategory = async (clubId: number, category: string) => {
+    const promise = await fetch(`${url}Post/GetPostsByCategory/${clubId}/${category}`)
+    const data: IPosts[] = await promise.json()
+    return data;
+}
+
+export const getPostsByTags = async(clubId: number, tag: string) => {
+    const promise = await fetch(`${url}Post/GetPostsByTags/${clubId}/${tag}`)
+    const data: IPosts[] = await promise.json()
+    return data;
+}
+
+// GET POPULAR POSTS
+export const getPostsbyMostLiked = async (clubId:number) => {
+    const promise = await fetch(url + 'Post/GetPostsByLikes/' + clubId);
+    const data: IPosts[] = await promise.json()
+    return data
+}
+
+export const getPostsbyComments = async(clubId: number) => {
+    const promise = await fetch(url+ 'Post/GetPostsByComments/' + clubId)
+    const data: IPosts[] = await promise.json()
+    return data
 }
 
 
