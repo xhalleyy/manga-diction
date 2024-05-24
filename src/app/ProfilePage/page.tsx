@@ -20,7 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import FriendsComponent from '../components/FriendsComponent';
 import { checkToken } from '@/utils/token';
-
+ 
 const ProfilePage = (props: any) => {
 
     const info = useClubContext();
@@ -373,7 +373,7 @@ const ProfilePage = (props: any) => {
                             <div className={pageSize ? "hidden" : "contents font-mainFont"}>
                                 <div className='flex justify-between px-4'>
                                     <p className='text-xl font-bold'> Friends </p>
-                                    <button className='justify-end' onClick={() => viewAllFriends()}> View All </button>
+                                    <button className='justify-end' onClick={() => viewAllFriends()}>  + </button>
                                 </div>
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
@@ -425,7 +425,7 @@ const ProfilePage = (props: any) => {
                                         <div className={clubs.length !== 0 ? 'bg-darkblue p-3 rounded-lg w-full' : ''}>
                                             <div className={showClubs ? "" : ""}>
                                                 {clubs.length !== 0 ? clubs.map((club, idx) => (
-                                                    <div key={idx} className='col-span-1 mx-2 py-1' onClick={() => handleClubCardClick(club)}>
+                                                    <div key={idx} className='col-span-1 mx-2 py-1 max-w-auto' onClick={() => handleClubCardClick(club)}>
                                                         <CardProfPgComponent
                                                             id={club.id}
                                                             leaderId={club.leaderId}
@@ -458,10 +458,10 @@ const ProfilePage = (props: any) => {
 
                                         <div className={!showClubs ? "" : "border-ivory bg-white border-8 rounded-lg"}>
 
-                                            <div className='grid grid-cols-2 '>
+                                            <div className='grid md:grid-cols-3 sm:grid-cols-2 '>
                                                 {completed.map((manga, index) => {
                                                     return (
-                                                        <div key={index}>
+                                                        <div key={index} className='flex justify-center py-1 px-2'>
                                                             <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
                                                         </div>
                                                     );
@@ -470,7 +470,7 @@ const ProfilePage = (props: any) => {
                                                 {/* finished reads */}
                                                 {ongoing.map((manga, index) => (
                                                     // Render JSX directly here
-                                                    <div key={index}>
+                                                    <div key={index} className='flex justify-center py-1 px-2'>
                                                         <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
 
                                                         {/* Add more JSX as needed */}

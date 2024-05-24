@@ -59,7 +59,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
 
   return (
     <Card onClick={goToClub}
-      className="max-w-sm cursor-pointer"
+      className="max-w-auto cursor-pointer"
       imgAlt={prop.description}
       theme={customCard}
     >

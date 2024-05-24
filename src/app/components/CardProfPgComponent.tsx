@@ -58,7 +58,7 @@ function CardProfPgComponent(prop: { id: number, leaderId: number, description: 
 
   return (
     <Card onClick={goToClub}
-      className="max-w-sm cursor-pointer"
+      className="max-w-auto cursor-pointer"
       imgAlt={prop.description}
       theme={customCard}
     >

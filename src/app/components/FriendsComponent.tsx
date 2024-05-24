@@ -87,7 +87,7 @@ const FriendsComponent = ({searchedUser}: FriendsType) => {
                         ) : (
                             <div className='flex justify-center items-center'>
                                 <Avatar img={friend.profilePic} rounded theme={customAvatar} size="lg" />
-                                <div>
+                                <div className='ml-2'>
                                     <p className='font-poppinsMed text-lg text-darkbrown'>{friend.username}</p>
                                     <p className='font-mainFont text-sm text-darkbrown'>{friend.firstName} {friend.lastName}</p>
                                 </div>

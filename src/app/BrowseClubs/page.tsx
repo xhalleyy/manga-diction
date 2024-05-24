@@ -342,7 +342,7 @@ const BrowseClubs = () => {
           {recentClubs.map((club, idx) => (
             <div
               key={idx}
-              className="col-span-1 py-1 border-0"
+              className="col-span-1 py-1 max-w-auto border-0"
               onClick={() => handleClubCardClick(club)}
             >
               <CardComponent2

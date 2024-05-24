@@ -2,7 +2,7 @@
 
 import { IClubs, IGetManga, IManga, IPostData, IPosts, IUserData } from "@/Interfaces/Interfaces";
 import { SetStateAction, createContext, useContext, useState } from "react"
-
+ 
 type ClubContextType = {
     displayedClub: IClubs | null,
     setDisplayedClub: React.Dispatch<React.SetStateAction<IClubs | null>>,
