@@ -330,6 +330,7 @@ const SearchedUser = () => {
                                         width={150}
                                         height={150}
                                         className='pfp shadow-md'
+                                        unoptimized
                                     />
                                 </div>
                                 <div className='text-center mt-5 flex flex-col justify-center items-center'>

@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { getAcceptedFriends } from '@/utils/DataServices';
 import { IAcceptedFriends, IUserData } from '@/Interfaces/Interfaces';
 import { CustomFlowbiteTheme, Avatar } from 'flowbite-react';
-import image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
 

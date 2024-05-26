@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Tooltip } from '@mui/material';
 import { useClubContext } from '@/context/ClubContext';
-import { IPostData } from '@/Interfaces/Interfaces';
+import { ILikedByUsers, IPostData } from '@/Interfaces/Interfaces';
 import { Chips } from 'primereact/chips';
 import { useRouter } from 'next/navigation';
 
@@ -51,7 +51,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
     const info = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [likes, setLikes] = useState<number>(0);
-    const [likedByUsers, setLikedByUsers] = useState<string[]>([]);
+    const [likedByUsers, setLikedByUsers] = useState<ILikedByUsers[]>([]);
     const [isLiked, setIsLiked] = useState<boolean>(false);
     const [isUnliked, setIsUnliked] = useState<boolean>(false);
     const [yourPost, setYourPost] = useState<boolean>(false);

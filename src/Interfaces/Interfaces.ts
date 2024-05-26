@@ -39,8 +39,8 @@ export interface IClubs {
     isMature: boolean,
     isPublic: boolean;
     isDeleted: boolean;
-    memberCount: number
-    clubId: string
+    // memberCount: number
+    // clubId: string
 }
 
 export interface IPopularClubs {
@@ -50,7 +50,7 @@ export interface IPopularClubs {
     description: string
     dateCreated: string
     isMature: boolean
-    isPublic:boolean
+    isPublic: boolean
     memberCount: number
 }
 
@@ -102,6 +102,7 @@ export interface IManga {
         updatedAt: string,
         lastChapter: string,
         lastVolume: string,
+        latestUploadedChapter: string,
         publicationDemographic: string,
         state: string,
         status: string,
@@ -206,4 +207,84 @@ export interface IGetManga {
     tagInput: string[],
     demographic: string,
     status: string
+}
+
+export interface IPostLikes {
+    likesCount: number
+    likedByUsers: ILikedByUsers[]
+}
+
+export interface ILikedByUsers {
+    userId: number
+    username: string
+}
+
+export interface IMostLikedPost {
+    clubId: number
+    clubName: string
+    postId: number
+    title: string
+    category: string
+    tags: string
+    description: string
+    image: string
+    dateCreated: string
+    dateUpdated: string
+    isDeleted: boolean
+    likeCount: number
+    user: {
+        id: number
+        username: string
+        profilePic: string
+    }
+}
+
+export interface IMostCommentedPost {
+    clubId: number
+    clubName: string
+    postId: number
+    title: string
+    category: string
+    tags: string
+    description: string
+    image: string
+    dateCreated: string
+    dateUpdated: string
+    isDeleted: boolean
+    likeCount: number
+    user: {
+        id: number
+        username: string
+        profilePic: string
+    }
+}
+
+export interface ILastChapter {
+    data: {
+        id: string
+        type: string
+        attributes: {
+            volume: string
+            chapter: string
+            title: string
+            translatedLanguage: string
+            externalUrl: string | null
+            publishAt: string
+            readableAt: string
+            createdAt: string
+            updatedAt: string
+            pages: number
+            version: number
+        }
+        relationships: [
+            {
+                id: string
+                type: string
+            }
+        ]
+    }
+}
+
+export interface IStatus {
+    status: number
 }

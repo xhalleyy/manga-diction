@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes, IPopularClubs } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes, IPopularClubs, IPostLikes, IMostLikedPost, IMostCommentedPost, ILastChapter, IStatus } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -247,6 +247,17 @@ export const removeFavManga = async (userId: number, mangaId: string) => {
     return data;
 }
 
+export const getLastChapter = async (chapterId: string) => {
+    try {
+        const res = await fetch(url + 'GetLastChapter/' + chapterId);
+        const data: ILastChapter = await res.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching last chapter:', error);
+        return null; // Return null in case of errors
+    }
+}
+
 // ------------------------ POST API FETCHES -----------------------
 // GET POSTS BY CLUB ID 
 export const getPostsByClubId = async (clubId: number | undefined) => {
@@ -306,14 +317,20 @@ export const getPostsByTags = async(clubId: number, tag: string) => {
 // GET POPULAR POSTS
 export const getPostsbyMostLiked = async (clubId:number) => {
     const promise = await fetch(url + 'Post/GetPostsByLikes/' + clubId);
-    const data: IPosts[] = await promise.json()
+    const data: IMostLikedPost[] = await promise.json()
     return data
 }
 
 export const getPostsbyComments = async(clubId: number) => {
     const promise = await fetch(url+ 'Post/GetPostsByComments/' + clubId)
-    const data: IPosts[] = await promise.json()
+    const data: IMostCommentedPost[] = await promise.json()
     return data
+}
+
+export const getRecentClubPosts = async(clubId: number) =>{
+    const promise = await fetch(url + 'Post/GetRecentlyCreatedPosts/'+ clubId);
+    const data: IPosts[] = await promise.json()
+    return data;
 }
 
 
@@ -415,6 +432,12 @@ export const AddUserToClub = async (userId: number | undefined, clubId: number |
     return data;
 }
 
+export const getStatusInClub = async(clubId: number, userId: number) => {
+    const promise = await fetch(`${url}Member/GetUserStatusInClub/${clubId}/${userId}`);
+    const data: IStatus = await promise.json()
+    return data;
+}
+
 // DELETE USER IN CLUB
 export const RemoveMember = async (userId: number | undefined, clubId: number | undefined) => {
     const res = await fetch(`${url}Member/RemoveMemberFromClub?userId=${userId}&clubId=${clubId}`, {
@@ -471,7 +494,7 @@ export const GetLikesByPost = async (postId: number) => {
         throw new Error(message);
     }
 
-    const data = await res.json();
+    const data: IPostLikes = await res.json();
     return data;
 }
 

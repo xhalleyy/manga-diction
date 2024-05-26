@@ -1,6 +1,6 @@
 import { IFavManga, IManga } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
-import { getCompletedManga, getInProgessManga, specificManga } from '@/utils/DataServices';
+import { getCompletedManga, getInProgessManga, getLastChapter, specificManga } from '@/utils/DataServices';
 import { Card } from 'flowbite-react'
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -16,6 +16,7 @@ const LatestUpdatesComponent = () => {
         favedMangaId: string;
     }[]>([])
     const router = useRouter();
+    const [lastChapter, setLastChapter] = useState<string[]>([])
 
     useEffect(() => {
         const fetchManga = async () => {
@@ -24,10 +25,10 @@ const LatestUpdatesComponent = () => {
             const completedManga = await getCompletedManga(user);
             const ongoingManga = await getInProgessManga(user);
 
-            // Combine completed and ongoing manga arrays
+            // combining completed and ongoing mangas
             const allManga = [...completedManga, ...ongoingManga];
 
-            // Fetch manga details and sort by last update
+            // getting all manga details and sort by last update
             const allMangaDetails = await Promise.all(
                 allManga.map(async (manga: IFavManga) => {
                     const mangaResponse = await specificManga(manga.mangaId);
@@ -43,12 +44,25 @@ const LatestUpdatesComponent = () => {
                     };
                 })
             );
-
-            // Sort the combined manga by last update date in descending order
             const sortedManga = allMangaDetails.sort((a, b) => new Date(b.lastUpdate).getTime() - new Date(a.lastUpdate).getTime());
-
-            // Set the state with the sorted combined manga
             setCombinedManga(sortedManga);
+
+            const chapterPromises = sortedManga.map(async (manga) => {
+                if (manga.manga.attributes?.lastChapter) {
+                    return manga.manga.attributes.lastChapter;
+                } else {
+                    const chapterId = manga.manga.attributes?.latestUploadedChapter;
+                    if (chapterId) {
+                        const chapterInfo = await getLastChapter(chapterId);
+                        return chapterInfo?.data.attributes.chapter || 'Unknown';
+                    } else {
+                        return 'Unknown';
+                    }
+                }
+            });
+
+            const chapters = await Promise.all(chapterPromises);
+            setLastChapter(chapters);
         };
 
         fetchManga();
@@ -62,7 +76,7 @@ const LatestUpdatesComponent = () => {
     return (
         <div>
             {combinedManga.slice(0,3).map((manga, index) => (
-                <div key={index} className="flex flex-col sm:flex-row p-2">
+                <div key={index} className="flex flex-col sm:flex-row p-2 cursor-pointer">
                     <Card className="w-[27%] h-[125px] cardImg border-none" onClick={() => handleRouting(manga.favedMangaId)}>
                         <img className="w-full h-full object-cover rounded-l-lg" src={manga.coverArtUrl} alt={manga.manga.attributes.title.en} />
                     </Card>
@@ -70,7 +84,7 @@ const LatestUpdatesComponent = () => {
                         <h5 className="text-md font-semibold font-poppinsMed text-gray-900 justify-start text-start">
                             {manga.manga.attributes.title.en}
                         </h5>
-                        <p className="text-md font-mainFont">Chapter {manga.manga.attributes.lastChapter} </p>
+                        <p className="text-md font-mainFont">Chapter {lastChapter[index] !== undefined ? lastChapter[index] : 'N/A'} </p>
                     </Card>
                 </div>
             ))}

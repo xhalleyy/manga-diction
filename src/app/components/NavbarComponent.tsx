@@ -54,9 +54,9 @@ export function NavbarComponent() {
   }
 
   const handleLogout = () => {
+    router.push('/');
     localStorage.removeItem("Token");
     localStorage.removeItem("UserId");
-    router.push('/');
   }
 
   const handleSearchModal = () => {

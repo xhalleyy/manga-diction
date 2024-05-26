@@ -17,6 +17,11 @@
         font-family: poppinsBold;
         src: url(../assets/Poppins/Poppins-Bold.ttf);
     }
+    
+    @font-face {
+        font-family: poppinsSemi;
+        src: url(../assets/Poppins/Poppins-SemiBold.ttf);
+    }
 
     @font-face {
         font-family: poppinsExtra;

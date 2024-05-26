@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { getPostsByClubId, publicClubsApi, specifiedClub } from "@/utils/DataServices";
+import { getPopularClubs, getPostsByClubId, getRecentClubPosts, publicClubsApi, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import CardComponent from "./CardComponent";
 import CarouselButtonsComponent from "./CarouselButtonsComponent";
@@ -18,7 +18,7 @@ export function CarouselComponent(props: any) {
 
   useEffect(() => {
     const fetchedData = async () => {
-      const getClubs = await publicClubsApi();
+      const getClubs = await getPopularClubs();
       setClubs(getClubs);
     };
     fetchedData();
@@ -40,7 +40,7 @@ export function CarouselComponent(props: any) {
   const handleClubCardClick = async (club: IClubs) => {
     try {
       const clubDisplayedInfo = await specifiedClub(club.id);
-      const postInfo = await getPostsByClubId(club.id)
+      const postInfo = await getRecentClubPosts(club.id)
       clubData.setDisplayedClub(clubDisplayedInfo);
       clubData.setDisplayedPosts(postInfo)
     } catch (error) {

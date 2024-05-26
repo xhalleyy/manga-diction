@@ -21,6 +21,7 @@ const config: Config = {
       mainFont: ['mainFont'],
       poppinsMed: ['poppinsMed'],
       poppinsBold: ['poppinsBold'],
+      poppinsSemi: ['poppinsSemi'],
       poppinsExtra: ['poppinsExtra']
     },
     extend: {

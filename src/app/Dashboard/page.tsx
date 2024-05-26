@@ -109,7 +109,7 @@ const Dashboard = () => {
         <div className='bg-offwhite flex flex-col pb-10'>
 
           <div className={pageSize ? "flex flex-1 justify-between items-start px-[40px] py-4" : "px-[70px] py-4"}>
-            <p style={pageSize ? { fontSize: '18px' } : { fontSize: '26px' }} className={pageSize ? 'font-mainFont mt-2 ml-8 ' : 'font-mainFont text-darkbrown pt-4 text-center font-bold'}>Popular Public Clubs</p>
+            <p style={pageSize ? { fontSize: '30px' } : { fontSize: '26px' }} className={pageSize ? 'mt-2 ms-6 text-3xl text-darkbrown font-poppinsSemi' : 'font-mainFont text-darkbrown pt-4 text-center font-bold'}>Popular Clubs</p>
             <div className={pageSize ? 'mr-8' : 'hidden'}>
               <ClubModalComponent />
             </div>

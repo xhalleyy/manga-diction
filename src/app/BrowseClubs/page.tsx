@@ -7,7 +7,7 @@ import { Button, CustomFlowbiteTheme, TextInput, Tooltip } from "flowbite-react"
 import ClubModalComponent from "../components/ClubModalComponent";
 import { CarouselComponent } from "../components/CarouselComponent";
 import CardComponent from "../components/CardComponent";
-import { getClubsByName, getPostsByClubId, publicClubsApi, specifiedClub } from "@/utils/DataServices";
+import { getClubsByName, getPostsByClubId, getRecentClubPosts, publicClubsApi, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import { Tabs } from "flowbite-react";
@@ -67,7 +67,7 @@ const BrowseClubs = () => {
   const handleClubCardClick = async (club: IClubs) => {
     try {
       const clubDisplayedInfo = await specifiedClub(club.id);
-      const postInfo = await getPostsByClubId(club.id)
+      const postInfo = await getRecentClubPosts(club.id)
       clubData.setDisplayedClub(clubDisplayedInfo);
       clubData.setDisplayedPosts(postInfo)
     } catch (error) {
@@ -211,7 +211,7 @@ const BrowseClubs = () => {
           </div>
 
           <div>
-            <p className={pageSize ? "text-3xl text-darkbrown font-bold" : "text-center py-5 text-2xl text-darkbrown font-bold"}>Popular Public Clubs </p>
+            <p className={pageSize ? "text-3xl text-darkbrown font-poppinsSemi" : "text-center py-5 text-2xl text-darkbrown font-bold"}>Popular Clubs </p>
           </div>
 
           {/* search bar visible on lg, hidden on mobile */}

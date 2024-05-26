@@ -29,7 +29,8 @@ const SearchedFriendsComponent = () => {
                         alt='profile picture'
                         height={110}
                         width={110}
-                        className='searchPfp' />
+                        className='searchPfp'
+                        unoptimized />
                     <div className='text-center mt-2'>
                         <p className='text-lg font font-poppinsMed'>UserName</p>
                         <p className='text-sm -mt-1'>Geto Suguru</p>
@@ -43,7 +44,8 @@ const SearchedFriendsComponent = () => {
                         alt='profile picture'
                         height={110}
                         width={110}
-                        className='searchPfp' />
+                        className='searchPfp'
+                        unoptimized />
                     <div className='text-center mt-2'>
                         <p className='text-lg font font-poppinsMed'>UserName</p>
                         <p className='text-sm -mt-1'>Geto Suguru</p>

@@ -3,7 +3,7 @@ import React, { use, useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Badge, Button, Dropdown } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext'
-import { addMangaFav, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
+import { addMangaFav, getCompletedManga, getInProgessManga, getLastChapter, removeFavManga, specificManga } from '@/utils/DataServices'
 import { IFavManga, IManga } from '@/Interfaces/Interfaces'
 import { notFound } from 'next/navigation'
 import { checkToken } from '@/utils/token'
@@ -27,6 +27,7 @@ const MangaInfo = () => {
     const [completedChecked, setCompletedChecked] = useState<boolean>(false);
     const [readingChecked, setReadingChecked] = useState<boolean>(false);
     const [isChecked, setIsChecked] = useState<'completed' | 'ongoing' | ''>('');
+    const [lastChapter, setLastChapter] = useState<string | null>(null);
 
     useEffect(() => {
 
@@ -105,6 +106,22 @@ const MangaInfo = () => {
         const formatDemo = demographics.charAt(0).toUpperCase() + demographics.slice(1)
         setFormattedDemographics(formatDemo)
     };
+
+    const fetchLastChapter = async () => {
+        if (manga?.attributes?.lastChapter) {
+            setLastChapter(manga.attributes.lastChapter);
+        } else {
+            const chapterId = manga?.attributes?.latestUploadedChapter;
+            if (chapterId) {
+                const chapterInfo = await getLastChapter(chapterId);
+                setLastChapter(chapterInfo?.data?.attributes?.chapter || 'Unknown');
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchLastChapter();
+    }, [manga?.attributes.lastChapter, manga?.attributes.latestUploadedChapter]);
 
     const updateDT = () => {
         const dateTimeString = manga?.attributes.updatedAt;
@@ -330,8 +347,8 @@ const MangaInfo = () => {
                                     <span className='font-normal'> {manga.attributes.publicationDemographic ? formattedDemographics : 'N/A'}</span>
                                 </p>
 
-                                <p className='font-bold'> Chapters:
-                                    <span className='font-normal'> {manga.attributes.lastChapter}</span>
+                                <p className='font-bold'> {'Chapters: '}
+                                <span className='font-normal'>{lastChapter ?? 'N/A'}</span>
                                 </p>
 
                                 <p className='font-bold'> Last Updated:

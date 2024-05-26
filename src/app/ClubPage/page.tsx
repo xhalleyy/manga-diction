@@ -7,8 +7,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs, Avatar } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
-import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByCategory, getPostsByClubId, getPostsByTags, getPostsbyComments, getPostsbyMostLiked, getUserInfo, getUsersByUsername } from '@/utils/DataServices';
-import { IPosts, IUserData } from '@/Interfaces/Interfaces';
+import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByCategory, getPostsByClubId, getPostsByTags, getPostsbyComments, getPostsbyMostLiked, getStatusInClub, getUserInfo, getUsersByUsername } from '@/utils/DataServices';
+import { IPosts, IStatus, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
 import CreatePostComponent from '../components/CreatePostComponent';
@@ -42,6 +42,8 @@ const ClubPage = () => {
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
   const [modalVisible, setModalVisible] = useState(false);
   const [adultModal, setAdultModal] = useState<boolean>(false);
+  const [status, setStatus] = useState<IStatus>({} as IStatus);
+  const [message, setMessage] = useState("")
 
   const [addMember, setAddMember] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -72,6 +74,7 @@ const ClubPage = () => {
       let userId = Number(localStorage.getItem("UserId"));
       const joinUser = await AddUserToClub(userId, displayedClub?.id, false);
       setJoined(true);
+      fetchClubMembers(displayedClub?.id)
     } catch (error) {
       alert('Unable to Join Club at this moment');
       console.log(error);
@@ -227,6 +230,7 @@ const ClubPage = () => {
 
     fetchedData(displayedClub?.id);
 
+    // checks if user is joined 
     const checkJoined = async (clubId: number | undefined) => {
       try {
         if (clubId === undefined) {
@@ -253,10 +257,24 @@ const ClubPage = () => {
       if (isLeader || joined) {
         setModalVisible(false);
       } else {
+        let userId = Number(localStorage.getItem("UserId"))
+        const getStatus = async () => {
+          const statusInfo = await getStatusInClub(displayedClub!.id, userId);
+          setStatus(statusInfo)
+          if (statusInfo.status === 0) {
+            setMessage('You have already requested to join');
+          } else if (statusInfo.status === 2) {
+            setMessage('Unfortunately, you have been denied to join.')
+          } else {
+            setMessage('You are not able to view this private club.')
+          }
+        }
+        getStatus();
         setModalVisible(true);
       }
     }
-  }, [isLeader, joined, displayedClub?.isPublic]);
+
+  }, [displayedClub]);
 
   useEffect(() => {
     const userId = Number(localStorage.getItem("UserId"));
@@ -299,7 +317,21 @@ const ClubPage = () => {
     try {
       if (option === "Mostlikes") {
         const getPostsbyLikes = await getPostsbyMostLiked(displayedClub!.id);
-        newOrder = getPostsbyLikes;
+        newOrder = getPostsbyLikes.map(post => ({
+          id: post.postId,
+          userId: post.user.id,
+          username: post.user.username,
+          clubId: post.clubId,
+          clubName: post.clubName,
+          title: post.title,
+          category: post.category,
+          tags: post.tags,
+          description: post.description,
+          image: post.image,
+          dateCreated: post.dateCreated,
+          dateUpdated: post.dateUpdated,
+          isDeleted: post.isDeleted
+        }));
       } else if (option === "Newest") {
         newOrder.sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime());
       } else if (option === "Oldest") {
@@ -310,11 +342,25 @@ const ClubPage = () => {
         newOrder.sort((a, b) => new Date(a.dateUpdated).getTime() - new Date(b.dateUpdated).getTime());
       } else if (option === "Mostcomments") {
         const getPostsbyMostComments = await getPostsbyComments(displayedClub!.id);
-        newOrder = getPostsbyMostComments;
+        newOrder = getPostsbyMostComments.map(post => ({
+          id: post.postId,
+          userId: post.user.id,
+          username: post.user.username,
+          clubId: post.clubId,
+          clubName: post.clubName,
+          title: post.title,
+          category: post.category,
+          tags: post.tags,
+          description: post.description,
+          image: post.image,
+          dateCreated: post.dateCreated,
+          dateUpdated: post.dateUpdated,
+          isDeleted: post.isDeleted
+        }));
       }
 
       // Fetch user info for the sorted posts
-      const memberIds = newOrder.map((post) => post.userId);
+      const memberIds = Array.from(new Set(newOrder.map(post => post.userId))); // Ensure unique user IDs
       const membersInfo = await Promise.all(
         memberIds.map(async (memberId) => {
           const member = await getUserInfo(memberId);
@@ -325,6 +371,7 @@ const ClubPage = () => {
       const usersMap = new Map<number, IUserData>(membersInfo);
       setUsersMap(usersMap);
 
+
       // Update the state with the sorted posts
       setPosts(newOrder);
     } catch (error) {
@@ -332,9 +379,6 @@ const ClubPage = () => {
     }
   };
 
-  //   useEffect(() => {
-  //     console.log('Posts have been updated', posts);
-  // }, [posts]);
 
   const handleClickPost = (postId: number) => {
     // event.stopPropagation(); // Prevent the click event from bubbling up to the parent div
@@ -518,15 +562,17 @@ const ClubPage = () => {
             <Modal.Body>
               <div className="text-center pt-20 pb-6">
                 <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                  You are not able to view this private club.
+                  {message}
                 </h3>
                 <div className="flex justify-center gap-4">
                   <Button color="gray" onClick={goBackToClubs}>
                     {"Browse other Clubs"}
                   </Button>
-                  <Button color="success" onClick={requestToJoin}>
-                    Request to Join
-                  </Button>
+                  {status.status !== 0 && status.status !== 2 && (
+                    <Button color="success" onClick={requestToJoin}>
+                      Request to Join
+                    </Button>
+                  )}
                 </div>
               </div>
             </Modal.Body>
@@ -726,6 +772,7 @@ const ClubPage = () => {
                             width={200}
                             height={200}
                             alt="Club Leader"
+                            unoptimized
                             className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
                         </div>
                         <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
@@ -904,6 +951,7 @@ const ClubPage = () => {
                             width={200}
                             height={200}
                             alt="Club Leader"
+                            unoptimized
                             className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
                         </div>
                         <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>

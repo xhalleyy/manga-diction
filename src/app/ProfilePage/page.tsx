@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
 import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
-import { GetLikesByPost, getClubsByLeader, getCompletedManga, getInProgessManga, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
+import { GetLikesByPost, getClubsByLeader, getCompletedManga, getInProgessManga, getRecentClubPosts, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { notFound, useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
@@ -20,7 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import FriendsComponent from '../components/FriendsComponent';
 import { checkToken } from '@/utils/token';
- 
+
 const ProfilePage = (props: any) => {
 
     const info = useClubContext();
@@ -149,7 +149,9 @@ const ProfilePage = (props: any) => {
     const handleClubCardClick = async (club: IClubs) => {
         try {
             const clubDisplayedInfo = await specifiedClub(club.id);
+            const postInfo = await getRecentClubPosts(club.id)
             info.setDisplayedClub(clubDisplayedInfo);
+            info.setDisplayedPosts(postInfo)
         } catch (error) {
             alert("Error fetching club information");
             console.error(error);
@@ -185,7 +187,7 @@ const ProfilePage = (props: any) => {
             const promises = memberIds.map((clubId: number) => specifiedClub(clubId));
             const usersInfo = await Promise.all(promises);
             const activeClubs = usersInfo.filter(club => !club.isDeleted);
-        
+
             return activeClubs;
         } catch (error) {
             console.error('Error fetching club members:', error);

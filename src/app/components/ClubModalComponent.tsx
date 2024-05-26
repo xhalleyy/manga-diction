@@ -141,7 +141,8 @@ function ClubModalComponent() {
             image: clubImg,
             isMature: matureClub,
             isPublic: privateClub,
-            isDeleted: false
+            isDeleted: false,
+            
         };
         setClubItems(prevClubItems => [...prevClubItems, newClub]);
 

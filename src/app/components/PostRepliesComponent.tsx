@@ -220,61 +220,6 @@ const PostRepliesComponent = () => {
         }
     };
 
-
-
-    // const handleLikes = async (event: React.MouseEvent<HTMLDivElement>, commentId: number) => {
-    //     event.stopPropagation();
-    //     try {
-    //         const user = Number(localStorage.getItem("UserId"));
-    //         // Assuming you have a function to like the comment
-    //         await AddLikeToComment(commentId, user); // Implement this function as per your API
-
-    //         // Update likes state
-    //         const updatedLikes = await GetLikesByComment(commentId);
-    //         setAllLikesTopComments(prevState => ({
-    //             ...prevState,
-    //             [commentId]: updatedLikes
-    //         }));
-    //     } catch (error) {
-    //         console.error('Error adding like: ', error);
-    //     }
-    // };
-
-    // const removeLikes = async (event: React.MouseEvent<HTMLDivElement>, commentId: number) => {
-    //     event.stopPropagation();
-    //     try {
-    //         const user = Number(localStorage.getItem("UserId"));
-    //         // Assuming you have a function to remove the like from the comment
-    //         await RemoveLikeFromComment(commentId, user); // Implement this function as per your API
-
-    //         // Update likes state
-    //         const updatedLikes = await GetLikesByComment(commentId);
-    //         setAllLikesTopComments(prevState => ({
-    //             ...prevState,
-    //             [commentId]: updatedLikes
-    //         }));
-    //     } catch (error) {
-    //         console.error('Error removing like: ', error);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     const fetchedLikes = async () => {
-    //         try {
-    //             const user = Number(localStorage.getItem("UserId"));
-    //             const likedComment = await GetLikesByComment(id); // Make sure `id` is the correct comment ID
-    //             setLikes(likedComment.likesCount);
-    //             setLikedByUsers(likedComment.likedByUsers);
-
-    //             const isUserLiked = likedComment.likedByUsers.some((likedUser: LikedUser) => Number(likedUser.userId) === user);
-    //             setIsLiked(isUserLiked);
-    //         } catch (error) {
-    //             console.error('Error fetching likes:', error);
-    //         }
-    //     };
-    //     fetchedLikes();
-    // }, [id]);
-
     const customAvatar: CustomFlowbiteTheme['avatar'] = {
         "root": {
             "base": "flex items-center space-x-4 justify-center rounded",
@@ -305,6 +250,9 @@ const PostRepliesComponent = () => {
                         dateUpdated={post.dateUpdated || ''}
                         isDeleted={post.isDeleted}
                         displayClubName={false}
+                        shouldSort={false}
+                        onSortCategory={() => {}}
+                        onSortTag={() => {}}
                     />
                 )}
             </div>
@@ -412,6 +360,7 @@ const PostRepliesComponent = () => {
                                                 width={60}
                                                 height={50}
                                                 alt="Picture of the author"
+                                                unoptimized
                                             />
 
                                         </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Chips } from 'primereact/chips'
 import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
 import { TextInput, Label, Dropdown, Select } from 'flowbite-react';
-import { createPost, getPostsByClubId } from '@/utils/DataServices';
+import { createPost, getPostsByClubId, getRecentClubPosts } from '@/utils/DataServices';
 import { IPostData, IPosts } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 
@@ -115,7 +115,7 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
 
             if(data){
                 resetValues()
-                    const getPosts = await getPostsByClubId(info.displayedClub!.id);
+                    const getPosts = await getRecentClubPosts(info.displayedClub!.id);
                     setPosts(getPosts);
             }
             console.log(data)
