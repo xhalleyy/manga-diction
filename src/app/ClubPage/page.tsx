@@ -130,8 +130,12 @@ const ClubPage = () => {
 
   // SEARCH, ADDING MEMBER TO CLUB, MEMBER CLICKS TO PROFILE
   const handleMemberClick = (user: IUserData | null) => {
-    setSelectedUser(user);
-    router.push('/SearchedUser')
+    if(user!.id === Number(localStorage.getItem("UserId"))){
+      router.push('/ProfilePage')
+    }else{
+      setSelectedUser(user);
+      router.push('/SearchedUser')
+    }
   }
 
   const searchUser = async () => {
@@ -153,6 +157,7 @@ const ClubPage = () => {
   const handleLeaderAdds = async (userId: number) => {
     try {
       const addUser = await AddUserToClub(userId, displayedClub?.id, true)
+      fetchClubMembers(displayedClub?.id)
     } catch (error) {
       alert("User is already in the club!")
     }
@@ -233,11 +238,6 @@ const ClubPage = () => {
     // checks if user is joined 
     const checkJoined = async (clubId: number | undefined) => {
       try {
-        if (clubId === undefined) {
-          console.error('clubId is undefined');
-          return;
-        }
-
         const memberIds = await getClubMembers(clubId);
         if (memberIds.includes(Number(localStorage.getItem("UserId")) ?? 0)) {
           setJoined(true);
@@ -259,7 +259,7 @@ const ClubPage = () => {
       } else {
         let userId = Number(localStorage.getItem("UserId"))
         const getStatus = async () => {
-          const statusInfo = await getStatusInClub(displayedClub!.id, userId);
+          const statusInfo = await getStatusInClub(displayedClub?.id, userId);
           setStatus(statusInfo)
           if (statusInfo.status === 0) {
             setMessage('You have already requested to join');
@@ -382,7 +382,6 @@ const ClubPage = () => {
 
   const handleClickPost = (postId: number) => {
     // event.stopPropagation(); // Prevent the click event from bubbling up to the parent div
-    console.log("Post clicked:", postId);  // Add this line
 
     if (!isLeader && !joined) {
       alert("You need to join the club to view this post.");
@@ -556,7 +555,7 @@ const ClubPage = () => {
           </Modal>
         )}
 
-        {modalVisible && (
+        {!modalVisible ? null : (
           <Modal show={modalVisible} size="lg" onClose={() => setModalVisible(false)} popup>
             {/* <Modal.Header /> */}
             <Modal.Body>
@@ -693,6 +692,7 @@ const ClubPage = () => {
                               shouldSort={true}
                               onSortCategory={handleSortCategory}
                               onSortTag={handleSortTag}
+                              fetchedPost = {() => {}}
                             // onClick = {() => handleClickPost(post.id)}
                             />
                           </div>
@@ -890,6 +890,7 @@ const ClubPage = () => {
                                   shouldSort={true}
                                   onSortCategory={handleSortCategory}
                                   onSortTag={handleSortTag}
+                                  fetchedPost = {() => {}}
                                 // onClick = {() => handleClickPost(post.id)}
                                 />
                               </div>

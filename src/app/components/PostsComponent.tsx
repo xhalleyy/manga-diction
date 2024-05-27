@@ -33,7 +33,7 @@ interface PostsProps {
     shouldSort: boolean
     onSortCategory: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, category: string) => void;
     onSortTag: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, tag: string) => void;
-
+    fetchedPost: () => void
 }
 
 interface likedUser {
@@ -46,7 +46,7 @@ interface successProps {
 }
 
 
-const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName, shouldSort, onSortCategory, onSortTag }: PostsProps, { updateSuccess }: successProps) => {
+const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName, shouldSort, onSortCategory, onSortTag, fetchedPost }: PostsProps, { updateSuccess }: successProps) => {
 
     const info = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
@@ -122,7 +122,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
     }
 
     const handleEdit = async (event: React.MouseEvent<HTMLDivElement>) => {
-        event.stopPropagation();
+        // event.stopPropagation();
         setIsEditing(!isEditing)
     }
 
@@ -130,6 +130,8 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
         const getPost = async () => {
             if (info.displayedUser?.id === userId) {
                 setYourPost(true);
+            }else {
+                setYourPost(false)
             }
         }
         getPost();
@@ -177,6 +179,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
             }
 
             const updatedPost = await updatePosts(updatedPostData);
+            fetchedPost()
             console.log(updatedPost);
             if (updatedPost) {
                 setNewTitle(updatedPost.title);

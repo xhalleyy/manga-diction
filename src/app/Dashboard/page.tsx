@@ -156,6 +156,7 @@ const Dashboard = () => {
                         shouldSort={false}
                         onSortCategory={() => {}}
                         onSortTag={() => {}}
+                        fetchedPost={() => {}}
                       />
                     </div>
                   ))

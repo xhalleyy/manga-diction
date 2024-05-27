@@ -432,7 +432,7 @@ export const AddUserToClub = async (userId: number | undefined, clubId: number |
     return data;
 }
 
-export const getStatusInClub = async(clubId: number, userId: number) => {
+export const getStatusInClub = async(clubId: number | undefined, userId: number) => {
     const promise = await fetch(`${url}Member/GetUserStatusInClub/${clubId}/${userId}`);
     const data: IStatus = await promise.json()
     return data;
@@ -600,7 +600,7 @@ export const getCommentById = async (commentId: number)=> {
 export const getComments = async (postId: number) => {
     const promise = await fetch(url + 'Comment/GetPostReplies/' + postId);
     const data = await promise.json();
-    console.log(data)
+    // console.log(data)
     return data;
 }
 
@@ -608,7 +608,7 @@ export const getComments = async (postId: number) => {
 export const getRepliesFromComment = async (commentId: number) => {
     const promise = await fetch(url + 'Comment/GetRepliesFromComment/' + commentId)
     const data = await promise.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 

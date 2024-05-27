@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
 import SearchIcon from "@mui/icons-material/Search";
 import { notFound, useRouter } from "next/navigation";
-import { getClubsByName, specifiedClub } from "@/utils/DataServices";
+import { getClubsByName, getRecentClubPosts, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import CardComponent from "../components/CardComponent";
@@ -16,7 +16,7 @@ import { checkToken } from "@/utils/token";
 const SearchClub = () => {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { searchClub, setSearchClub, setDisplayedClub } = useClubContext();
+  const { searchClub, setSearchClub, setDisplayedClub, setDisplayedPosts } = useClubContext();
   const [fetchedClubs, setFetchedClubs] = useState<any>(null);
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [pageSize, setPageSize] = useState<boolean>(true);
@@ -67,7 +67,9 @@ const SearchClub = () => {
   const handleClubCardClick = async (club: IClubs) => {
     try {
       const clubDisplayedInfo = await specifiedClub(club.id);
+      const postInfo = await getRecentClubPosts(club.id)
       setDisplayedClub(clubDisplayedInfo);
+      setDisplayedPosts(postInfo)
     } catch (error) {
       alert("Error fetching club information");
       console.error(error);

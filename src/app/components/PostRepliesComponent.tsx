@@ -4,7 +4,7 @@ import { AddLikeToComment, GetLikesByComment, RemoveLikeFromComment, addCommentT
 import PostsComponent from './PostsComponent';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
-import { IClubs, IComments, IGetLikes, IPostData, IUserData, LikedUser } from '@/Interfaces/Interfaces';
+import { IClubs, IComments, IGetLikes, ILikedByUsers, IPostData, IUserData, LikedUser } from '@/Interfaces/Interfaces';
 import TurnLeftIcon from '@mui/icons-material/TurnLeft';
 import { Avatar, Button, CustomFlowbiteTheme, Modal } from 'flowbite-react';
 import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
@@ -14,7 +14,6 @@ import { Tooltip } from '@mui/material';
 
 
 const PostRepliesComponent = () => {
-    const info = useClubContext();
     const { selectedPostId } = useClubContext();
     const [post, setPost] = useState<IPostData | null>(null);
     const [club, setClub] = useState<IClubs | null>(null);
@@ -28,11 +27,6 @@ const PostRepliesComponent = () => {
     const [allReplies, setAllReplies] = useState<{ [key: number]: IComments[] }>({});
     const [allLikesReplies, setAllLikesReplies] = useState<{ [key: number]: IGetLikes }>({});
     const [userLikedReplies, setUserLikedReplies] = useState<{ [key: number]: boolean }>({});
-
-    const [isLiked, setIsLiked] = useState<boolean>(false);
-    const [isLiked2, setIsLiked2] = useState<boolean>(false);
-    const [likedByUsers, setLikedByUsers] = useState<LikedUser[]>([]);
-
 
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [expandValue, setExpandValue] = useState<string>("");
@@ -81,15 +75,26 @@ const PostRepliesComponent = () => {
                 const memberInfo = await getUserInfo(getPost.userId);
                 setPostUser(memberInfo);
 
+                // getting all top level comments for the posts
                 const topComments = await getComments(getPost.id);
                 setParentComments(topComments);
 
-                // Fetch likes for top-level comments
+                // from these comments, we are then getting the likes (like count and list of users)
                 const likesDataTopComments = await Promise.all(
                     topComments.map(async (comment: IComments) => {
                         const likes = await GetLikesByComment(comment.id);
-                        const isUserLiked = likes.likedByUsers.some((likedUser: LikedUser) => likedUser.userId === userId);
-                        return { commentId: comment.id, likes, isUserLiked };
+                        // this checks if the current user has liked each comment 
+                        const isUserLiked = (likedByUsers:ILikedByUsers[], userId: number) => {
+                            for (let i = 0; i < likedByUsers.length; i++) {
+                                if (likedByUsers[i].userId === userId) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        };
+                        const userLiked = isUserLiked(likes.likedByUsers, Number(userId));
+                        // console.log(`Comment ID: ${comment.id}, Is User Liked: ${userLiked}`);
+                        return { commentId: comment.id, likes, isUserLiked: userLiked };
                     })
                 );
 
@@ -112,8 +117,16 @@ const PostRepliesComponent = () => {
                     repliesData.flatMap(({ replies }) =>
                         replies.map(async (reply: IComments) => {
                             const likes = await GetLikesByComment(reply.id);
-                            const isUserLiked = likes.likedByUsers.some((likedUser: LikedUser) => likedUser.userId === userId);
-                            return { replyId: reply.id, likes, isUserLiked };
+                            const isUserLiked = (likedByUsers:ILikedByUsers[], userId: number) => {
+                                for (let i = 0; i < likedByUsers.length; i++) {
+                                    if (likedByUsers[i].userId === userId) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            };
+                            const userLiked = isUserLiked(likes.likedByUsers, Number(userId));
+                            return { replyId: reply.id, likes, isUserLiked: userLiked };
                         })
                     )
                 );
@@ -253,13 +266,13 @@ const PostRepliesComponent = () => {
                         shouldSort={false}
                         onSortCategory={() => {}}
                         onSortTag={() => {}}
+                        fetchedPost={fetchedPost}
                     />
                 )}
             </div>
-            <div className='py-2 px-8 relative'>
+            <div className='pt-2 pb-1 px-8 relative'>
                 <textarea
                     required
-                    id="review-text"
                     onChange={(e) => handleChange(e.target.value)}
                     ref={textAreaRef}
                     placeholder='Add a comment...'
@@ -267,12 +280,12 @@ const PostRepliesComponent = () => {
                     value={expandValue}
                     className='w-full rounded-lg font-mainFont border-0 focus-within:border-0 focus-within:ring-2 focus-within:ring-cyan-300 px-5 pt-5 pb-6'
                 />
-                <button onClick={handleNewComment} className='font-mainFont text-white text-md bg-darkerblue px-1.5 rounded-tl-lg rounded-br-lg absolute right-8 bottom-3.5'>Submit</button>
+                <button onClick={handleNewComment} className='font-mainFont text-white text-md bg-darkerblue px-1.5 rounded-tl-lg rounded-br-lg absolute right-8 bottom-2.5'>Submit</button>
             </div>
             <div className='mx-5'>
                 <div>
                     {parentComments.map((comment) => (
-                        <div key={comment.id} className='flex flex-col relative rounded-md pt-3 my-1 bg-white/95'>
+                        <div key={comment.id} className='flex flex-col relative rounded-md pt-3 my-2 bg-white/95'>
                             <div className='flex flex-row border-b-2 border-paleblue rounded-md px-14'>
                                 {/* <div className='arrow inline-block ms-10 place-content-end mt-6'>
                                     <TurnLeftIcon sx={{ fontSize: 30 }} />
@@ -299,7 +312,7 @@ const PostRepliesComponent = () => {
                                 </div>
 
                                 {comment.userId === userId && (
-                                    <div className="absolute top-1 right-1 p-3">
+                                    <div className="absolute top-1 right-1 p-3 cursor-pointer">
                                         <Tooltip onClick={() => {
                                             setCommentToDeleteId(comment.id);
                                             setOpenModal(true);
@@ -358,7 +371,7 @@ const PostRepliesComponent = () => {
                                             <Image
                                                 src="/replyLine.png"
                                                 width={60}
-                                                height={50}
+                                                height={60}
                                                 alt="Picture of the author"
                                                 unoptimized
                                             />
