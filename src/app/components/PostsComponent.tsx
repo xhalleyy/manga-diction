@@ -332,10 +332,10 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                         <div>
 
                             <div>
-                                <div className='inline-flex'>
-                                    <Badge onClick={(event) => shouldSort && onSortCategory(event, clubId, initialCategory)}  className='bg-darkblue rounded-lg text-white px-2 mr-1'>{initialCategory}</Badge>
+                                <div className='inline-flex flex-wrap'>
+                                    <Badge onClick={(event) => shouldSort && onSortCategory(event, clubId, initialCategory)}  className='bg-darkblue rounded-lg text-white px-2 mr-1 my-1'>{initialCategory}</Badge>
                                     {
-                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => shouldSort && onSortTag(event, clubId, tag)}  key={idx} className='bg-darkblue rounded-lg text-white me-1.5'>{tag}</Badge>)
+                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => shouldSort && onSortTag(event, clubId, tag)}  key={idx} className='bg-darkblue rounded-lg text-white me-1.5 my-1'>{tag}</Badge>)
                                     }
                                 </div>
 

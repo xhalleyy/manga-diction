@@ -168,7 +168,7 @@ const Dashboard = () => {
             <div className={pageSize ? 'col-span-1' : ''}>
               <p style={pageSize ? { fontSize: '18px' } : { fontSize: '26px' }} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Latest Updates:</p>
               {/* latest updates component */}
-              <div className='bg-ivory rounded-lg p-3 h-[447px]'>
+              <div className='bg-ivory rounded-lg p-3 updatesHeight'>
 
                 <LatestUpdatesComponent />
                 {/* <LatestUpdatesComponent /> */}

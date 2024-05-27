@@ -177,6 +177,33 @@
     padding: 0 !important;
 }
 
+.cardImg{
+  border-style: none;
+  height: 125px;
+  width: 27%;
+}
+
+.cardImgChild{
+    border-top-right-radius: 0px;
+    border-top-left-radius: 8px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 8px;
+}
+
+.cardTxt{
+  border-style: none;
+  height: 125px;
+  width: 73%;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 0px;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 0px;
+}
+
+.updatesHeight{
+    height: 447px;
+}
+
 .css-1l742km-MuiListItem-root {
     background-color: rgba(207, 198, 183, 1) !important;
 }
@@ -307,4 +334,28 @@
   
   .invisibleInk:focus {
     filter: blur(0px);
+  }
+
+  @media screen and (max-width: 425px) {
+    .cardImg{
+        height: 75px;
+        width: 100%;
+    }
+    .cardImgChild{
+        border-top-right-radius: 8px;
+        border-top-left-radius: 8px;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+    .cardTxt{
+        height: 75px;
+        width: 100%;
+        border-top-right-radius: 0px;
+        border-top-left-radius: 0px;
+        border-bottom-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+    .updatesHeight{
+        height: 10%;
+    }
   }

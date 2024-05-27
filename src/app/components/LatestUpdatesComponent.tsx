@@ -77,10 +77,10 @@ const LatestUpdatesComponent = () => {
         <div>
             {combinedManga.slice(0,3).map((manga, index) => (
                 <div key={index} className="flex flex-col sm:flex-row p-2 cursor-pointer">
-                    <Card className="w-[27%] h-[125px] cardImg border-none" onClick={() => handleRouting(manga.favedMangaId)}>
-                        <img className="w-full h-full object-cover rounded-l-lg" src={manga.coverArtUrl} alt={manga.manga.attributes.title.en} />
+                    <Card className="cardImg" onClick={() => handleRouting(manga.favedMangaId)}>
+                        <img className="w-full h-full object-cover cardImgChild" src={manga.coverArtUrl} alt={manga.manga.attributes.title.en} />
                     </Card>
-                    <Card className="w-[73%] h-[125px] cardTxt rounded-l-none border-none " onClick={() => handleRouting(manga.favedMangaId)}>
+                    <Card className="cardTxt" onClick={() => handleRouting(manga.favedMangaId)}>
                         <h5 className="text-md font-semibold font-poppinsMed text-gray-900 justify-start text-start">
                             {manga.manga.attributes.title.en}
                         </h5>
