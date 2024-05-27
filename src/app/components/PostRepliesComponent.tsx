@@ -267,6 +267,7 @@ const PostRepliesComponent = () => {
                         onSortCategory={() => {}}
                         onSortTag={() => {}}
                         fetchedPost={fetchedPost}
+                        shouldEdit={true}
                     />
                 )}
             </div>

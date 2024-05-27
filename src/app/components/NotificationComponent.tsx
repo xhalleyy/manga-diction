@@ -74,7 +74,7 @@ const NotificationComponent = () => {
                     const othersCount = usernames.length - 1;
                     const othersText = othersCount > 0 ? ` and ${othersCount} other${othersCount > 1 ? 's ' : ' '}` : ' ';
     
-                    const message = { profilePic, firstUsername, othersText, postTitle: post.title };
+                    const message = { profilePic, firstUsername, othersText, postTitle: ` ${post.title}` };
                     messagesArr.push(message);
                 } else {
                     // console.log('Skipping this like because post is invalid');
@@ -147,7 +147,7 @@ const NotificationComponent = () => {
     }
 
     const customDropdown: CustomFlowbiteTheme["dropdown"] = {
-        "content": "h-72 focus:outline-none overflow-y-auto",
+        "content": "h-80 focus:outline-none overflow-y-auto",
         "floating": {
             "item": {
                 "container": "",
@@ -164,7 +164,7 @@ const NotificationComponent = () => {
             <Box sx={{ color: 'action.active' }}>
                 {((requestedFriends.length !== 0) || (pendingMembers.length !== 0) || (messages.length !== 0) || (commentMessage.length !==0)) ?
                     <Badge color='info' variant="dot" badgeContent=" ">
-                        <Dropdown theme={customDropdown} className=" border-8 rounded-xl border-offwhite w-96"
+                        <Dropdown theme={customDropdown} className=" border-8 rounded-xl border-ivory w-96"
                             arrowIcon={false}
                             inline
                             label={
@@ -199,7 +199,7 @@ const NotificationComponent = () => {
                                                 </div>
                                             </div>
                                         </Dropdown.Item>
-                                        <DropdownDivider className="border-2 my-0 border-offwhite" />
+                                        <DropdownDivider className="border-2 my-0 border-ivory" />
                                     </div>
                                 ))
                             )}
@@ -233,7 +233,7 @@ const NotificationComponent = () => {
                                                     </div>
                                                 </div>
                                             </Dropdown.Item>
-                                            <DropdownDivider className="border-2 my-0 border-offwhite" />
+                                            <DropdownDivider className="border-2 my-0 border-ivory" />
                                             {/* <p>{request.clubName}</p>
                                             <p key={index}>{member.name} requested to join club {request.clubId}</p> */}
                                         </div>
@@ -255,7 +255,7 @@ const NotificationComponent = () => {
                                             </p>
                                         </div>
                                     </Dropdown.Item>
-                                    <DropdownDivider className="border-2 my-0 border-offwhite" />
+                                    <DropdownDivider className="border-2 my-0 border-ivory" />
                                 </div>
                             ))}
                             {commentMessage.map((comment, idx) => (
@@ -273,12 +273,12 @@ const NotificationComponent = () => {
                                             </p>
                                         </div>
                                     </Dropdown.Item>
-                                    <DropdownDivider className="border-2 my-0 border-offwhite" />
+                                    <DropdownDivider className="border-2 my-0 border-ivory" />
                                 </div>
                             ))}
                         </Dropdown>
                     </Badge> :
-                    <Dropdown theme={customDropdown} className=" border-8 rounded-xl border-offwhite w-96"
+                    <Dropdown theme={customDropdown} className=" border-8 rounded-xl border-ivory w-96"
                         arrowIcon={false}
                         inline
                         label={
