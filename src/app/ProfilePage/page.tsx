@@ -20,6 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import FriendsComponent from '../components/FriendsComponent';
 import { checkToken } from '@/utils/token';
+let userId = Number(localStorage.getItem("UserId"));
 
 const ProfilePage = (props: any) => {
 
@@ -367,7 +368,7 @@ const ProfilePage = (props: any) => {
                                 </div>
                                 <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                     {/* displays 4 friends at a time ? */}
-                                    <FriendsComponent searchedUser={info.displayedUser?.id} />
+                                    <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.displayedUser?.id} />
                                 </div>
                             </div>
 
@@ -380,7 +381,7 @@ const ProfilePage = (props: any) => {
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                     <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
-                                        <FriendsComponent searchedUser={info.displayedUser?.id} />
+                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.displayedUser?.id} />
                                     </div>
                                 </div>
                             </div>
@@ -463,7 +464,7 @@ const ProfilePage = (props: any) => {
                                             <div className='grid md:grid-cols-3 sm:grid-cols-2 '>
                                                 {completed.map((manga, index) => {
                                                     return (
-                                                        <div key={index} className='flex justify-center py-1 px-2'>
+                                                        <div key={index} onClick={() => handleMangaClick(manga.manga.id)} className='flex justify-center py-1 px-2'>
                                                             <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
                                                         </div>
                                                     );
@@ -472,7 +473,7 @@ const ProfilePage = (props: any) => {
                                                 {/* finished reads */}
                                                 {ongoing.map((manga, index) => (
                                                     // Render JSX directly here
-                                                    <div key={index} className='flex justify-center py-1 px-2'>
+                                                    <div key={index} onClick={() => handleMangaClick(manga.manga.id)} className='flex justify-center py-1 px-2'>
                                                         <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
 
                                                         {/* Add more JSX as needed */}

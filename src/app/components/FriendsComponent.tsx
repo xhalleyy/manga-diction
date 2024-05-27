@@ -10,10 +10,11 @@ import { useClubContext } from '@/context/ClubContext';
 
 type FriendsType = {
     searchedUser: number | undefined
+    isCurrentUser: boolean
 }
 
 
-const FriendsComponent = ({searchedUser}: FriendsType) => {
+const FriendsComponent = ({searchedUser, isCurrentUser}: FriendsType) => {
 
     const router = useRouter();
     const {selectedUser, setSelectedUser} = useClubContext();
@@ -40,10 +41,16 @@ const FriendsComponent = ({searchedUser}: FriendsType) => {
         }
     }, [searchedUser]);
 
-    const handleFriendClick = (user: IUserData | null) => {
-        setSelectedUser(user);
-        router.push('/SearchedUser')
-      }
+    const handleFriendClick = (friend: IUserData | null) => {
+        let userId = Number(localStorage.getItem("UserId"))
+        if (friend && friend.id !== userId) {
+            setSelectedUser(friend);
+            router.push('/SearchedUser');
+        } else if (friend && friend.id === userId){
+            router.push('/ProfilePage')
+        }
+    };
+
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
