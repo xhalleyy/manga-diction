@@ -31,6 +31,7 @@ interface PostsProps {
     isDeleted: boolean
     displayClubName: boolean
     shouldSort: boolean
+    shouldEdit: boolean
     onSortCategory: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, category: string) => void;
     onSortTag: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, tag: string) => void;
     fetchedPost: () => void
@@ -46,7 +47,7 @@ interface successProps {
 }
 
 
-const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName, shouldSort, onSortCategory, onSortTag, fetchedPost }: PostsProps, { updateSuccess }: successProps) => {
+const PostsComponent = ({ id, userId, username, clubId, clubName, title: initialTitle, category: initialCategory, tags: initialTags, description: initialDescription, image, dateCreated, dateUpdated, isDeleted, displayClubName, shouldSort, shouldEdit, onSortCategory, onSortTag, fetchedPost }: PostsProps, { updateSuccess }: successProps) => {
 
     const info = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
@@ -122,8 +123,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
     }
 
     const handleEdit = async (event: React.MouseEvent<HTMLDivElement>) => {
-        // event.stopPropagation();
-        setIsEditing(!isEditing)
+        if(shouldEdit){
+            setIsEditing(!isEditing)
+        }
     }
 
     useEffect(() => {
@@ -241,7 +243,12 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                                     <EditIcon className='col-span-1 items-end' />
                                 </Tooltip>
 
-                                <Tooltip onClick={() => setOpenModal(true)} title='Delete Post' placement='right'>
+                                <Tooltip onClick={() => {
+                                    if(shouldEdit)
+                                    {
+                                        setOpenModal(true)
+                                    }
+                                    }} title='Delete Post' placement='right'>
                                     <DeleteIcon />
                                 </Tooltip>
                             </div>

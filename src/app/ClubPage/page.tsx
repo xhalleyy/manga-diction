@@ -130,9 +130,9 @@ const ClubPage = () => {
 
   // SEARCH, ADDING MEMBER TO CLUB, MEMBER CLICKS TO PROFILE
   const handleMemberClick = (user: IUserData | null) => {
-    if(user!.id === Number(localStorage.getItem("UserId"))){
+    if (user!.id === Number(localStorage.getItem("UserId"))) {
       router.push('/ProfilePage')
-    }else{
+    } else {
       setSelectedUser(user);
       router.push('/SearchedUser')
     }
@@ -247,19 +247,13 @@ const ClubPage = () => {
       }
     }
 
-    checkJoined(displayedClub?.id)
-  }, [displayedClub?.id])
-
-  useEffect(() => {
-    if (displayedClub?.isPublic === true) {
-      setModalVisible(false);
-    } else {
-      if (isLeader || joined) {
+    const privateModal = async (clubId: number | undefined) => {
+      if (displayedClub?.isPublic === true || isLeader || joined) {
         setModalVisible(false);
       } else {
         let userId = Number(localStorage.getItem("UserId"))
         const getStatus = async () => {
-          const statusInfo = await getStatusInClub(displayedClub?.id, userId);
+          const statusInfo = await getStatusInClub(clubId, userId);
           setStatus(statusInfo)
           if (statusInfo.status === 0) {
             setMessage('You have already requested to join');
@@ -274,7 +268,37 @@ const ClubPage = () => {
       }
     }
 
-  }, [displayedClub]);
+    privateModal(displayedClub?.id);
+    checkJoined(displayedClub?.id)
+  }, [displayedClub?.id])
+
+
+  // ISSUE WITH IT BEING ONE BEHIND
+  // useEffect(() => {
+  //   if (displayedClub?.isPublic === false) {
+  //     if (isLeader || joined) {
+  //       setModalVisible(false);
+  //     } else {
+  //       let userId = Number(localStorage.getItem("UserId"))
+  //       const getStatus = async () => {
+  //         const statusInfo = await getStatusInClub(displayedClub?.id, userId);
+  //         setStatus(statusInfo)
+  //         if (statusInfo.status === 0) {
+  //           setMessage('You have already requested to join');
+  //         } else if (statusInfo.status === 2) {
+  //           setMessage('Unfortunately, you have been denied to join.')
+  //         } else {
+  //           setMessage('You are not able to view this private club.')
+  //         }
+  //       }
+  //       getStatus();
+  //       setModalVisible(true);
+  //     }
+  //   } else {
+  //     setModalVisible(false);
+  //   }
+
+  // }, [displayedClub?.id]);
 
   useEffect(() => {
     const userId = Number(localStorage.getItem("UserId"));
@@ -692,7 +716,8 @@ const ClubPage = () => {
                               shouldSort={true}
                               onSortCategory={handleSortCategory}
                               onSortTag={handleSortTag}
-                              fetchedPost = {() => {}}
+                              fetchedPost={() => { }}
+                              shouldEdit={false}
                             // onClick = {() => handleClickPost(post.id)}
                             />
                           </div>
@@ -890,7 +915,8 @@ const ClubPage = () => {
                                   shouldSort={true}
                                   onSortCategory={handleSortCategory}
                                   onSortTag={handleSortTag}
-                                  fetchedPost = {() => {}}
+                                  fetchedPost={() => { }}
+                                  shouldEdit={false}
                                 // onClick = {() => handleClickPost(post.id)}
                                 />
                               </div>
