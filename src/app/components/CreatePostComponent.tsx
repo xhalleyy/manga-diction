@@ -6,10 +6,10 @@ import { createPost, getPostsByClubId, getRecentClubPosts } from '@/utils/DataSe
 import { IPostData, IPosts } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 
-type CreatePostType =  {
+type CreatePostType = {
     setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>
 }
-const CreatePostComponent = ({setPosts}:CreatePostType) => {
+const CreatePostComponent = ({ setPosts }: CreatePostType) => {
 
     const info = useClubContext();
     const [value, setValue] = useState<any>([]);
@@ -23,6 +23,7 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
     const [username, setUsername] = useState<string>("");
     const [clubName, setClubName] = useState<string>("");
     const [title, setTitle] = useState<string>("");
+    const [success, setSuccess] = useState<boolean | null>(null);
     const [image, setImage] = useState<string>("");
     const [category, setCategory] = useState<string>("Category");
     const [tags, setTags] = useState<string>("");
@@ -53,16 +54,24 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
         setExpandValue(expand);
     };
 
-    const handleTitleChange = (title: string) => {
-        setTitle(title);
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.trim();
+        setTitle(value);
+        setSuccess(value !== '' && category !== '');
     };
 
-    const handleCategoryChange = (category: string) => {
-        setCategory(category);
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = e.target.value;
+        if (selectedValue !== 'Category') {
+            setCategory(selectedValue);
+        } else {
+            setCategory('');
+        }
+        setSuccess(title !== '' && selectedValue !== 'Category');
     };
 
     const handleTagsChange = (tag: string) => {
-       let tags = tag.replace(/[\s,]+/g, ',')
+        let tags = tag.replace(/[\s,]+/g, ',')
         setTags(tags);
     };
 
@@ -73,56 +82,41 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const seconds = date.getSeconds().toString().padStart(2, '0');
-    
+
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
     const handleSubmit = async () => {
-        let userId = Number(localStorage.getItem("UserId"));
-        try {
-          // datecreated is auto filled in the backend
-        
-          if(title === ''){
-              alert("Please Enter a Title.")
-              setErrors(true);
-            }
-          else if(category === "Category"){
-            alert("Please choose a Category.")
-            setErrors(true);
-        }
-        else if(expandValue === ''){
-            alert("Please enter the Post.")
-            setErrors(true);
-          }else{
-            setErrors(false);
-          }
+        if (title !== '' && category !== '') {
+            try {
+                let userId = Number(localStorage.getItem("UserId"));
+                const postData: IPostData = {
+                    id,
+                    userId,
+                    clubId: info.displayedClub!.id,
+                    title,
+                    category,
+                    tags: tags ?? null,
+                    description: expandValue,
+                    image: null,
+                    dateCreated: formattedDate,
+                    dateUpdated: formattedDate,
+                    isDeleted: false
+                };
+                const data = await createPost(postData);
 
-        if(!hasErrors){
-
-            const postData: IPostData = {
-                id,
-                userId,
-                clubId: info.displayedClub!.id,
-                title,
-                category: category,
-                tags: tags ?? null,
-                description: expandValue,
-                image: null, //TODO add a way to add images
-                dateCreated: formattedDate,
-                dateUpdated: formattedDate,
-                isDeleted: false
-            };
-            const data = await createPost(postData);
-
-            if(data){
-                resetValues()
+                if (data) {
+                    resetValues();
                     const getPosts = await getRecentClubPosts(info.displayedClub!.id);
                     setPosts(getPosts);
+                }
+                console.log(data);
+                setSuccess(true);
+            } catch (error) {
+                console.log('An error occurred', error);
+                setSuccess(false);
             }
-            console.log(data)
-        }
-        
-        } catch (error) {
-            console.log('An error occurred', error);
+        } else {
+            setSuccess(false);
         }
     };
 
@@ -130,11 +124,11 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
         if (typeof window !== 'undefined') {
             setPageSize(window.innerWidth > 768);
             const handleResize = () => {
-              setPageSize(window.innerWidth > 768)
+                setPageSize(window.innerWidth > 768)
             }
             window.addEventListener('resize', handleResize)
             return () => window.removeEventListener('resize', handleResize)
-          }
+        }
     })
 
 
@@ -142,21 +136,22 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
         <div className='bg-paleblue px-10 py-2 mb-5 rounded-xl'>
 
             <div className={pageSize ? 'hidden' : 'col-span-2 flex justify-end py-1'}>
-                    <Select onChange={(e)=> handleCategoryChange(e.target.value)} value={category} id='myDropdown' defaultValue={"Category"} required={true} className='font-mainFont'>
-                        <option value="Category" disabled>Category</option>
-                        <option value="Discussion">Discussion</option>
-                        <option value="Spoilers">Spoilers</option>
-                        <option value="Question">Question</option>
-                        <option value="Rant">RANT</option>
-                    </Select>
-                </div>
+                <Select onChange={handleCategoryChange} defaultValue="" required={true} className='font-mainFont'>
+                    <option value="" disabled hidden>Category</option>
+                    <option value="Discussion">Discussion</option>
+                    <option value="Spoilers">Spoilers</option>
+                    <option value="Question">Question</option>
+                    <option value="Rant">RANT</option>
+                </Select>
+            </div>
 
+            {success === false && <p className={` py-0 my-0 text-center font-poppinsMed text-red-900`}>Please enter a Title AND choose a Category to post.</p>}
             <div className={pageSize ? 'grid grid-cols-12 items-center gap-3 py-1' : "grid grid-cols-5 pb-2"}>
-                <Label htmlFor="base" value="Title:" className='col-span-1 text-lg mt-1' />
-                <TextInput onChange={(e)=>handleTitleChange(e.target.value)} value={title} theme={customInput} placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
+                <Label htmlFor="base" value="Title*:" className='col-span-1 text-lg mt-1' />
+                <TextInput onChange={handleTitleChange} theme={customInput} placeholder="What is the topic?" id="base" type="text" sizing="post" className={pageSize ? 'col-span-9' : 'col-span-4'} required />
                 <div className={pageSize ? 'col-span-2 flex justify-center' : 'hidden'}>
-                    <Select onChange={(e)=> handleCategoryChange(e.target.value)} value={category} id='myDropdown' defaultValue={"Category"} required={true} className='font-mainFont'>
-                        <option value="Category" disabled>Category</option>
+                    <Select onChange={handleCategoryChange} defaultValue="" required={true} className='font-mainFont'>
+                        <option value="" disabled hidden>Category</option>
                         <option value="Discussion">Discussion</option>
                         <option value="Spoilers">Spoilers</option>
                         <option value="Question">Question</option>
@@ -168,13 +163,13 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
                 <Label htmlFor="base2" value="Tags:" className='col-span-1 text-lg mt-1' />
                 <div className={pageSize ? "card p-fluid col-span-11" : "col-span-4"}>
                     {value !== undefined && value !== null && (
-                        <Chips className='' value={value} onChange={(e) =>{
+                        <Chips className='' value={value} onChange={(e) => {
 
                             setValue(e.value)
                             handleTagsChange(e.value?.join(",") ?? "")
-                        } 
                         }
-                        placeholder='Enter to separate tags' separator="," />
+                        }
+                            placeholder={"Press 'Enter' to separate tags"} separator="," />
                     )}
                 </div>
             </div>
@@ -183,12 +178,12 @@ const CreatePostComponent = ({setPosts}:CreatePostType) => {
                 <textarea
                     required
                     id="review-text"
-                    onChange={(e)=>handleChange(e.target.value)}
+                    onChange={(e) => handleChange(e.target.value)}
                     ref={textAreaRef}
                     placeholder='Write your thoughts...'
                     rows={1}
                     value={expandValue}
-                    className={pageSize ? 'col-span-11 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5' : 'col-span-4 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5' }
+                    className={pageSize ? 'col-span-11 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5' : 'col-span-4 w-full font-mainFont rounded-lg border-0 focus-within:border-0 focus-within:ring-0 px-5'}
                 />
                 {/* <TextInput theme={customInput} id="base3" type="text" sizing="post" className='col-span-11 w-full' /> */}
             </div>

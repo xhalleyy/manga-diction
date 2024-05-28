@@ -212,6 +212,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                 dateUpdated,
                 isDeleted
             });
+            fetchedPost()
             setOpenModal(false)
         } catch (error) {
             console.log('error deleting club', error)

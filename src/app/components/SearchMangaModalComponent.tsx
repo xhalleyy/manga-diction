@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Modal } from 'flowbite-react'
+import { Button, CustomFlowbiteTheme, Modal } from 'flowbite-react'
 import React, { useEffect, useState } from 'react'
 import { Chips, ChipsChangeEvent } from 'primereact/chips'
 import { useClubContext } from '@/context/ClubContext';
@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { IGetManga } from '@/Interfaces/Interfaces';
 import { searchManga } from '@/utils/DataServices';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Tooltip } from "flowbite-react";
 
 interface SearchMangaModalProps {
     open: boolean;
@@ -96,6 +97,29 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
         }
     };
 
+    const customTooltip: CustomFlowbiteTheme["tooltip"] = 
+    {
+        "target": "w-fit",
+        "animation": "transition-opacity",
+        "arrow": {
+          "base": "absolute z-10 h-2 w-2 rotate-45",
+          "style": {
+            "dark": "bg-gray-900 dark:bg-gray-700",
+            "light": "bg-white",
+            "auto": "bg-white dark:bg-gray-700"
+          },
+          "placement": "-4px"
+        },
+        "base": "absolute z-10 inline-block rounded-lg px-3 py-2 text-sm font-medium shadow-sm w-96 h-32 overflow-y-auto",
+        "hidden": "invisible opacity-0",
+        "style": {
+          "dark": "bg-gray-900 text-white dark:bg-gray-700",
+          "light": "border border-gray-200 bg-white text-gray-900",
+          "auto": "border border-gray-200 bg-white text-gray-900 dark:border-none dark:bg-gray-700 dark:text-white"
+        },
+        "content": "relative z-20 w-90"
+      }
+
     return (
         <div>
 
@@ -126,16 +150,18 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             <div className='flex'>
                             <label className="font-mainFont text-lg">Tags</label>
                             <div className='relativeBox'>
+                            <Tooltip theme={customTooltip} content={"Available tags are: Oneshot, Thriller, Award Winning, Reincarnation, Sci-Fi, Time Travel, Genderswap, Loli, Traditional Games, Official Colored, Historical, Monster, Action, Demons, Psychological, Ghosts, Animals, Long Strip, Romance, Ninja, Comedy, Mecha, Anthology, Boys' Love, Incest, Crime, Survival, Zombies, Reverse Harem, Sports, Superhero, Martial Arts, Fan Colored, Samurai, Magical Girls, Mafia, Adventure, Self-Published, Virtual Reality, Office Workers, Video Games, Post Apocalyptic, Sexual Violence, Crossdressing, Magic, Girls' Love, Harem, Military, Wuxia, Isekai, 4-Koma, Doujinshi, Philosophical, Gore, Drama, Medical, School Life, Horror, Fantasy, Villainess, Vampires, Delinquents, Monster Girls, Shota, Police, Web Comic, Slice of Life, Aliens, Cooking, Supernatural, Mystery, Adaptation, Music, Full Color, Tragedy, Gyaru"} placement="right">
                             <InfoOutlinedIcon fontSize='small' className='ms-2 mb-1'/>
-                        <div className="tooltip">
+                            </Tooltip>
+                        {/* <div className="tooltip">
                             <p>{"Available tags are: Oneshot, Thriller, Award Winning, Reincarnation, Sci-Fi, Time Travel, Genderswap, Loli, Traditional Games, Official Colored, Historical, Monster, Action, Demons, Psychological, Ghosts, Animals, Long Strip, Romance, Ninja, Comedy, Mecha, Anthology, Boys' Love, Incest, Crime, Survival, Zombies, Reverse Harem, Sports, Superhero, Martial Arts, Fan Colored, Samurai, Magical Girls, Mafia, Adventure, Self-Published, Virtual Reality, Office Workers, Video Games, Post Apocalyptic, Sexual Violence, Crossdressing, Magic, Girls' Love, Harem, Military, Wuxia, Isekai, 4-Koma, Doujinshi, Philosophical, Gore, Drama, Medical, School Life, Horror, Fantasy, Villainess, Vampires, Delinquents, Monster Girls, Shota, Police, Web Comic, Slice of Life, Aliens, Cooking, Supernatural, Mystery, Adaptation, Music, Full Color, Tragedy, Gyaru"}</p>
-                        </div>
+                        </div> */}
                             </div>
                             </div>
                             <div>
                                 {/* wider + taller than club name input */}
                                 {/* <input className="opaqueWhite rounded-xl w-[100%] h-14" onChange={(e) => setTagsInput(e.target.value)} /> */}
-                                <Chips placeholder='Tags (ex: Drama, Isekai...)' className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={tagsInput} // Ensure value is an array of strings
+                                <Chips placeholder={"Press 'Enter' to separate tags"} className="opaqueWhite rounded-xl w-[100%] h-14 p-fluid" value={tagsInput} // Ensure value is an array of strings
                                     onChange={(e) => setTagsInput(e.value || [])} separator="," />
                             </div>
 

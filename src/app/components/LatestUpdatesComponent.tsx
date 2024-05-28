@@ -75,7 +75,7 @@ const LatestUpdatesComponent = () => {
 
     return (
         <div>
-            {combinedManga.slice(0,3).map((manga, index) => (
+            {combinedManga.length === 0 ? <p className='flex justify-center items-center text-2xl font-poppinsMed text-center text-darkbrown lg:py-36'>Favorite some Mangas to see latest updates!</p> :combinedManga.slice(0,3).map((manga, index) => (
                 <div key={index} className="flex flex-col sm:flex-row p-2 cursor-pointer">
                     <Card className="cardImg" onClick={() => handleRouting(manga.favedMangaId)}>
                         <img className="w-full h-full object-cover cardImgChild" src={manga.coverArtUrl} alt={manga.manga.attributes.title.en} />
