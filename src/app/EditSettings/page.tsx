@@ -174,7 +174,7 @@ const EditSettings = () => {
             };
 
             // console.log('Updated user data:', updatedUser);
-            if(username || firstName || lastName || age || (currentPass && newPass)){
+            if(username || firstName || lastName || age || updatedProfilePic || (currentPass && newPass)){
                 const response = await updateUser(updatedUser);
                 console.log(response);
     
