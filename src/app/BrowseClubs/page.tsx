@@ -7,7 +7,7 @@ import { Button, CustomFlowbiteTheme, TextInput, Tooltip } from "flowbite-react"
 import ClubModalComponent from "../components/ClubModalComponent";
 import { CarouselComponent } from "../components/CarouselComponent";
 import CardComponent from "../components/CardComponent";
-import { getClubsByName, getPostsByClubId, getRecentClubPosts, publicClubsApi, specifiedClub } from "@/utils/DataServices";
+import { getClubsByName, getPostsByClubId, getRecentClubPosts, getStatusInClub, publicClubsApi, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import { Tabs } from "flowbite-react";
@@ -66,13 +66,30 @@ const BrowseClubs = () => {
 
   const handleClubCardClick = async (club: IClubs) => {
     try {
+      const userId = Number(localStorage.getItem("UserId"))
       const clubDisplayedInfo = await specifiedClub(club.id);
       const postInfo = await getRecentClubPosts(club.id)
       clubData.setDisplayedClub(clubDisplayedInfo);
       clubData.setDisplayedPosts(postInfo)
+      if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
+        const statusInfo = await getStatusInClub(club.id, userId);
+        clubData.setStatus(statusInfo)
+        if (statusInfo.status === 1) {
+          clubData.setPrivateModal(false);
+        } else if (statusInfo.status === 0) {
+          clubData.setPrivateModal(true)
+          clubData.setMessage('You have already requested to join');
+        } else if (statusInfo.status === 2) {
+          clubData.setPrivateModal(true)
+          clubData.setMessage('Unfortunately, you have been denied to join.')
+        } else {
+          clubData.setPrivateModal(true)
+          clubData.setMessage('You are not able to view this private club.')
+        }
+      } else {
+        clubData.setPrivateModal(false)
+      }
     } catch (error) {
-      alert("Error fetching club information");
-      console.error(error);
     }
   };
 
@@ -91,7 +108,7 @@ const BrowseClubs = () => {
   useEffect(() => {
     const shuffledClubs = clubs.filter(club => club.isPublic == true).sort(() => Math.random() - 0.5);
     setRandomClubs(shuffledClubs.slice(0, 12));
-  
+
     const recentClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
       const dateA = new Date(a.dateCreated);
       const dateB = new Date(b.dateCreated);
@@ -99,7 +116,7 @@ const BrowseClubs = () => {
       return comparisonResult;
     }).filter(club => club.isPublic == true);
     setRecentClubs(recentClubs.slice(0, 12));
-  
+
     const oldestClubs = clubs.slice().sort((a: IClubs, b: IClubs) => {
       const dateA = new Date(a.dateCreated);
       const dateB = new Date(b.dateCreated);

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { getPopularClubs, getPostsByClubId, getRecentClubPosts, publicClubsApi, specifiedClub } from "@/utils/DataServices";
+import { getPopularClubs, getPostsByClubId, getRecentClubPosts, getStatusInClub, publicClubsApi, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import CardComponent from "./CardComponent";
 import CarouselButtonsComponent from "./CarouselButtonsComponent";
@@ -39,13 +39,31 @@ export function CarouselComponent(props: any) {
 
   const handleClubCardClick = async (club: IClubs) => {
     try {
+      const userId = Number(localStorage.getItem("UserId"))
       const clubDisplayedInfo = await specifiedClub(club.id);
       const postInfo = await getRecentClubPosts(club.id)
       clubData.setDisplayedClub(clubDisplayedInfo);
       clubData.setDisplayedPosts(postInfo)
+      if(clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId){
+        const statusInfo = await getStatusInClub(club.id, userId);
+        clubData.setStatus(statusInfo)
+        if(statusInfo.status === 1){
+          clubData.setPrivateModal(false);
+        } else if(statusInfo.status === 0) {
+          clubData.setPrivateModal(true)
+          clubData.setMessage('You have already requested to join');
+        } else if (statusInfo.status === 2) {
+          clubData.setPrivateModal(true)
+          clubData.setMessage('Unfortunately, you have been denied to join.')
+        }else {
+          clubData.setPrivateModal(true)
+          clubData.setMessage('You are not able to view this private club.')
+        }
+      }else{
+        clubData.setPrivateModal(false)
+      }
     } catch (error) {
-      alert("Error fetching club information");
-      console.error(error);
+
     }
   };
 

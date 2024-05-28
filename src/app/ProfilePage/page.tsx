@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
 import CardComponent from '../components/CardComponent';
 import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
-import { GetLikesByPost, getClubsByLeader, getCompletedManga, getInProgessManga, getRecentClubPosts, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
+import { GetLikesByPost, getClubsByLeader, getCompletedManga, getInProgessManga, getRecentClubPosts, getStatusInClub, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { notFound, useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
@@ -149,13 +149,31 @@ const ProfilePage = (props: any) => {
 
     const handleClubCardClick = async (club: IClubs) => {
         try {
+            const userId = Number(localStorage.getItem("UserId"))
             const clubDisplayedInfo = await specifiedClub(club.id);
             const postInfo = await getRecentClubPosts(club.id)
             info.setDisplayedClub(clubDisplayedInfo);
             info.setDisplayedPosts(postInfo)
+            if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
+                const statusInfo = await getStatusInClub(club.id, userId);
+                info.setStatus(statusInfo)
+                if (statusInfo.status === 1) {
+                    info.setPrivateModal(false);
+                } else if (statusInfo.status === 0) {
+                    info.setPrivateModal(true)
+                    info.setMessage('You have already requested to join');
+                } else if (statusInfo.status === 2) {
+                    info.setPrivateModal(true)
+                    info.setMessage('Unfortunately, you have been denied to join.')
+                } else {
+                    info.setPrivateModal(true)
+                    info.setMessage('You are not able to view this private club.')
+                }
+            } else {
+                info.setPrivateModal(false)
+            }
         } catch (error) {
-            alert("Error fetching club information");
-            console.error(error);
+            // console.error(error);
         }
     };
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { IClubs, IGetManga, IManga, IPostData, IPosts, IUserData } from "@/Interfaces/Interfaces";
-import { SetStateAction, createContext, useContext, useState } from "react"
+import { IClubs, IGetManga, IManga, IPostData, IPosts, IStatus, IUserData } from "@/Interfaces/Interfaces";
+import React, { SetStateAction, createContext, useContext, useState } from "react"
  
 type ClubContextType = {
     displayedClub: IClubs | null,
@@ -30,6 +30,12 @@ type ClubContextType = {
     setMangaInfo: React.Dispatch<React.SetStateAction<IManga[]>>
     displayedPosts: IPosts[]
     setDisplayedPosts: React.Dispatch<React.SetStateAction<IPosts[]>>
+    status: IStatus,
+    setStatus: React.Dispatch<SetStateAction<IStatus>>,
+    message: string,
+    setMessage: React.Dispatch<React.SetStateAction<string>>
+    privateModal: boolean,
+    setPrivateModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const ClubContext = createContext<ClubContextType>({} as ClubContextType);
@@ -52,9 +58,12 @@ export const AppWrapper = ({
     const [selectedUser, setSelectedUser] = useState<IUserData | null> (null);
     const [mangaInfo, setMangaInfo] = useState<IManga[]>([])
     const [displayedPosts, setDisplayedPosts] = useState<IPosts[]>([])
+    const [status, setStatus] = useState<IStatus>({} as IStatus)
+    const [message, setMessage] = useState<string>("")
+    const [privateModal, setPrivateModal] = useState<boolean>(false);
 
     return (
-        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, mangaId, setMangaId, selectedPostId, setSelectedPostId, selectedUser, setSelectedUser, mangaInfo, setMangaInfo, displayedPosts, setDisplayedPosts}}>
+        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, mangaId, setMangaId, selectedPostId, setSelectedPostId, selectedUser, setSelectedUser, mangaInfo, setMangaInfo, displayedPosts, setDisplayedPosts, status, setStatus, message, setMessage, privateModal, setPrivateModal}}>
             {children}
         </ClubContext.Provider>
     )

@@ -23,7 +23,7 @@ import { checkToken } from '@/utils/token';
 
 
 const ClubPage = () => {
-  const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser, setDisplayedPosts, displayedPosts } = useClubContext();
+  const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser, setDisplayedPosts, displayedPosts, status, message, setPrivateModal, privateModal } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
@@ -42,8 +42,7 @@ const ClubPage = () => {
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
   const [modalVisible, setModalVisible] = useState(false);
   const [adultModal, setAdultModal] = useState<boolean>(false);
-  const [status, setStatus] = useState<IStatus>({} as IStatus);
-  const [message, setMessage] = useState("")
+  // const [status, setStatus] = useState<IStatus>({} as IStatus);
 
   const [addMember, setAddMember] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -247,58 +246,14 @@ const ClubPage = () => {
       }
     }
 
-    const privateModal = async (clubId: number | undefined) => {
-      if (displayedClub?.isPublic === true || isLeader || joined) {
-        setModalVisible(false);
-      } else {
-        let userId = Number(localStorage.getItem("UserId"))
-        const getStatus = async () => {
-          const statusInfo = await getStatusInClub(clubId, userId);
-          setStatus(statusInfo)
-          if (statusInfo.status === 0) {
-            setMessage('You have already requested to join');
-          } else if (statusInfo.status === 2) {
-            setMessage('Unfortunately, you have been denied to join.')
-          } else {
-            setMessage('You are not able to view this private club.')
-          }
-        }
-        getStatus();
-        setModalVisible(true);
-      }
+    if((displayedClub?.isPublic === false && isLeader) || (displayedClub?.isPublic === false && joined)){
+      setPrivateModal(false)
     }
 
-    privateModal(displayedClub?.id);
+    // privateModal(displayedClub?.id);
     checkJoined(displayedClub?.id)
   }, [displayedClub?.id])
 
-
-  // ISSUE WITH IT BEING ONE BEHIND
-  // useEffect(() => {
-  //   if (displayedClub?.isPublic === false) {
-  //     if (isLeader || joined) {
-  //       setModalVisible(false);
-  //     } else {
-  //       let userId = Number(localStorage.getItem("UserId"))
-  //       const getStatus = async () => {
-  //         const statusInfo = await getStatusInClub(displayedClub?.id, userId);
-  //         setStatus(statusInfo)
-  //         if (statusInfo.status === 0) {
-  //           setMessage('You have already requested to join');
-  //         } else if (statusInfo.status === 2) {
-  //           setMessage('Unfortunately, you have been denied to join.')
-  //         } else {
-  //           setMessage('You are not able to view this private club.')
-  //         }
-  //       }
-  //       getStatus();
-  //       setModalVisible(true);
-  //     }
-  //   } else {
-  //     setModalVisible(false);
-  //   }
-
-  // }, [displayedClub?.id]);
 
   useEffect(() => {
     const userId = Number(localStorage.getItem("UserId"));
@@ -579,8 +534,8 @@ const ClubPage = () => {
           </Modal>
         )}
 
-        {!modalVisible ? null : (
-          <Modal show={modalVisible} size="lg" onClose={() => setModalVisible(false)} popup>
+        {!privateModal ? null : (
+          <Modal show={privateModal} size="lg" onClose={() => setPrivateModal(false)} popup>
             {/* <Modal.Header /> */}
             <Modal.Body>
               <div className="text-center pt-20 pb-6">
@@ -701,9 +656,9 @@ const ClubPage = () => {
                             <PostsComponent
                               id={post.id}
                               userId={post.userId}
-                              username={usersMap.get(post.userId)?.username || "Unknown User"}
+                              username={usersMap.get(post.userId)?.username || ""}
                               clubId={post.clubId}
-                              clubName={post.clubName || "Default Club Name"}
+                              clubName={post.clubName || ""}
                               title={post.title}
                               category={post.category}
                               tags={post.tags ? post.tags.split(',') : null}
