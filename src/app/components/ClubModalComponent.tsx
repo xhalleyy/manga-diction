@@ -49,9 +49,11 @@ function ClubModalComponent() {
 
     const privateSettingOn = () => {
         setPublicClub(false)
+        console.log(publicClub)
     }
     const publicSettingOn = () => {
         setPublicClub(true)
+        console.log(publicClub)
     }
 
     const matureSettingOn = () => {
@@ -210,9 +212,9 @@ function ClubModalComponent() {
                             <label className="mt-1 font-mainFont text-lg">Privacy Settings: </label>
                             {/* dropdown, 2 options (public, private) */}
                             <div className="rounded-xl dropdownBtn flex justify-center ms-3">
-                                <select required className={pageSize ? "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none" : "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none ml-10"}>
-                                    <option value="public" className="font-mainFont" onClick={publicSettingOn}>Public</option>
-                                    <option value="priv" onClick={privateSettingOn}>Private</option>
+                                <select onClick={(e) => e.currentTarget.value === "public" ? setPublicClub(true) : setPublicClub(false) } required className={pageSize ? "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none" : "rounded-xl opaqueWhite font-mainFont h-9 px-4 border-none ml-10"}>
+                                    <option value="public" className="font-mainFont" >Public</option>
+                                    <option value="priv" >Private</option>
                                 </select>
                                 {/* <Dropdown label={!publicClub ? "Public" : "Private"} style={{color: "black"}} dismissOnClick={false}>
                                 <Dropdown.Item onClick={publicSettingOn}>Public</Dropdown.Item>
