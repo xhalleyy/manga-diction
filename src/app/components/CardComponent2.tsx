@@ -18,12 +18,6 @@ function CardComponent(prop: { id: number, leaderId: number, description: string
     router.push('/ClubPage');
   }
 
-  if (prop.isDeleted) {
-    // returning null leaves empty space where card used to be, return empty tags for formatting
-    return <></>;
-    // both return null and return empty tags still leave card-sized portions of empty space in carousel and search clubs page
-  }
-
   useEffect(() => {
     // handling window resize 
     // typeof returns a string indicating the type of the operand's value

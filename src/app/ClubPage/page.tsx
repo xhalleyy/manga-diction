@@ -946,7 +946,7 @@ const ClubPage = () => {
 
                       {isLeader ?
                         <div className='py-1'>
-                          <button className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Invite Members</button>
+                          <button onClick={() => setAddMember(!addMember)} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Invite Members</button>
                         </div> : null}
 
                       {isLeader ? (
@@ -967,32 +967,52 @@ const ClubPage = () => {
                     <p className='p-2.5 font-poppinsMed  text-darkbrown text-lg'>{displayedClub?.description}</p>
                   </div>
 
-                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> Members: </p>
-                  {!membersVisible && (
-                    <div className='grid grid-cols-3 px-8 justify-center p-8 bg-white/80 rounded-lg'>
-                      <div className="col-span-1 flex flex-col justify-center items-center">
-                        <div onClick={() => { handleMemberClick(leader) }} className='relative cursor-pointer'>
-                          <img src={leader?.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
-                          <Image src="/crown.gif"
-                            width={200}
-                            height={200}
-                            alt="Club Leader"
-                            unoptimized
-                            className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
+                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> {addMember ? 'Invite Members' : 'Members'}</p>
+                  {addMember ? 
+                  <div className='px-5 flex justify-center p-8 bg-white/80 rounded-lg'>
+                    <div className='items-center rounded-xl'>
+                    <div className='col-span-3 xl:col-span-2 2xl:col-span-1 w-[285px] darkBeige px-2 py-0.5 rounded-2xl flex items-center 2xl:ms-[-100px] justify-end '>
+                          <input
+                            className='rounded-xl h-7 ps-3'
+                            onChange={(e) => setSearch(e.target.value)}
+                          />
+                          <SearchIcon className='text-4xl text-white cursor-pointer flex float-right' onClick={searchUser} />
                         </div>
-                        <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
-                        <p className="font-mainFont text-darkbrown text-xs">{`${leader?.firstName} ${leader?.lastName}`}</p>
+                        <div className=''>
+                          <p className=' text-lg font-poppinsMed text-darkbrown'>{`Search Results for '${search}'`}</p>
+                        </div>
+                        
                       </div>
-                      {members.map((member) => (
-                        <div key={member.id} onClick={() => { handleMemberClick(member) }} className="cursor-pointer col-span-1 flex flex-col justify-center items-center py-2">
-                          <img src={member.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
-                          <h1 className="font-poppinsMed text-lg text-center text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
-                          <p className="font-mainFont text-darkbrown text-xs text-center">{`${member.firstName} ${member.lastName}`}</p>
-                        </div>
-                      )
-                      )}
                     </div>
-                  )}
+                    :
+                    
+                    (!membersVisible) && (
+                      <div className='grid grid-cols-3 px-8 justify-center p-8 bg-white/80 rounded-lg'>
+                        <div className="col-span-1 flex flex-col justify-center items-center">
+                          <div onClick={() => { handleMemberClick(leader) }} className='relative cursor-pointer'>
+                            <img src={leader?.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
+                            <Image src="/crown.gif"
+                              width={200}
+                              height={200}
+                              alt="Club Leader"
+                              unoptimized
+                              className='absolute top-[-35px] right-[-15px] rotate-[25deg] w-[70px] h-[80px]' />
+                          </div>
+                          <h1 className="font-poppinsMed text-lg text-darkbrown pt-2 pb-0 mb-0 leading-none">{leader?.username}</h1>
+                          <p className="font-mainFont text-darkbrown text-xs">{`${leader?.firstName} ${leader?.lastName}`}</p>
+                        </div>
+                        {members.map((member) => (
+                          <div key={member.id} onClick={() => { handleMemberClick(member) }} className="cursor-pointer col-span-1 flex flex-col justify-center items-center py-2">
+                            <img src={member.profilePic || '/noprofile.jpg'} alt="Member" className="member-img" />
+                            <h1 className="font-poppinsMed text-lg text-center text-darkbrown pt-2 pb-0 mb-0 leading-none">{member.username}</h1>
+                            <p className="font-mainFont text-darkbrown text-xs text-center">{`${member.firstName} ${member.lastName}`}</p>
+                          </div>
+                        )
+                        )}
+                      </div>
+                    )}
+                    
+                  
                 </div>
 
               </Tabs.Item>
