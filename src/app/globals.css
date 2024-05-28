@@ -264,15 +264,6 @@
     padding-bottom: 3px;
 }
 
-@media screen and (max-width: 1024px) {
-    .mobileBgColor {
-        background-color: #273043;
-    }
-    .modalNav{
-        display: block;
-    }
-    
-}
 /* Styles for the Chips component */
 .p-chips {
     width: 100%;

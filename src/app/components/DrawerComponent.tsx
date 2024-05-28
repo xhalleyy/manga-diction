@@ -46,6 +46,8 @@ export default function DrawerComponent() {
       router.push('/BrowseClubs');
     } else if (page === 'Search Manga') {
       router.push('/MangaSearchMobile')
+    } else if (page === 'Notifications') {
+      router.push('/MobileNotifs')
     } else if (page === 'Profile') {
       router.push('/ProfilePage');
     } else if (page === 'Edit Settings') {

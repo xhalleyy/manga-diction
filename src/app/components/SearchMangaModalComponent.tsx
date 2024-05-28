@@ -99,7 +99,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
     return (
         <div>
 
-            <Modal show={open} onClose={() => setOpen(false)} className='mobileBgColor'>
+            <Modal show={open} onClose={() => setOpen(false)}>
 
                 <Modal.Body className="darkBeige rounded-lg px-10">
                     <div className="flex justify-end justify-items-end">
