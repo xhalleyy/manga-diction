@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 
 
-function CardProfPgComponent(prop: { id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean }) {
+function CardProfPgComponent(prop: { id: number, leaderId: number, description: string, dateCreated: string, image: string, isMature: boolean, isPublic: boolean, clubName: string, isDeleted: boolean }) {
 
   const router = useRouter();
   const [pageSize, setPageSize] = useState<boolean>(false)
@@ -14,6 +14,7 @@ function CardProfPgComponent(prop: { id: number, leaderId: number, description: 
   const goToClub = () => {
     router.push('/ClubPage');
   }
+
 
   useEffect(() => {
     // handling window resize 
@@ -71,9 +72,15 @@ function CardProfPgComponent(prop: { id: number, leaderId: number, description: 
           />
         )}
         <div className="mt-5">
-          <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">
-            {prop.isPublic ? "Public" : "Private"}
-          </p>
+          <span className="inline-flex">
+            <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">
+              {prop.isPublic ? "Public" : "Private"}
+            </p>
+            {prop.isMature && (
+              <p className=" ml-2 text-sm px-3 text-center bg-red-700 text-white font-poppinsMed rounded-lg">Mature</p>
+            )}
+          </span>
+
           <h5 className="text-lg font-poppinsMed tracking-tight text-gray-900 m-0 dark:text-white">
             {prop.clubName}
           </h5>

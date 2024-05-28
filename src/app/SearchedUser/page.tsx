@@ -63,52 +63,6 @@ const SearchedUser = () => {
         }
       };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (info.selectedUser) {
-                const userClubs = await fetchUserClubs(info.selectedUser.id);
-                console.log('User clubs:', userClubs);
-                setClubs(userClubs);
-            }
-        };
-        fetchData();
-    }, [info.selectedUser]);
-    
-    useEffect(() => {
-        const fetchMangaData = async () => {
-            if (info.selectedUser) {
-                let user = info.selectedUser.id
-                const completedManga = await getCompletedManga(user);
-                const allCompleted = await Promise.all(
-                    completedManga.map(async (manga: IFavManga) => {
-                        const mangaResponse = await specificManga(manga.mangaId);
-                        const mangaData: IManga = mangaResponse.data;
-                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
-                        return {
-                            manga: mangaData,
-                            coverArtUrl: coverArt
-                        };
-                    })
-                );
-                setCompleted(allCompleted);
-
-                const ongoingManga = await getInProgessManga(user);
-                const allOngoing = await Promise.all(
-                    ongoingManga.map(async (manga: IFavManga) => {
-                        const mangaResponse = await specificManga(manga.mangaId);
-                        const mangaData: IManga = mangaResponse.data;
-                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
-                        return {
-                            manga: mangaData,
-                            coverArtUrl: coverArt
-                        };
-                    })
-                );
-                setOngoing(allOngoing);
-            };
-        };
-        fetchMangaData();
-    }, [info.selectedUser]);
     
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -248,6 +202,55 @@ const SearchedUser = () => {
         setShowClubs(false);
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            if (info.selectedUser) {
+                const userClubs = await fetchUserClubs(info.selectedUser.id);
+                console.log('User clubs:', userClubs);
+                setClubs(userClubs);
+            }
+        };
+        fetchData();
+        checkAssociation();
+    }, [info.selectedUser]);
+    
+    useEffect(() => {
+        const fetchMangaData = async () => {
+            if (info.selectedUser) {
+                let user = info.selectedUser.id
+                const completedManga = await getCompletedManga(user);
+                const allCompleted = await Promise.all(
+                    completedManga.map(async (manga: IFavManga) => {
+                        const mangaResponse = await specificManga(manga.mangaId);
+                        const mangaData: IManga = mangaResponse.data;
+                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
+                        return {
+                            manga: mangaData,
+                            coverArtUrl: coverArt
+                        };
+                    })
+                );
+                setCompleted(allCompleted);
+
+                const ongoingManga = await getInProgessManga(user);
+                const allOngoing = await Promise.all(
+                    ongoingManga.map(async (manga: IFavManga) => {
+                        const mangaResponse = await specificManga(manga.mangaId);
+                        const mangaData: IManga = mangaResponse.data;
+                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
+                        return {
+                            manga: mangaData,
+                            coverArtUrl: coverArt
+                        };
+                    })
+                );
+                setOngoing(allOngoing);
+            };
+        };
+        fetchMangaData();
+        checkAssociation();
+    }, [info.selectedUser]);
+    
     useEffect(() => {
         const checkIsFavManga = async () => {
             const user = Number(localStorage.getItem("UserId"));
@@ -473,6 +476,7 @@ const SearchedUser = () => {
                                                                 description={club.description}
                                                                 dateCreated={club.dateCreated}
                                                                 image={club.image}
+                                                                isMature={club.isMature}
                                                                 isPublic={club.isPublic}
                                                                 clubName={club.clubName}
                                                                 isDeleted={club.isDeleted}

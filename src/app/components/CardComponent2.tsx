@@ -4,10 +4,8 @@ import { Card, CustomFlowbiteTheme } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+function CardComponent(prop: { id: number, leaderId: number, description: string, dateCreated: string, image: string, isMature: boolean, isPublic: boolean, clubName: string, isDeleted: boolean }) {
 
-
-function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isPublic: boolean, clubName: string, isDeleted: boolean}) {
-  
   const router = useRouter();
   const [pageSize, setPageSize] = useState<boolean>(false)
   const [pageChange, setPageChange] = useState<boolean>(true)
@@ -15,9 +13,15 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
   const clubPg = ('/ClubPage');
   const profPg = ('/ProfilePage')
 
-  
+
   const goToClub = () => {
     router.push('/ClubPage');
+  }
+
+  if (prop.isDeleted) {
+    // returning null leaves empty space where card used to be, return empty tags for formatting
+    return <></>;
+    // both return null and return empty tags still leave card-sized portions of empty space in carousel and search clubs page
   }
 
   useEffect(() => {
@@ -33,10 +37,10 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
-  
+
   }, [])
 
-  
+
   const customCard: CustomFlowbiteTheme["card"] = {
     "root": {
       "base": `flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800 h-28`,
@@ -55,7 +59,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
       }
     }
   };
-  
+
 
   return (
     <Card onClick={goToClub}
@@ -64,22 +68,28 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
       theme={customCard}
     >
       <div className={pageSize ? "flex flex-col" : "flex flex-row"}>
-    {!pageSize && (
-      <img
-        className="w-24 h-28 object-cover mr-4 rounded-l-lg"
-        src={prop.image || 'dummyImg.jpg'}
-        alt={prop.description}
-      />
-    )}
-    <div className="mt-5">
-      <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">
-        {prop.isPublic ? "Public" : "Private"}
-      </p>
-      <h5 className="text-lg font-poppinsMed tracking-tight text-gray-900 m-0 dark:text-white">
-        {prop.clubName}
-      </h5>
-    </div>
-  </div>
+        {!pageSize && (
+          <img
+            className="w-24 h-28 object-cover mr-4 rounded-l-lg"
+            src={prop.image || 'dummyImg.jpg'}
+            alt={prop.description}
+          />
+        )}
+        <div className="mt-5">
+          <span className="inline-flex">
+            <p className="text-sm font-mainFont text-gray-700 dark:text-gray-400 m-0">
+              {prop.isPublic ? "Public" : "Private"}
+            </p>
+            {prop.isMature && (
+              <p className=" ml-2 text-sm px-3 text-center bg-red-700 text-white font-poppinsMed rounded-lg">Mature</p>
+            )}
+          </span>
+
+          <h5 className="text-lg font-poppinsMed tracking-tight text-gray-900 m-0 dark:text-white">
+            {prop.clubName}
+          </h5>
+        </div>
+      </div>
 
     </Card>
   );

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
-
 function CardComponent( prop: {id: number, leaderId: number, description: string, dateCreated: string, image: string, isMature: boolean, isPublic: boolean, clubName: string, isDeleted: boolean}) {
   
   const router = useRouter();

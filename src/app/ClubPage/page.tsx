@@ -21,7 +21,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { File } from 'react-kawaii'
 import { checkToken } from '@/utils/token';
 import ScrollToTop from "react-scroll-to-top";
-
+import { Browser } from 'react-kawaii'
 
 const ClubPage = () => {
   const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser, setDisplayedPosts, displayedPosts, status, message, setPrivateModal, privateModal } = useClubContext();
@@ -35,7 +35,7 @@ const ClubPage = () => {
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState(false);
   const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
-  
+
 
   // New state to track whether members section is visible
   const [membersVisible, setMembersVisible] = useState<boolean>(false);
@@ -540,10 +540,13 @@ const ClubPage = () => {
 
         {/* modal for mature club? if(isMature == false) closemodal else showmodal, if(user.age < 18) description and redirect */}
         {adultModal && (
-          <Modal show={adultModal} size="lg" onClose={() => setAdultModal(false)} popup>
-            <Modal.Body>
-              <div className='text-center py-10 font-mainFont'>
-                <h2 className='text-2xl pb-5'>You are not old enough to view this club</h2>
+          <Modal show={adultModal} size="xl" onClose={() => setAdultModal(false)} popup>
+            <Modal.Body className='bg-offwhite rounded-lg'>
+            <div className="text-center pt-10 pb-6 bg-offwhite">
+                  <div className='flex justify-center py-5'>
+                    <Browser size={130} mood="ko" color="#E0E4E8" />                  
+                  </div>                
+                  <h2 className='text-xl pb-2'>You are not old enough to view this club</h2>
                 <div className='flex justify-center pt-10'>
                   <button className='bg-darkerblue text-white px-4 py-2 rounded-xl' onClick={goBackToClubs}>
                     Browse other clubs
@@ -555,19 +558,23 @@ const ClubPage = () => {
         )}
 
         {!privateModal ? null : (
-          <Modal show={privateModal} size="lg" onClose={() => setPrivateModal(false)} popup>
+          <Modal show={privateModal} size="xl" onClose={() => setPrivateModal(false)} popup>
             {/* <Modal.Header /> */}
-            <Modal.Body>
-              <div className="text-center pt-20 pb-6">
-                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                  {message}
-                </h3>
-                <div className="flex justify-center gap-4">
+            <Modal.Body className='bg-offwhite rounded-xl flex justify-center'>
+              <div className="text-center pt-10 pb-6 bg-offwhite">
+                  <div className='flex justify-center py-5'>
+                    <Browser size={130} mood="ko" color="#E0E4E8" />                  
+                  </div>
+                  <h3 className="mb-5 col-span-2 text-lg font-normal text-black dark:text-gray-400">
+                    {message}
+                  </h3>
+
+                <div className="flex justify-center gap-6">
                   <Button color="gray" onClick={goBackToClubs}>
                     {"Browse other Clubs"}
                   </Button>
                   {status.status !== 0 && status.status !== 2 && (
-                    <Button color="success" onClick={requestToJoin}>
+                    <Button className='bg-mutedgreen' onClick={requestToJoin}>
                       Request to Join
                     </Button>
                   )}
@@ -816,8 +823,8 @@ const ClubPage = () => {
             </div>
           </div>
 
-          <Modal  show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
-            <Modal.Header className='bg-offwhite rounded-t-xl p-5'/>
+          <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
+            <Modal.Header className='bg-offwhite rounded-t-xl p-5' />
             <Modal.Body className='bg-offwhite rounded-b-xl'>
               <div className="text-center bg-offwhite ">
                 <h3 className=" bg-offwhite text-lg font-normal text-gray-500 dark:text-gray-400">
@@ -831,7 +838,7 @@ const ClubPage = () => {
                         Are you sure you want to delete <br /> {displayedClub?.clubName}?
                       </div>
                     </div>
-                    : 
+                    :
                     <div className='grid grid-cols-3'>
                       <div className='col-span-1'>
                         <File size={100} mood="ko" color="#afdeee " />
@@ -841,7 +848,7 @@ const ClubPage = () => {
                         Are you sure you want to leave <br /> {displayedClub?.clubName}?
                       </div>
                     </div>}
-                    
+
                 </h3>
                 <div className="flex justify-end gap-8 bg-offwhite">
                   <Button className='bg-mutedred enabled:hover:bg-red-800' onClick={handleLeave}>

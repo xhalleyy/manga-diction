@@ -40,7 +40,8 @@ const config: Config = {
         'darkerblue': 'rgba(12, 20, 37, 1)', //darker blue
         'brown' : 'rgba(180, 163, 138, 1)',
         'mutedblue': 'rgba(150, 182, 197, 1)',
-        'mutedred' : 'rgb(255, 105, 97)'
+        'mutedred' : 'rgb(255, 105, 97)',
+        'mutedgreen' : 'rgb(88,116,93)'
       }
     }
   },

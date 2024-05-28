@@ -151,12 +151,12 @@ const MobileNotifs = () => {
             <h1 className='text-xl font-poppinsMed text-center py-5'>Notifications</h1>
             <div className='px-2'>
                 {((requestedFriends.length !== 0) || (pendingMembers.length !== 0) || (messages.length !== 0) || (commentMessage.length !==0)) ?
-                    <Badge color='info' variant="dot" badgeContent=" ">
-                        <div  className=" border-8 rounded-xl border-ivory w-full min-h-60 p-3 bg-ivory">
+                    // <Badge color='info' variant="dot" badgeContent=" ">
+                        <div  className=" border-8 rounded-xl border-ivory w-full min-h-screen mb-5 bg-white">
                             {(
                                 requestedFriends.map((user) => (
                                     <div key={user.id}>
-                                        <div className='grid grid-cols-4 ps-7 pe-3y-2'>
+                                        <div className='grid grid-cols-4 ps-7 pe-3 py-5 bg-white'>
                                             <img
                                                 src={user.profilePic || '/noprofile.jpg'}
                                                 alt={`${user.username} requested to add.`}
@@ -182,7 +182,7 @@ const MobileNotifs = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr className="border-2 my-2 border-ivory" />
+                                        <hr className="border-2 border-ivory " />
                                     </div>
                                 ))
                             )}
@@ -190,7 +190,7 @@ const MobileNotifs = () => {
                                 <div key={idx}>
                                     {request.members.map((member, index) => (
                                         <div key={index}>
-                                            <div className='grid grid-cols-4 ps-7 pe-3'>
+                                            <div className='grid grid-cols-4 ps-7 pe-3 py-5 bg-white'>
                                                 <img
                                                     src={member.profilepic || '/noprofile.jpg'}
                                                     alt={`${member.name} requested to join.`}
@@ -216,7 +216,7 @@ const MobileNotifs = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <hr className="border-2 my-2 border-ivory" />
+                                            <hr className="border-2 border-ivory" />
                                             {/* <p>{request.clubName}</p>
                                             <p key={index}>{member.name} requested to join club {request.clubId}</p> */}
                                         </div>
@@ -225,7 +225,7 @@ const MobileNotifs = () => {
                             ))}
                             {messages.map((message, idx) => (
                                 <div key={idx}>
-                                    <div className='grid grid-cols-4 ps-7 pe-3'>
+                                    <div className='grid grid-cols-4 ps-7 pe-3 py-5  bg-white'>
                                         <img
                                             src={message.profilePic || '/noprofile.jpg'}
                                             alt={`User liked your post`}
@@ -238,12 +238,12 @@ const MobileNotifs = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <hr className="border-2 my-2 border-ivory" />
+                                    <hr className="border-2 border-ivory" />
                                 </div>
                             ))}
                             {commentMessage.map((comment, idx) => (
                                 <div key={idx}>
-                                    <div className='grid grid-cols-4 ps-7 pe-3'>
+                                    <div className='grid grid-cols-4 ps-7 pe-3 py-5 bg-white'>
                                         <img
                                             src={comment.profilePic || '/noprofile.jpg'}
                                             alt={`User liked your post`}
@@ -256,12 +256,13 @@ const MobileNotifs = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <hr className="border-2 my-2 border-ivory" />
+                                    <hr className="border-2 border-ivory" />
                                 </div>
                             ))}
                         </div>
-                    </Badge> :
-                    <div  className=" border-8 rounded-xl border-ivory w-full  min-h-60 p-3 bg-ivory">
+                    // </Badge> 
+                    :
+                    <div  className=" border-8 rounded-xl border-ivory w-full  min-h-screen p-3 bg-white mb-5">
 
                         <p className='mt-20 text-center font-mainFont text-xl text-darkbrown'>you have no notifications <br />{'(｡ •́︿•̀｡ )'}</p>
                     </div>}
