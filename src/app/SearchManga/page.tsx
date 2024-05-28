@@ -18,6 +18,7 @@ const SearchManga = () => {
     const [coverArtList, setCoverArtList] = useState<string[]>([]);
     // const tempID: string = '304ceac3-8cdb-4fe7-acf7-2b6ff7a60613';
     const formattedTitle = title.charAt(0).toUpperCase() + title.slice(1);
+    const [pageSize, setPageSize] = useState<boolean>(false);
     const maxTitleLength = 30;
     const router = useRouter();
 
@@ -30,6 +31,20 @@ const SearchManga = () => {
             return undefined;
         }
     };
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setPageSize(window.innerWidth > 767);
+
+            const handleResize = () => {
+                setPageSize(window.innerWidth > 767);
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, [pageSize])
+
 
     const handleMangaSubmit = (mangaId: string) => {
         setMangaId(mangaId);
@@ -50,7 +65,7 @@ const SearchManga = () => {
 
                 <div className='pt-6'>
                     <div className='pt-6'>
-                        <h1 className='px-16 text-[26px] font-poppinsMed text-darkbrown text-center'>Manga Results for &apos;{formattedTitle}&apos;</h1>
+                        <h1 className={pageSize ? 'px-16 text-[26px] font-poppinsMed text-darkbrown' : 'text-[26px] font-poppinsMed text-darkbrown text-center'}>Manga Results for &apos;{formattedTitle}&apos;</h1>
 
                         <div className="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 lg:px-[70px] mt-8 pb-6 gap-4">
                             {/* search results, 5 per 'row' */}

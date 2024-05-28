@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { getAcceptedFriends } from '@/utils/DataServices';
-import { IAcceptedFriends, IUserData } from '@/Interfaces/Interfaces';
+import { getAcceptedFriends, getClubsByLeader, getCompletedManga, getInProgessManga, getUserClubs, specificManga, specifiedClub } from '@/utils/DataServices';
+import { IAcceptedFriends, IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
 import { CustomFlowbiteTheme, Avatar } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
@@ -14,10 +14,10 @@ type FriendsType = {
 }
 
 
-const FriendsComponent = ({searchedUser, isCurrentUser}: FriendsType) => {
+const FriendsComponent = ({ searchedUser, isCurrentUser }: FriendsType) => {
 
     const router = useRouter();
-    const {selectedUser, setSelectedUser} = useClubContext();
+    const { selectedUser, setSelectedUser } = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [friends, setFriends] = useState<IAcceptedFriends[]>([]);
 
@@ -29,27 +29,25 @@ const FriendsComponent = ({searchedUser, isCurrentUser}: FriendsType) => {
             console.error('Error fetching friends:', error);
         }
     };
-    
-    
+
+
     useEffect(() => {
-        console.log("FriendsComponent useEffect called"); // Log when the useEffect is called
         if (searchedUser !== undefined && searchedUser === selectedUser?.id) {
-            console.log("Fetching friends for selected user:", selectedUser?.id); // Log when fetching friends for selected user
-            displayFriends(selectedUser?.id); 
+            displayFriends(selectedUser?.id);
         } else {
             let userId = Number(localStorage.getItem("UserId"));
-            console.log("Fetching friends for logged-in user:", userId); // Log when fetching friends for logged-in user
-            displayFriends(userId); 
+            displayFriends(userId);
         }
-    }, [searchedUser, selectedUser?.id]);
-    
 
+    }, [searchedUser, selectedUser?.id]); // Include selectedUser?.id in the dependencies array
+
+    
     const handleFriendClick = (friend: IUserData | null) => {
         let userId = Number(localStorage.getItem("UserId"))
         if (friend && friend.id !== userId) {
             setSelectedUser(friend);
             router.push('/SearchedUser');
-        } else if (friend && friend.id === userId){
+        } else if (friend && friend.id === userId) {
             router.push('/ProfilePage')
         }
     };
@@ -84,7 +82,7 @@ const FriendsComponent = ({searchedUser, isCurrentUser}: FriendsType) => {
                 <p className='text-center text-2xl font-poppinsMed text-lightbrown lg:pt-20'>No friends... <br /> {'(｡•́︿•̀｡)(╥﹏╥)'}</p>
             ) : (
                 friends.map(friend => (
-                    <div key={friend.id} onClick={() => {handleFriendClick(friend)}} className={pageSize ? "bg-white pt-[5px] mb-1 flex rounded-t-md cursor-pointer" : "flex justify-center pt-2 pb-2 text-center"}>
+                    <div key={friend.id} onClick={() => { handleFriendClick(friend) }} className={pageSize ? "bg-white pt-[5px] mb-1 flex rounded-t-md cursor-pointer" : "flex justify-center pt-2 pb-2 text-center"}>
                         {pageSize ? (
                             <div className='grid grid-cols-6 items-center lg:border-b-4 w-full lg:border-ivory pb-3'>
                                 <Avatar className='col-span-2 flex justify-end' img={friend.profilePic} rounded theme={customAvatar} size="md" />

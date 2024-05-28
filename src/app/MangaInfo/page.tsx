@@ -18,6 +18,20 @@ const MangaInfo = () => {
     const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
     const [completed, setCompleted] = useState<boolean>(false);
     const [isReading, setIsReading] = useState<boolean>(false);
+    const [pageSize, setPageSize] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setPageSize(window.innerWidth > 768);
+
+            const handleResize = () => {
+                setPageSize(window.innerWidth > 768);
+            };
+
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
+    }, [])
 
     useEffect(() => {
         const fetchMangaInfo = async () => {
@@ -132,18 +146,18 @@ const MangaInfo = () => {
         <div className='bg-offwhite min-h-screen'>
             <NavbarComponent />
             {manga && (
-                <div className='grid lg:grid-cols-7 lg:grid-rows-1 grid-rows-2 lg:ms-1 lg:px-16 '>
-                    <div className='lg:col-span-2 row-span-1 lg:flex lg:flex-col lg:justify-center w-full mt-20 lg:mt-0'>
-                        <div className='flex lg:justify-end xl:justify-center justify-center lg:pt-10 lg:px-0 pt-0 px-2'>
+                <div className={pageSize ? 'grid lg:grid-cols-7 lg:grid-rows-1 grid-rows-2 lg:ms-1 lg:px-16 ' : ''}>
+                    <div className={pageSize ? 'lg:col-span-2 row-span-1 lg:flex lg:flex-col lg:justify-center w-full mt-20 lg:mt-0' : ''}>
+                        <div className={pageSize ? 'flex lg:justify-end xl:justify-center justify-center lg:pt-10 lg:px-0 pt-0 px-2' : 'flex justify-center mt-5'}>
                             {fileName && <img className='rounded-lg max-h-[455px] max-w-[342px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
                         </div>
-                        <div className='flex lg:justify-end xl:justify-center justify-center items-center lg:pt-8 lg:mt-0 mt-10 flex-col w-full text xl:w-[300px] mx-auto '>
-                            <div className='flex justify-center lg:px-0 px-5'>
-                                <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 xl:px-12 px-8 font-mainFont lg:w-auto w-full' onClick={() => setFavBool(!favBool)} disabled={isReading && completed} >
-                                    <span className='text-xl lg:text-nowrap'>{(isReading || completed) ? "Favorited ✔" : "Favorite Manga +"}</span>
+                        <div className={pageSize ? 'flex lg:justify-end xl:justify-center justify-center items-center lg:pt-8 lg:mt-0 mt-10 flex-col w-full text xl:w-[300px] mx-auto ' : 'my-8'}>
+                            <div className={pageSize ? 'flex justify-center lg:px-0 px-5' : 'flex justify-center px-5'}>
+                                <Button className={pageSize ? 'bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont w-full ' : 'bg-darkblue enabled:hover:bg-darkerblue rounded-2xl focus:ring-0 font-mainFont w-80' } onClick={() => setFavBool(!favBool)} disabled={isReading && completed} >
+                                    <span className={(isReading || completed) ? 'text-xl lg:text-nowrap px-5' : 'text-xl lg:text-nowrap'}>{(isReading || completed) ? "Favorited ✔" : "Favorite Manga +"}</span>
                                 </Button>
                             </div>
-                            <div id='dropCont' className={`favdrop bg-ivory mx-auto lg:w-[94%] w-[70%] ${favBool ? "show" : ""}`}>
+                            <div id='dropCont' className={pageSize ? `favdrop bg-ivory mx-auto lg:w-[94%] md:w-[40%] ${favBool ? "show" : ""}` : `favdrop bg-ivory mx-auto md:w-[40%] w-[70%] ${favBool ? "show" : ""}`}>
                                 <div className='mt-1 ms-4'>
                                     <div className="flex my-2">
                                         <input
@@ -165,7 +179,7 @@ const MangaInfo = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='lg:col-span-5 row-span-1 flex flex-col lg:mt-10 lg:ml-5 lg:mr-10 lg:px-0 px-5 rounded-lg pb-5 lg:pb-0'>
+                    <div className={pageSize ? 'lg:col-span-5 row-span-1 flex flex-col lg:mt-10 lg:ml-5 lg:mr-10 lg:px-0 px-5 rounded-lg pb-5 lg:pb-0' : 'm-2'}>
                         <div className='bg-white border-darkbrown border-2 rounded-t-lg'>
                             <div className='p-5 inline-flex'>
                                 <p className='text-3xl text-darkbrown font-bold'>{manga.attributes.title.en}</p>

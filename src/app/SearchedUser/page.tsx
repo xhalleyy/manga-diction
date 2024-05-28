@@ -25,17 +25,13 @@ const SearchedUser = () => {
     const [clubs, setClubs] = useState<IClubs[]>([]);
     const [showClubs, setShowClubs] = useState<boolean>(true);
     const [friends, setFriends] = useState<IUserData[]>([]);
-    const [allFriends, setAllFriends] = useState<IUserData[]>([])
-    const [viewAll, setViewAll] = useState<boolean>(false);
     const [isFriend, setIsFriend] = useState<boolean>(false);
     const [requested, setRequested] = useState<boolean>(false);
     const [manga, setManga] = useState<IManga | null>(null); //null to handle intitial state
     const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
-    const [hideFriends, setHideFriends] = useState<boolean>(false);
     const userId = info.displayedUser;
-
 
     // Click a club, routes them to clubpage
     const handleClubCardClick = async (club: IClubs) => {
@@ -69,7 +65,53 @@ const SearchedUser = () => {
         }
     };
 
+    useEffect(() => {
+        const fetchData = async () => {
+            if (info.selectedUser) {
+                const userClubs = await fetchUserClubs(info.selectedUser.id);
+                console.log('User clubs:', userClubs);
+                setClubs(userClubs);
+            }
+        };
+        fetchData();
+    }, [info.selectedUser]);
+    
+    useEffect(() => {
+        const fetchMangaData = async () => {
+            if (info.selectedUser) {
+                let user = info.selectedUser.id
+                const completedManga = await getCompletedManga(user);
+                const allCompleted = await Promise.all(
+                    completedManga.map(async (manga: IFavManga) => {
+                        const mangaResponse = await specificManga(manga.mangaId);
+                        const mangaData: IManga = mangaResponse.data;
+                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
+                        return {
+                            manga: mangaData,
+                            coverArtUrl: coverArt
+                        };
+                    })
+                );
+                setCompleted(allCompleted);
 
+                const ongoingManga = await getInProgessManga(user);
+                const allOngoing = await Promise.all(
+                    ongoingManga.map(async (manga: IFavManga) => {
+                        const mangaResponse = await specificManga(manga.mangaId);
+                        const mangaData: IManga = mangaResponse.data;
+                        const coverArt = `https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${mangaData.id}/${mangaData.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`
+                        return {
+                            manga: mangaData,
+                            coverArtUrl: coverArt
+                        };
+                    })
+                );
+                setOngoing(allOngoing);
+            };
+        };
+        fetchMangaData();
+    }, [info.selectedUser]);
+    
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setPageSize(window.innerWidth > 768);
@@ -81,7 +123,7 @@ const SearchedUser = () => {
             window.addEventListener('resize', handleResize);
             return () => window.removeEventListener('resize', handleResize);
         }
-    }, [pageSize])
+    }, [])
 
     // Get Users' Info such as clubs 
     useEffect(() => {
@@ -186,34 +228,15 @@ const SearchedUser = () => {
         }
     }
 
-    // useEffect(() => {
-    //     const fetchFriendsData = async () => {
-    //         try {
-    //             const userId = info?.displayedUser;
-    //             if (userId) {
-    //                 const fetchFriends = await getAcceptedFriends(userId.id);
-    //                 console.log(fetchFriends);
-    //                 setFriends(fetchFriends);
-    //             }
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     };
-
-    //     fetchFriendsData();
-    // }, []);
-
     const viewAllFriends = async () => {
         if (!friendBool) {
             document.getElementById("mobileClubFav")?.classList.add("hidden");
             document.getElementById("mobileFriends")?.classList.remove("hidden");
             document.getElementById("hideMobileFriends")?.classList.add("hidden");
-            setHideFriends(false); // Set hideFriends state to false to show the mobile friends section
         } else {
             document.getElementById("mobileClubFav")?.classList.remove("hidden");
             document.getElementById("mobileFriends")?.classList.add("hidden");
             document.getElementById("hideMobileFriends")?.classList.remove("hidden");
-            setHideFriends(true); // Set hideFriends state to true to hide the mobile friends section
         }
     
         setFriendBool(!friendBool); // Toggle the friendBool state
@@ -272,7 +295,6 @@ const SearchedUser = () => {
                         };
                     })
                 );
-                console.log(allOngoing)
                 setOngoing(allOngoing);
             };
         }
@@ -417,7 +439,7 @@ const SearchedUser = () => {
                                 <div className={pageSize ? "hidden" : "contents font-mainFont"}>
                                     <div className='flex justify-between px-4'>
                                         <p className='text-xl font-bold'> Friends </p>
-                                        <button className='justify-end' onClick={() => viewAllFriends()}> View All </button>
+                                        <button className='justify-end' onClick={() => viewAllFriends()}> {!friendBool ? 'View All' : 'Back'} </button>
                                     </div>
 
                                     <div id='hideMobileFriends' className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
