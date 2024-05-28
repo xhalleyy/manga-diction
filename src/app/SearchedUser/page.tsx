@@ -139,7 +139,7 @@ const SearchedUser = () => {
                     const uniqueClubs = allClubs.filter(
                         (club, index, self) =>
                             index ===
-                            self.findIndex((t) => t.id === club.id)
+                            self.findIndex((t) => t.id === club.id && !t.isDeleted)
                     );
 
                     setClubs(prevClubs => {

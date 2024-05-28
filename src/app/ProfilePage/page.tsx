@@ -240,7 +240,7 @@ const ProfilePage = (props: any) => {
                         (club, index, self) =>
                             index ===
                             self.findIndex(
-                                (t) => t.id === club.id
+                                (t) => t.id === club.id && !t.isDeleted
                             )
                     );
 
