@@ -8,8 +8,9 @@ import { useClubContext } from '@/context/ClubContext';
 
 type CreatePostType = {
     setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>
+    setCreatePost: React.Dispatch<React.SetStateAction<boolean>>
 }
-const CreatePostComponent = ({ setPosts }: CreatePostType) => {
+const CreatePostComponent = ({ setPosts, setCreatePost }: CreatePostType) => {
 
     const info = useClubContext();
     const [value, setValue] = useState<any>([]);
@@ -25,18 +26,18 @@ const CreatePostComponent = ({ setPosts }: CreatePostType) => {
     const [title, setTitle] = useState<string>("");
     const [success, setSuccess] = useState<boolean | null>(null);
     const [image, setImage] = useState<string>("");
-    const [category, setCategory] = useState<string>("Category");
+    const [category, setCategory] = useState<string>("");
     const [tags, setTags] = useState<string>("");
     const [expandValue, setExpandValue] = useState<string>(""); // description
     const [dateCreated, setDateCreated] = useState<string>("");
     const [dateUpdated, setDateUpdated] = useState<string>("");
-    const [hasErrors, setErrors] = useState<boolean>(false);
+
     const resetValues = () => {
         setExpandValue("")
         setDateCreated("")
         setDateUpdated("")
         setTitle("")
-        setCategory("Category")
+        setCategory("")
         setTags("");
     }
     const customInput = {
@@ -58,16 +59,18 @@ const CreatePostComponent = ({ setPosts }: CreatePostType) => {
         const value = e.target.value.trim();
         setTitle(value);
         setSuccess(value !== '' && category !== '');
+        console.log(success)
     };
 
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = e.target.value;
-        if (selectedValue !== 'Category') {
+        if (selectedValue !== '') {
             setCategory(selectedValue);
         } else {
             setCategory('');
         }
-        setSuccess(title !== '' && selectedValue !== 'Category');
+        setSuccess(title !== '' && selectedValue !== '');
+        console.log(success)
     };
 
     const handleTagsChange = (tag: string) => {
@@ -86,7 +89,7 @@ const CreatePostComponent = ({ setPosts }: CreatePostType) => {
     const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
     const handleSubmit = async () => {
-        if (title !== '' && category !== '') {
+        if (success) {
             try {
                 let userId = Number(localStorage.getItem("UserId"));
                 const postData: IPostData = {
@@ -108,9 +111,10 @@ const CreatePostComponent = ({ setPosts }: CreatePostType) => {
                     resetValues();
                     const getPosts = await getRecentClubPosts(info.displayedClub!.id);
                     setPosts(getPosts);
+                    setCreatePost(false)
                 }
                 console.log(data);
-                setSuccess(true);
+                // setSuccess(true);
             } catch (error) {
                 console.log('An error occurred', error);
                 setSuccess(false);
