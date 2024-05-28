@@ -136,10 +136,13 @@
     font-family: poppinsMed;
     background-color: rgb(255, 255, 255, 0);
     border-bottom: 1px solid darkgray;
-    padding-left: 40px;
-    background-position: 10px 1px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding-left: 45px;
+    background-position: 6px 8px;
     background-image: url(../assets/grey\ pfp\ transparent.png);
-    background-size: contain;
+    background-size: calc(10%);
     background-repeat: no-repeat;
     width: 100%;
 }
@@ -148,10 +151,13 @@
     font-family: poppinsMed;
     background-color: rgb(255, 255, 255, 0);
     border-bottom: 1px solid darkgray;
-    padding-left: 40px;
-    background-position: 10px -1px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    padding-left: 45px;
+    background-position: 5px 1px;
     background-image: url(../assets/grey\ lock\ transparent.png);
-    background-size: contain;
+    background-size: calc(12%);
     background-repeat: no-repeat;
     width: 100%;
 }
