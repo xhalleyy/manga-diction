@@ -39,8 +39,8 @@ const config: Config = {
         'paleblue' : 'rgb(173, 196, 206)', //desaturated blue
         'darkerblue': 'rgba(12, 20, 37, 1)', //darker blue
         'brown' : 'rgba(180, 163, 138, 1)',
-        'mutedblue': 'rgba(150, 182, 197, 1)'
-
+        'mutedblue': 'rgba(150, 182, 197, 1)',
+        'mutedred' : 'rgb(255, 105, 97)'
       }
     }
   },

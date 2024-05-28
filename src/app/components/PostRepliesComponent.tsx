@@ -11,6 +11,7 @@ import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Image from 'next/image';
 import { Tooltip } from '@mui/material';
+import { File } from 'react-kawaii'
 
 
 const PostRepliesComponent = () => {
@@ -84,7 +85,7 @@ const PostRepliesComponent = () => {
                     topComments.map(async (comment: IComments) => {
                         const likes = await GetLikesByComment(comment.id);
                         // this checks if the current user has liked each comment 
-                        const isUserLiked = (likedByUsers:ILikedByUsers[], userId: number) => {
+                        const isUserLiked = (likedByUsers: ILikedByUsers[], userId: number) => {
                             for (let i = 0; i < likedByUsers.length; i++) {
                                 if (likedByUsers[i].userId === userId) {
                                     return true;
@@ -117,7 +118,7 @@ const PostRepliesComponent = () => {
                     repliesData.flatMap(({ replies }) =>
                         replies.map(async (reply: IComments) => {
                             const likes = await GetLikesByComment(reply.id);
-                            const isUserLiked = (likedByUsers:ILikedByUsers[], userId: number) => {
+                            const isUserLiked = (likedByUsers: ILikedByUsers[], userId: number) => {
                                 for (let i = 0; i < likedByUsers.length; i++) {
                                     if (likedByUsers[i].userId === userId) {
                                         return true;
@@ -264,8 +265,8 @@ const PostRepliesComponent = () => {
                         isDeleted={post.isDeleted}
                         displayClubName={false}
                         shouldSort={false}
-                        onSortCategory={() => {}}
-                        onSortTag={() => {}}
+                        onSortCategory={() => { }}
+                        onSortTag={() => { }}
                         fetchedPost={fetchedPost}
                         shouldEdit={true}
                     />
@@ -322,17 +323,22 @@ const PostRepliesComponent = () => {
                                         </Tooltip>
 
                                         <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
-                                            <Modal.Header />
-                                            <Modal.Body>
-                                                <div className="text-center">
-                                                    <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                                                        <div>
-                                                            Are you sure you want to delete this comment?
-                                                        </div>
+                                            <Modal.Header className='bg-offwhite rounded-t-xl p-5' />
+                                            <Modal.Body className='bg-offwhite rounded-b-xl'>
+                                                <div className="text-center bg-offwhite">
+                                                    <h3 className="bg-offwhite mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                                        <div className='grid grid-cols-3'>
+                                                            <div className='col-span-1'>
+                                                                <File size={100} mood="ko" color="#afdeee " />
+                                                            </div>
 
+                                                            <div className='font-mainFont col-span-2'>
+                                                                Are you sure you want to delete this comment?
+                                                            </div>
+                                                        </div>
                                                     </h3>
-                                                    <div className="flex justify-center gap-4">
-                                                        <Button color="failure" onClick={handleDeleteComment}>
+                                                    <div className="flex justify-end gap-8 bg-offwhite">
+                                                        <Button className='bg-mutedred enabled:hover:bg-red-800' onClick={handleDeleteComment}>
                                                             {"Yes, I'm sure"}
                                                         </Button>
                                                         <Button color="gray" onClick={() => setOpenModal(false)}>

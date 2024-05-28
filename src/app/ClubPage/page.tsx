@@ -18,7 +18,7 @@ import { Alert } from '@mui/material';
 import PostRepliesComponent from '../components/PostRepliesComponent';
 import { notFound, useRouter } from 'next/navigation';
 import SearchIcon from "@mui/icons-material/Search";
-import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
+import { File } from 'react-kawaii'
 import { checkToken } from '@/utils/token';
 import ScrollToTop from "react-scroll-to-top";
 
@@ -794,7 +794,7 @@ const ClubPage = () => {
               <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
               <div className='bg-white/80 border-8 border-ivory rounded-xl'>
                 <img
-                  src={displayedClub?.image || '/dummyImg2.jpg'}
+                  src={displayedClub?.image || '/dummyImg.jpg'}
                   alt='profile image'
                   className='object-fit w-full shadow-lg'
                 />
@@ -816,21 +816,35 @@ const ClubPage = () => {
             </div>
           </div>
 
-          <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
-            <Modal.Header />
-            <Modal.Body>
-              <div className="text-center">
-                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+          <Modal  show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
+            <Modal.Header className='bg-offwhite rounded-t-xl p-5'/>
+            <Modal.Body className='bg-offwhite rounded-b-xl'>
+              <div className="text-center bg-offwhite ">
+                <h3 className=" bg-offwhite text-lg font-normal text-gray-500 dark:text-gray-400">
                   {isLeader ?
-                    <div>
-                      Are you sure you want to delete <br /> {displayedClub?.clubName}?
+                    <div className='grid grid-cols-3'>
+                      <div className='col-span-1'>
+                        <File size={100} mood="ko" color="#afdeee " />
+                      </div>
+
+                      <div className='font-mainFont col-span-2'>
+                        Are you sure you want to delete <br /> {displayedClub?.clubName}?
+                      </div>
                     </div>
-                    : <div>
-                      Are you sure you want to leave <br /> {displayedClub?.clubName}?
+                    : 
+                    <div className='grid grid-cols-3'>
+                      <div className='col-span-1'>
+                        <File size={100} mood="ko" color="#afdeee " />
+                      </div>
+
+                      <div className='font-mainFont col-span-2'>
+                        Are you sure you want to leave <br /> {displayedClub?.clubName}?
+                      </div>
                     </div>}
+                    
                 </h3>
-                <div className="flex justify-center gap-4">
-                  <Button color="failure" onClick={handleLeave}>
+                <div className="flex justify-end gap-8 bg-offwhite">
+                  <Button className='bg-mutedred enabled:hover:bg-red-800' onClick={handleLeave}>
                     {"Yes, I'm sure"}
                   </Button>
                   <Button color="gray" onClick={() => setOpenModal(false)}>

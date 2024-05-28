@@ -14,6 +14,7 @@ import { ILikedByUsers, IPostData } from '@/Interfaces/Interfaces';
 import { Chips } from 'primereact/chips';
 import { useRouter } from 'next/navigation';
 import { Spinner } from "flowbite-react";
+import { File } from 'react-kawaii'
 
 
 interface PostsProps {
@@ -33,8 +34,8 @@ interface PostsProps {
     displayClubName: boolean
     shouldSort: boolean
     shouldEdit: boolean
-    onSortCategory: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, category: string) => void;
-    onSortTag: (event: React.MouseEvent<HTMLSpanElement>, clubId:number, tag: string) => void;
+    onSortCategory: (event: React.MouseEvent<HTMLSpanElement>, clubId: number, category: string) => void;
+    onSortTag: (event: React.MouseEvent<HTMLSpanElement>, clubId: number, tag: string) => void;
     fetchedPost: () => void
 }
 
@@ -134,7 +135,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
         const getPost = async () => {
             if (info.displayedUser?.id === userId) {
                 setYourPost(true);
-            }else {
+            } else {
                 setYourPost(false)
             }
         }
@@ -233,7 +234,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
 
             <div className={pageSize ? 'flex' : 'flex'}>
 
-                <div style={pageSize ? { width: '12%' } : {width: '30%'}} className='flex flex-col place-content-center mt-[-35px]'>
+                <div style={pageSize ? { width: '12%' } : { width: '30%' }} className='flex flex-col place-content-center mt-[-35px]'>
                     <Avatar img={image} rounded theme={customAvatar} size="md" />
                 </div>
 
@@ -253,7 +254,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                                     {
                                         setOpenModal(true)
                                     }
-                                    }} title='Delete Post' placement='right'>
+                                }} title='Delete Post' placement='right'>
                                     <DeleteIcon />
                                 </Tooltip>
                             </div>
@@ -261,17 +262,22 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                     </div>
 
                     <Modal show={openModal} size="lg" onClose={() => setOpenModal(false)} popup>
-                        <Modal.Header />
-                        <Modal.Body>
-                            <div className="text-center">
-                                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                                    <div>
-                                        Are you sure you want to delete this post?
-                                    </div>
+                        <Modal.Header className='bg-offwhite rounded-t-xl p-5'/>
+                        <Modal.Body className='bg-offwhite rounded-b-xl'>
+                            <div className="text-center bg-offwhite">
+                                <h3 className="bg-offwhite mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                                    <div className='grid grid-cols-3'>
+                                        <div className='col-span-1'>
+                                            <File size={100} mood="ko" color="#afdeee " />
+                                        </div>
 
+                                        <div className='font-mainFont col-span-2'>
+                                            Are you sure you want to delete this post?
+                                        </div>
+                                    </div>                                
                                 </h3>
-                                <div className="flex justify-center gap-4">
-                                    <Button color="failure" onClick={handleDeletePost}>
+                                <div className="flex justify-end gap-8 bg-offwhite">
+                                    <Button className='bg-mutedred enabled:hover:bg-red-800' onClick={handleDeletePost}>
                                         {"Yes, I'm sure"}
                                     </Button>
                                     <Button color="gray" onClick={() => setOpenModal(false)}>
@@ -338,9 +344,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
 
                             <div>
                                 <div className='inline-flex flex-wrap'>
-                                    <Badge onClick={(event) => shouldSort && onSortCategory(event, clubId, initialCategory)}  className='bg-darkblue rounded-lg text-white px-2 mr-1 my-1'>{initialCategory}</Badge>
+                                    <Badge onClick={(event) => shouldSort && onSortCategory(event, clubId, initialCategory)} className='bg-darkblue rounded-lg text-white px-2 mr-1 my-1'>{initialCategory}</Badge>
                                     {
-                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => shouldSort && onSortTag(event, clubId, tag)}  key={idx} className='bg-darkblue rounded-lg text-white me-1.5 my-1'>{tag}</Badge>)
+                                        initialTags && initialTags.map((tag, idx) => <Badge onClick={(event) => shouldSort && onSortTag(event, clubId, tag)} key={idx} className='bg-darkblue rounded-lg text-white me-1.5 my-1'>{tag}</Badge>)
                                     }
                                 </div>
 
