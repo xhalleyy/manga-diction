@@ -10,10 +10,11 @@ import { useClubContext } from '@/context/ClubContext';
 import { notFound, useRouter } from 'next/navigation';
 import MangaInfo from '../MangaInfo/page';
 import { checkToken } from '@/utils/token';
+import { Spinner } from 'flowbite-react';
 
 
 const SearchManga = () => {
-    const { title, demographics, publication, tags, mangaId, setMangaId, mangaInfo, setMangaInfo } = useClubContext();
+    const { title, demographics, publication, tags, mangaId, setMangaId, mangaInfo, setMangaInfo, isLoadingMangas } = useClubContext();
     // const [mangaList, setMangaList] = useState<IManga[]>([]);
     const [coverArtList, setCoverArtList] = useState<string[]>([]);
     // const tempID: string = '304ceac3-8cdb-4fe7-acf7-2b6ff7a60613';
@@ -71,7 +72,10 @@ const SearchManga = () => {
                             {/* search results, 5 per 'row' */}
                             {/* if no matches found, display 'hidden' h1 with a message similar to "Can't find what you're looking for? Double check your spelling" */}
                             {/* 1st result */}
-                            {
+                            {isLoadingMangas ?
+                                <div className='text-center col-span-5 flex justify-center items-center py-10 md:py-36'>
+                                    <Spinner aria-label="Large spinner example" size="lg" />
+                                </div> :
                                 mangaInfo.map((manga: IManga, index: number) => {
                                     //    console.log(`https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art")?.attributes.fileName}`)
                                     return (

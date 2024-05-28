@@ -35,7 +35,9 @@ type ClubContextType = {
     message: string,
     setMessage: React.Dispatch<React.SetStateAction<string>>
     privateModal: boolean,
-    setPrivateModal: React.Dispatch<React.SetStateAction<boolean>>
+    setPrivateModal: React.Dispatch<React.SetStateAction<boolean>>,
+    isLoadingMangas: boolean,
+    setIsLoadingMangas: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 export const ClubContext = createContext<ClubContextType>({} as ClubContextType);
@@ -61,9 +63,10 @@ export const AppWrapper = ({
     const [status, setStatus] = useState<IStatus>({} as IStatus)
     const [message, setMessage] = useState<string>("")
     const [privateModal, setPrivateModal] = useState<boolean>(false);
+    const [isLoadingMangas, setIsLoadingMangas] = useState<boolean>(true);
 
     return (
-        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, mangaId, setMangaId, selectedPostId, setSelectedPostId, selectedUser, setSelectedUser, mangaInfo, setMangaInfo, displayedPosts, setDisplayedPosts, status, setStatus, message, setMessage, privateModal, setPrivateModal}}>
+        <ClubContext.Provider value={{displayedClub, setDisplayedClub, searchClub, setSearchClub, displayedUser, setDisplayedUser, title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, mangaId, setMangaId, selectedPostId, setSelectedPostId, selectedUser, setSelectedUser, mangaInfo, setMangaInfo, displayedPosts, setDisplayedPosts, status, setStatus, message, setMessage, privateModal, setPrivateModal, isLoadingMangas, setIsLoadingMangas}}>
             {children}
         </ClubContext.Provider>
     )

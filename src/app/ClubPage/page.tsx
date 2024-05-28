@@ -5,7 +5,7 @@ import { NavbarComponent } from '../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
-import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs, Avatar } from 'flowbite-react';
+import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs, Avatar, Spinner } from 'flowbite-react';
 import PostsComponent from '../components/PostsComponent';
 import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByCategory, getPostsByClubId, getPostsByTags, getPostsbyComments, getPostsbyMostLiked, getStatusInClub, getUserInfo, getUsersByUsername } from '@/utils/DataServices';
 import { IPosts, IStatus, IUserData } from '@/Interfaces/Interfaces';
@@ -20,6 +20,7 @@ import { notFound, useRouter } from 'next/navigation';
 import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import { checkToken } from '@/utils/token';
+import ScrollToTop from "react-scroll-to-top";
 
 
 const ClubPage = () => {
@@ -34,6 +35,7 @@ const ClubPage = () => {
   const [isLeader, setIsLeader] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState(false);
   const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
+  
 
   // New state to track whether members section is visible
   const [membersVisible, setMembersVisible] = useState<boolean>(false);
@@ -47,6 +49,7 @@ const ClubPage = () => {
   const [addMember, setAddMember] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
+  const [isLoadingPost, setIsLoadingPost] = useState<boolean>(true);
 
   const router = useRouter();
 
@@ -176,7 +179,7 @@ const ClubPage = () => {
 
   useEffect(() => {
     // set Selected Post null so that all the posts show instead of the full posts
-    setSelectedPostId(null);
+    // setSelectedPostId(null);
     // responsiveness
     if (typeof window !== 'undefined') {
       setPageSize(window.innerWidth > 769);
@@ -216,6 +219,7 @@ const ClubPage = () => {
     }
 
     const fetchedData = async (clubId: number | undefined) => {
+      setIsLoadingPost(true)
       try {
         if (clubId !== undefined) {
           // POSTS
@@ -240,6 +244,8 @@ const ClubPage = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setIsLoadingPost(false)
       }
     };
 
@@ -264,7 +270,7 @@ const ClubPage = () => {
 
     // privateModal(displayedClub?.id);
     checkJoined(displayedClub?.id)
-  }, [displayedClub?.id])
+  }, [displayedClub?.id, displayedPosts])
 
 
   useEffect(() => {
@@ -524,11 +530,13 @@ const ClubPage = () => {
     }
   }
 
+
   return (
     <>
       <div className='min-h-screen bg-offwhite'>
 
         <NavbarComponent />
+        <ScrollToTop smooth className='!bg-paleblue !flex !justify-center !items-center !rounded-full !m-1' color='darkblue' width='32' />
 
         {/* modal for mature club? if(isMature == false) closemodal else showmodal, if(user.age < 18) description and redirect */}
         {adultModal && (
@@ -633,7 +641,7 @@ const ClubPage = () => {
           <div className={pageSize ? 'grid grid-cols-7 pt-3 gap-5 pb-5' : 'hidden'}>
             {!seeMembers ? <div className='col-span-5'>
               {((createPost && joined) || (createPost && isLeader)) && (
-                <CreatePostComponent setPosts={setPosts} />
+                <CreatePostComponent setPosts={setPosts} setCreatePost={setCreatePost} />
               )}
               <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                 {!selectedPostId && <div className='flex justify-end items-center'>
@@ -654,46 +662,48 @@ const ClubPage = () => {
 
 
                 <div className='opacity-90 pt-1 pb-3'>
-                  {selectedPostId ?
-                    ((isLeader || joined) ? (
+                  {selectedPostId ? (
+                    (isLeader || joined) ? (
                       <div>
                         <Button theme={customButton} gradientDuoTone="purpleToBlue" onClick={() => setSelectedPostId(null)}>Back</Button>
                         <PostRepliesComponent />
                       </div>
-                    ) : null)
-                    : (
-                      posts.length > 0 ? (
-                        posts.map((post, idx) => (
-                          <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handleClickPost(post.id)}>
-                            <PostsComponent
-                              id={post.id}
-                              userId={post.userId}
-                              username={usersMap.get(post.userId)?.username || ""}
-                              clubId={post.clubId}
-                              clubName={post.clubName || ""}
-                              title={post.title}
-                              category={post.category}
-                              tags={post.tags ? post.tags.split(',') : null}
-                              description={post.description}
-                              image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
-                              dateCreated={post.dateCreated}
-                              dateUpdated={post.dateUpdated}
-                              isDeleted={post.isDeleted}
-                              displayClubName={false}
-                              shouldSort={true}
-                              onSortCategory={handleSortCategory}
-                              onSortTag={handleSortTag}
-                              fetchedPost={() => { }}
-                              shouldEdit={false}
-                            // onClick = {() => handleClickPost(post.id)}
-                            />
-                          </div>
-                        ))
-                      ) : (
-                        <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts &#41;:</h1>
-                      )
-                    )}
+                    ) : null
+                  ) : isLoadingPost ? (
+                    <div className='text-center flex justify-center items-center py-10 md:py-36'>
+                      <Spinner aria-label="Large spinner example" size="lg" />
+                    </div>
+                  ) : posts.length > 0 ? (
+                    posts.map((post, idx) => (
+                      <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={() => handleClickPost(post.id)}>
+                        <PostsComponent
+                          id={post.id}
+                          userId={post.userId}
+                          username={usersMap.get(post.userId)?.username || ""}
+                          clubId={post.clubId}
+                          clubName={post.clubName || ""}
+                          title={post.title}
+                          category={post.category}
+                          tags={post.tags ? post.tags.split(',') : null}
+                          description={post.description}
+                          image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
+                          dateCreated={post.dateCreated}
+                          dateUpdated={post.dateUpdated}
+                          isDeleted={post.isDeleted}
+                          displayClubName={false}
+                          shouldSort={true}
+                          onSortCategory={handleSortCategory}
+                          onSortTag={handleSortTag}
+                          fetchedPost={() => { }}
+                          shouldEdit={false}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <h1 className="text-center py-10 font-poppinsMed text-2xl text-white">There are currently no posts &#41;:</h1>
+                  )}
                 </div>
+
 
 
 
@@ -701,7 +711,7 @@ const ClubPage = () => {
             </div>
               :
               <div className='col-span-5 overflow-hidden'>
-                <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl overflow-y-auto'>
+                <div className='bg-white px-10 py-2 mb-5 rounded-xl members border-ivory focus-within:rounded-xl overflow-y-auto customScroll'>
                   <h1 className='font-mainFont text-xl text-darkbrown py-1.5 flex gap-2 items-center'>All Members {isLeader && <AddIcon className='cursor-pointer' onClick={() => setAddMember(!addMember)} />}</h1>
                   {addMember ?
                     <>
@@ -839,7 +849,7 @@ const ClubPage = () => {
               <Tabs.Item className='tabsFont' title='Posts'>
                 <div className=''>
                   {((createPost && joined) || (createPost && isLeader)) && (
-                    <CreatePostComponent setPosts={setPosts} />
+                    <CreatePostComponent setPosts={setPosts} setCreatePost={setCreatePost} />
                   )}
 
                   <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>

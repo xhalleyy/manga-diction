@@ -11,7 +11,7 @@ import { Router } from 'next/router';
 import { notFound, useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
 // import FriendsDesktopComponent from '../components/FriendsComponent';
-import { Avatar, CustomFlowbiteTheme, Tabs } from 'flowbite-react';
+import { Avatar, CustomFlowbiteTheme, Spinner, Tabs } from 'flowbite-react';
 import CardComponent2 from '../components/CardComponent2';
 import CardProfPgComponent from '../components/CardProfPgComponent';
 import EditIcon from '@mui/icons-material/Edit';
@@ -28,6 +28,7 @@ const ProfilePage = (props: any) => {
     const { mangaId, setMangaId } = useClubContext();
     const [clubs, setClubs] = useState<IClubs[]>([]);
     const [pageSize, setPageSize] = useState<boolean>(false);
+    const [isLoadingClubs, setIsLoadingClubs] = useState<boolean>(true)
 
     const [showClubs, setShowClubs] = useState<boolean>(true);
     const [userData, setUserData] = useState<IUserData>();
@@ -227,6 +228,7 @@ const ProfilePage = (props: any) => {
     useEffect(() => {
         const fetchData = async () => {
             if (showClubs) {
+                setIsLoadingClubs(true)
                 try {
                     const userId = Number(localStorage.getItem("UserId"));
                     const userClubs = await fetchUserClubs(userId);
@@ -251,6 +253,8 @@ const ProfilePage = (props: any) => {
                     });
                 } catch (error) {
                     console.error('Error fetching clubs:', error);
+                } finally {
+                    setIsLoadingClubs(false)
                 }
             }
         };
@@ -384,7 +388,7 @@ const ProfilePage = (props: any) => {
                                         <AddIcon fontSize='large' className='addI' onClick={() => openFriendSearch()} />
                                     </div>
                                 </div>
-                                <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
+                                <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto customScroll">
                                     {/* displays 4 friends at a time ? */}
                                     <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} />
                                 </div>
@@ -398,7 +402,7 @@ const ProfilePage = (props: any) => {
                                 </div>
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
-                                    <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
+                                    <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto customScroll'>
                                         <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} />
                                     </div>
                                 </div>
@@ -588,24 +592,29 @@ const ProfilePage = (props: any) => {
 
                             <div className='mt-4'>
                                 <div className={showClubs ? clubox : noClubox}>
-                                    {clubs.length !== 0 ? clubs.map((club, idx) => (
-                                        <div key={idx} className='col-span-1 mx-2' onClick={() => handleClubCardClick(club)}>
-                                            <CardComponent
-                                                id={club.id}
-                                                leaderId={club.leaderId}
-                                                description={club.description}
-                                                dateCreated={club.dateCreated}
-                                                image={club.image}
-                                                isMature={club.isMature}
-                                                isPublic={club.isPublic}
-                                                clubName={club.clubName}
-                                                isDeleted={club.isDeleted}
-                                            />
+                                    {isLoadingClubs ?
+                                        <div className='text-center col-span-5 flex justify-center items-center py-10 md:py-24'>
+                                            <Spinner aria-label="Large spinner example" size="lg" />
                                         </div>
-                                    )) :
-                                        <div className='col-span-3'>
-                                            <h1 className='pt-20 text-center font-poppinsMed text-2xl text-darkbrown'>You are not in any clubs. <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
-                                        </div>
+                                        :
+                                        clubs.length !== 0 ? clubs.map((club, idx) => (
+                                            <div key={idx} className='col-span-1 mx-2' onClick={() => handleClubCardClick(club)}>
+                                                <CardComponent
+                                                    id={club.id}
+                                                    leaderId={club.leaderId}
+                                                    description={club.description}
+                                                    dateCreated={club.dateCreated}
+                                                    image={club.image}
+                                                    isMature={club.isMature}
+                                                    isPublic={club.isPublic}
+                                                    clubName={club.clubName}
+                                                    isDeleted={club.isDeleted}
+                                                />
+                                            </div>
+                                        )) :
+                                            <div className='col-span-3'>
+                                                <h1 className='pt-20 text-center font-poppinsMed text-2xl text-darkbrown'>You are not in any clubs. <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
+                                            </div>
                                     }
                                 </div>
 

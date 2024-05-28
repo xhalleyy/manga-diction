@@ -18,7 +18,7 @@ interface SearchMangaModalProps {
 // React.FC type to specify that the SearchMangaModalComponent is a functional component that accepts the props of type SearchMangaModalProps
 const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setOpen }) => {
 
-    const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, setMangaInfo, mangaInfo } = useClubContext();
+    const { title, setTitle, author, setAuthor, demographics, setDemographics, publication, setPublication, tags, setTags, setMangaInfo, mangaInfo, setIsLoadingMangas } = useClubContext();
     const [titleInput, setTitleInput] = useState<string>('');
     // const [authorInput, setAuthorInput] = useState<string>('');
     const [tagsInput, setTagsInput] = useState<string[]>([]);
@@ -29,6 +29,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
     const router = useRouter();
 
     const fetchManga = async () => {
+        setIsLoadingMangas(true);
         try {
             const searchInfo: IGetManga = {
                 name: titleInput,
@@ -42,6 +43,8 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
             setMangaInfo(searchedManga.data)
         } catch (error) {
             console.error('Error fetching data:', error);
+        }finally{
+            setIsLoadingMangas(false)
         }
     }
 
@@ -110,7 +113,7 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
           },
           "placement": "-4px"
         },
-        "base": "absolute z-10 inline-block rounded-lg px-3 py-2 text-sm font-medium shadow-sm w-96 h-32 overflow-y-auto",
+        "base": "absolute z-10 inline-block rounded-lg px-3 py-2 text-sm font-medium shadow-sm w-96 h-32 overflow-y-auto !customScroll",
         "hidden": "invisible opacity-0",
         "style": {
           "dark": "bg-gray-900 text-white dark:bg-gray-700",
@@ -147,10 +150,10 @@ const SearchMangaModalComponent: React.FC<SearchMangaModalProps> = ({ open, setO
                             </div>
                         </div>
                         <div className="py-2">
-                            <div className='flex'>
+                            <div className='flex items-center'>
                             <label className="font-mainFont text-lg">Tags</label>
                             <div className='relativeBox'>
-                            <Tooltip theme={customTooltip} content={"Available tags are: Oneshot, Thriller, Award Winning, Reincarnation, Sci-Fi, Time Travel, Genderswap, Loli, Traditional Games, Official Colored, Historical, Monster, Action, Demons, Psychological, Ghosts, Animals, Long Strip, Romance, Ninja, Comedy, Mecha, Anthology, Boys' Love, Incest, Crime, Survival, Zombies, Reverse Harem, Sports, Superhero, Martial Arts, Fan Colored, Samurai, Magical Girls, Mafia, Adventure, Self-Published, Virtual Reality, Office Workers, Video Games, Post Apocalyptic, Sexual Violence, Crossdressing, Magic, Girls' Love, Harem, Military, Wuxia, Isekai, 4-Koma, Doujinshi, Philosophical, Gore, Drama, Medical, School Life, Horror, Fantasy, Villainess, Vampires, Delinquents, Monster Girls, Shota, Police, Web Comic, Slice of Life, Aliens, Cooking, Supernatural, Mystery, Adaptation, Music, Full Color, Tragedy, Gyaru"} placement="right">
+                            <Tooltip theme={customTooltip} className='customScroll' content={"Available tags are: Oneshot, Thriller, Award Winning, Reincarnation, Sci-Fi, Time Travel, Genderswap, Loli, Traditional Games, Official Colored, Historical, Monster, Action, Demons, Psychological, Ghosts, Animals, Long Strip, Romance, Ninja, Comedy, Mecha, Anthology, Boys' Love, Incest, Crime, Survival, Zombies, Reverse Harem, Sports, Superhero, Martial Arts, Fan Colored, Samurai, Magical Girls, Mafia, Adventure, Self-Published, Virtual Reality, Office Workers, Video Games, Post Apocalyptic, Sexual Violence, Crossdressing, Magic, Girls' Love, Harem, Military, Wuxia, Isekai, 4-Koma, Doujinshi, Philosophical, Gore, Drama, Medical, School Life, Horror, Fantasy, Villainess, Vampires, Delinquents, Monster Girls, Shota, Police, Web Comic, Slice of Life, Aliens, Cooking, Supernatural, Mystery, Adaptation, Music, Full Color, Tragedy, Gyaru"} placement="right">
                             <InfoOutlinedIcon fontSize='small' className='ms-2 mb-1'/>
                             </Tooltip>
                         {/* <div className="tooltip">

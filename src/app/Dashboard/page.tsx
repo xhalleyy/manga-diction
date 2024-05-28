@@ -7,7 +7,7 @@ import ClubModalComponent from '../components/ClubModalComponent'
 import { CarouselComponent } from '../components/CarouselComponent'
 import ArrowCircleLeftTwoToneIcon from '@mui/icons-material/ArrowCircleLeftTwoTone';
 import ArrowCircleRightTwoToneIcon from '@mui/icons-material/ArrowCircleRightTwoTone';
-import { Badge, Button, Card } from "flowbite-react";
+import { Badge, Button, Card, Spinner } from "flowbite-react";
 import { getPostsByClubId, getRecentPosts, getUserInfo, specifiedClub } from '@/utils/DataServices'
 import { IClubs, IPosts, IUserData } from '@/Interfaces/Interfaces'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [pageSize, setPageSize] = useState<boolean>(true);
   const [usersMap, setUsersMap] = useState<Map<number, IUserData>>(new Map());
   const [clubsMap, setClubsMap] = useState<Map<number, IClubs>>(new Map());
+  const [isLoadingPost, setIsLoadingPost] = useState<boolean>(true);
   const router = useRouter();
   const { setDisplayedClub, setDisplayedPosts } = useClubContext();
 
@@ -31,11 +32,12 @@ const Dashboard = () => {
   useEffect(() => {
     let userId = Number(localStorage.getItem("UserId"))
     const fetchedData = async () => {
+      setIsLoadingPost(true);
       try {
         const recentPosts = await getRecentPosts(userId);
         const memberIds = recentPosts.map((post) => post.userId);
         const clubIds = recentPosts.map((post) => post.clubId);
-  
+
         // Fetch users' info
         const membersInfo = await Promise.all(
           memberIds.map(async (memberId) => {
@@ -44,7 +46,7 @@ const Dashboard = () => {
           })
         )
         const usersMap = new Map<number, IUserData>(membersInfo)
-  
+
         // Fetch clubs' info
         const clubsInfo = await Promise.all(
           clubIds.map(async (clubId) => specifiedClub(clubId))
@@ -57,6 +59,8 @@ const Dashboard = () => {
         setClubsMap(clubsMap);
       } catch (error) {
         console.log('User does not have any recent posts')
+      } finally {
+        setIsLoadingPost(false);
       }
     }
     fetchedData();
@@ -131,37 +135,44 @@ const Dashboard = () => {
             <div className='col-span-3'>
               <p style={pageSize ? { fontSize: '18px' } : { fontSize: '26px' }} className={pageSize ? 'font-mainFont mt-2 mb-3' : 'font-mainFont font-bold text-darkbrown text-center my-5'}>Recent Posts:</p>
               <div className='bg-paleblue px-5 py-3 rounded-lg'>
-                {posts.length === 0 ? (
-                  <div className='col-span-1 py-2'>
-                    <h1 className='py-32 text-center font-poppinsMed text-2xl text-darkbrown'>{"There are no posts in your clubs or you're not in any clubs!"} <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
-                  </div>
-                ) : (
-                  posts.map((post, idx) => (
-                    <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={handleClubClick(post.clubId)}>
-                      <PostsComponent
-                        id={post.id}
-                        userId={post.userId}
-                        username={usersMap.get(post.userId)?.username || "Unknown User"}
-                        clubId={clubsMap.get(post.clubId)!.id}
-                        clubName={clubsMap.get(post.clubId)?.clubName || "Unknown Club"}
-                        title={post.title}
-                        category={post.category}
-                        tags={post.tags ? post.tags.split(',') : null}
-                        description={post.description}
-                        image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
-                        dateCreated={post.dateCreated}
-                        dateUpdated={post.dateUpdated}
-                        isDeleted={post.isDeleted}
-                        displayClubName={true}
-                        shouldSort={false}
-                        onSortCategory={() => {}}
-                        onSortTag={() => {}}
-                        fetchedPost={() => {}}
-                        shouldEdit={false}
-                      />
+
+                {
+                  isLoadingPost ?
+                    <div className='h-[300px] text-center flex justify-center items-center'>
+                      <Spinner aria-label="Large spinner example" size="lg" />
                     </div>
-                  ))
-                )}
+                    :
+                    posts.length === 0 ? (
+                      <div className='col-span-1 py-2'>
+                        <h1 className='py-32 text-center font-poppinsMed text-2xl text-darkbrown'>{"There are no posts in your clubs or you're not in any clubs!"} <br /> <span onClick={() => router.push('/BrowseClubs')} className='cursor-pointer underline hover:italic hover:text-[#3D4C6B]'>Join some clubs!</span></h1>
+                      </div>
+                    ) : (
+                      posts.map((post, idx) => (
+                        <div key={idx} className='col-span-1 py-2 cursor-pointer' onClick={handleClubClick(post.clubId)}>
+                          <PostsComponent
+                            id={post.id}
+                            userId={post.userId}
+                            username={usersMap.get(post.userId)?.username || "Unknown User"}
+                            clubId={clubsMap.get(post.clubId)!.id}
+                            clubName={clubsMap.get(post.clubId)?.clubName || "Unknown Club"}
+                            title={post.title}
+                            category={post.category}
+                            tags={post.tags ? post.tags.split(',') : null}
+                            description={post.description}
+                            image={usersMap.get(post.userId)?.profilePic || "/noprofile.jpg"}
+                            dateCreated={post.dateCreated}
+                            dateUpdated={post.dateUpdated}
+                            isDeleted={post.isDeleted}
+                            displayClubName={true}
+                            shouldSort={false}
+                            onSortCategory={() => { }}
+                            onSortTag={() => { }}
+                            fetchedPost={() => { }}
+                            shouldEdit={false}
+                          />
+                        </div>
+                      ))
+                    )}
               </div>
             </div>
             <div className={pageSize ? 'col-span-1' : ''}>

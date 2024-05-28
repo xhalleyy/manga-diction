@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import { Category } from '@mui/icons-material';
-import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost, deletePosts, getPostsByCategory, getPostsByTags, updatePosts } from '@/utils/DataServices';
+import { AddLikeToPost, GetLikesByPost, RemoveLikeFromPost, deletePosts, getPostsByCategory, getPostsByClubId, getPostsByTags, updatePosts } from '@/utils/DataServices';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Tooltip } from '@mui/material';
@@ -13,6 +13,7 @@ import { useClubContext } from '@/context/ClubContext';
 import { ILikedByUsers, IPostData } from '@/Interfaces/Interfaces';
 import { Chips } from 'primereact/chips';
 import { useRouter } from 'next/navigation';
+import { Spinner } from "flowbite-react";
 
 
 interface PostsProps {
@@ -123,6 +124,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
     }
 
     const handleEdit = async (event: React.MouseEvent<HTMLDivElement>) => {
+        info.setSelectedPostId(id)
         if(shouldEdit){
             setIsEditing(!isEditing)
         }
@@ -212,7 +214,9 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                 dateUpdated,
                 isDeleted
             });
-            fetchedPost()
+            const clubPostsInfo = await getPostsByClubId(info.displayedClub?.id)
+            info.setDisplayedPosts(clubPostsInfo)
+            info.setSelectedPostId(null)
             setOpenModal(false)
         } catch (error) {
             console.log('error deleting club', error)
@@ -223,7 +227,6 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
 
     return (
         <div className={isEditing ? 'font-mainFont w-full bg-darkBlue rounded-lg' : 'font-mainFont w-full bg-white rounded-lg'}>
-
             <div className='ps-10 pt-2'>
                 {displayClubName && (<p className='text-[20px] font-poppinsMed'>{clubName}</p>)}
             </div>
@@ -245,6 +248,7 @@ const PostsComponent = ({ id, userId, username, clubId, clubName, title: initial
                                 </Tooltip>
 
                                 <Tooltip onClick={() => {
+                                    info.setSelectedPostId(id)
                                     if(shouldEdit)
                                     {
                                         setOpenModal(true)

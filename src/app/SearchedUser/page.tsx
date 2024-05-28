@@ -426,7 +426,7 @@ const SearchedUser = () => {
                                             <h3 className='text-2xl font-mainFont font-semibold'>Friends</h3>
                                         </div>
                                     </div>
-                                    <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
+                                    <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto customScroll">
                                         {/* displays 4 friends at a time ? */}
                                         <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
                                         {/* <FriendsComponent /> */}
@@ -443,7 +443,7 @@ const SearchedUser = () => {
                                     </div>
 
                                     <div id='hideMobileFriends' className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
-                                        <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
+                                        <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto customScroll'>
                                             <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
                                         </div>
                                     </div>
@@ -451,7 +451,7 @@ const SearchedUser = () => {
 
                                 {/* friends section (toggled with View All) */}
                                 <div className={pageSize ? 'hidden' : 'border-ivory rounded-lg bg-white border-8 hidden p-2'} id='mobileFriends'>
-                                <div className='grid grid-cols-2 overflow-y-auto'>
+                                <div className='grid grid-cols-2 overflow-y-auto customScroll'>
                                             <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
                                         </div>
                                   
