@@ -32,14 +32,17 @@ const FriendsComponent = ({searchedUser, isCurrentUser}: FriendsType) => {
     
     
     useEffect(() => {
+        console.log("FriendsComponent useEffect called"); // Log when the useEffect is called
         if (searchedUser !== undefined && searchedUser === selectedUser?.id) {
+            console.log("Fetching friends for selected user:", selectedUser?.id); // Log when fetching friends for selected user
             displayFriends(selectedUser?.id); 
-        }else{
+        } else {
             let userId = Number(localStorage.getItem("UserId"));
+            console.log("Fetching friends for logged-in user:", userId); // Log when fetching friends for logged-in user
             displayFriends(userId); 
-            
         }
-    }, [searchedUser]);
+    }, [searchedUser, selectedUser?.id]);
+    
 
     const handleFriendClick = (friend: IUserData | null) => {
         let userId = Number(localStorage.getItem("UserId"))

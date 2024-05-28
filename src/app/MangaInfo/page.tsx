@@ -1,42 +1,30 @@
 'use client'
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
-import { Badge, Button, Dropdown } from 'flowbite-react'
+import { Badge, Button } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext'
-import { addMangaFav, getCompletedManga, getInProgessManga, getLastChapter, removeFavManga, specificManga } from '@/utils/DataServices'
+import { addMangaFav, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
 import { IFavManga, IManga } from '@/Interfaces/Interfaces'
 import { notFound } from 'next/navigation'
 import { checkToken } from '@/utils/token'
 
-
 const MangaInfo = () => {
-
     const { mangaId } = useClubContext();
-    const [manga, setManga] = useState<IManga | null>(null); //null to handle intitial state
-    // const [authorName, setAuthorName] = useState<string>("");
+    const [manga, setManga] = useState<IManga | null>(null);
     const [fileName, setFileName] = useState<string | undefined>("");
-    // need to capitalize: Status and Demographic - manga possibly undefined, declare inside func
     const [favBool, setFavBool] = useState<boolean>(false);
     const [formattedStatus, setFormattedStatus] = useState<string>("");
     const [formattedDemographics, setFormattedDemographics] = useState<string>("");
     const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
-    const [fav, setFave] = useState<boolean>(false)
     const [completed, setCompleted] = useState<boolean>(false);
     const [isReading, setIsReading] = useState<boolean>(false);
 
-    const [completedChecked, setCompletedChecked] = useState<boolean>(false);
-    const [readingChecked, setReadingChecked] = useState<boolean>(false);
-    const [isChecked, setIsChecked] = useState<'completed' | 'ongoing' | ''>('');
-    const [lastChapter, setLastChapter] = useState<string | null>(null);
-
     useEffect(() => {
-
         const fetchMangaInfo = async () => {
             try {
                 const data = await specificManga(mangaId);
                 setManga(data.data);
                 findCoverArt(data.data);
-
             } catch (error) {
                 console.log('Error fetching data:', error);
             }
@@ -45,16 +33,15 @@ const MangaInfo = () => {
         fetchMangaInfo();
     }, [mangaId]);
 
-
     useEffect(() => {
         const checkIsFavManga = async () => {
             const user = Number(localStorage.getItem("UserId"));
-
             if (manga) {
-                // Check if the manga is favorited by the user
                 const completedManga = await getCompletedManga(user);
-                const inProgressManga = await getInProgessManga(user)
-                setIsFavManga(inProgressManga || completedManga);
+                const inProgressManga = await getInProgessManga(user);
+                const favoriteManga = [...completedManga, ...inProgressManga].find(favManga => favManga.mangaId === manga.id);
+                setIsFavManga(favoriteManga);
+                setFavBool(!!favoriteManga);
             }
         };
 
@@ -62,189 +49,79 @@ const MangaInfo = () => {
     }, [manga]);
 
     useEffect(() => {
-        // Set the initial state of isChecked based on whether the manga is favorited
         if (isFavManga) {
-            setCompletedChecked(isFavManga.completed);
-            setReadingChecked(!isFavManga.completed);
-            setIsChecked(isFavManga.completed ? 'completed' : 'ongoing');
-        } else {
-            setIsChecked('');
+            setCompleted(isFavManga.completed);
+            setIsReading(!isFavManga.completed);
         }
     }, [isFavManga]);
-
-    // useEffect(() => {
-    //     // Initialize checkbox states based on manga status
-    //     if (isFavManga) {
-    //         setCompletedChecked(isFavManga.completed);
-    //         setReadingChecked(!isFavManga.completed);
-    //     } else {
-    //         setCompletedChecked(false);
-    //         setReadingChecked(false);
-    //     }
-    // }, [isFavManga]);
-
-    // const fetchAuthor = async (authorId: string) => {
-    //     const aData = await getAuthorName(authorId);
-    //     // console.log(aData);
-    //     setAuthorName(aData.data.attributes.name);
-    //     console.log(aData.data.attributes.name);
-    // };
 
     const findCoverArt = (manga: IManga) => {
         const relationships = manga.relationships;
         const coverArt = relationships.find(rel => rel.type === "cover_art");
         if (coverArt) {
             setFileName(coverArt.attributes.fileName);
-        } else {
-            return undefined;
         }
-        // less complicated than making a separate function just to format and set 2 variables 
+
         const status = manga.attributes.status;
-        setFormattedStatus(status.charAt(0).toUpperCase() + status.slice(1))
+        setFormattedStatus(status.charAt(0).toUpperCase() + status.slice(1));
 
         const demographics = manga.attributes.publicationDemographic;
-        const formatDemo = demographics.charAt(0).toUpperCase() + demographics.slice(1)
-        setFormattedDemographics(formatDemo)
+        const formatDemo = demographics.charAt(0).toUpperCase() + demographics.slice(1);
+        setFormattedDemographics(formatDemo);
     };
-
-    const fetchLastChapter = async () => {
-        if (manga?.attributes?.lastChapter) {
-            setLastChapter(manga.attributes.lastChapter);
-        } else {
-            const chapterId = manga?.attributes?.latestUploadedChapter;
-            if (chapterId) {
-                const chapterInfo = await getLastChapter(chapterId);
-                setLastChapter(chapterInfo?.data?.attributes?.chapter || 'Unknown');
-            }
-        }
-    };
-
-    useEffect(() => {
-        fetchLastChapter();
-    }, [manga?.attributes.lastChapter, manga?.attributes.latestUploadedChapter]);
 
     const updateDT = () => {
         const dateTimeString = manga?.attributes.updatedAt;
-        // will return empty string if value is undefined
         if (!dateTimeString) return "";
         const dateTime = new Date(dateTimeString);
-
         const month = dateTime.toLocaleString('en-US', { month: 'long' });
         const day = dateTime.getDate();
         const year = dateTime.getFullYear();
-
-        // console.log(`${month} ${day}, ${year}`);
-
         return `${month} ${day}, ${year}`;
     };
 
     const trimDescription = (description: string) => {
         if (description) {
             const indexEnd = description.indexOf('---');
-            // if '---', trims description up to that index
             if (indexEnd !== -1) {
                 return description.substring(0, indexEnd).trim();
-            } else
+            } else {
                 return description;
+            }
         }
     };
 
-    const favBtnDisplay = () => {
-        if (favBool == false && isFavManga) {
-            setFavBool(true);
-            // include display block dropdown toggle
-            document.getElementById("dropCont")?.classList.add("show");
-        } else {
+    const handleFavoriteChange = async (newCompleted: boolean, isChecked: boolean) => {
+        let user = Number(localStorage.getItem("UserId"));
+        if (!isChecked && isFavManga) {
+            await removeFavManga(user, mangaId);
+            setIsFavManga(undefined);
             setFavBool(false);
-            document.getElementById("dropCont")?.classList.remove("show");
+            setCompleted(false);
+            setIsReading(false);
+            setFavBool(false);
+        } else if (isChecked && manga) {
+            const favMangaData: IFavManga = {
+                id: isFavManga ? isFavManga.id : 0,
+                userId: user,
+                mangaId: manga.id,
+                completed: newCompleted
+            };
+            await addMangaFav(favMangaData);
+            setIsFavManga(favMangaData);
+            setCompleted(newCompleted);
+            setIsReading(!newCompleted);
+            setFavBool(true);
+            // Do not set favBool to true here
         }
-
-        // Reset isChecked state when the button is clicked
-        setIsChecked('');
     };
 
-    const toggleCheck = (value: 'completed' | 'ongoing') => {
-        if (isChecked === value) {
-            setIsChecked('')
-            localStorage.removeItem('checkboxstate')
-        } else {
-            setIsChecked(value);
-            localStorage.setItem('checkboxstate', value)
-        }
-    }
-
-    useEffect(() => {
-        const savedState = localStorage.getItem('checkboxstate');
-        if (savedState) {
-            setIsChecked(savedState as 'completed' | 'ongoing');
-        } else {
-            setIsChecked('');
-        }
-
-    }, []);
-
-    const handleCompleted = async (manga: IManga) => {
-        let user = Number(localStorage.getItem("UserId"));
-
-        try {
-            if (!completed && manga) {
-                const favMangaData: IFavManga = {
-                    id: isFavManga ? isFavManga.id : 0,
-                    userId: user,
-                    mangaId: manga.id,
-                    completed: true
-                };
-
-                await addMangaFav(favMangaData);
-                setIsFavManga(favMangaData);
-                setIsChecked('completed');
-            } else if (completed && isFavManga && isFavManga !== undefined) {
-                await removeFavManga(user, mangaId);
-                setIsFavManga(undefined);
-                setIsChecked('');
-            }
-
-            setCompletedChecked(true);
-            setReadingChecked(false);
-        } catch (error) {
-            console.error('Error updating manga status!', error);
-        }
-
-        setCompleted(!completed);
-        setIsReading(false);
-        setFave(!fav);
+    const handleCompletedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleFavoriteChange(true, e.target.checked);
     };
 
-    const handleOngoing = async (manga: IManga) => {
-        let user = Number(localStorage.getItem("UserId"));
-
-        try {
-            if (!isReading && manga) {
-                const favMangaData: IFavManga = {
-                    id: isFavManga ? isFavManga.id : 0,
-                    userId: user,
-                    mangaId: manga.id,
-                    completed: false
-                };
-
-                await addMangaFav(favMangaData);
-                setIsFavManga(favMangaData);
-                setIsChecked('ongoing');
-            } else if (isReading && isFavManga) {
-                await removeFavManga(user, mangaId);
-                setIsFavManga(undefined);
-                setIsChecked('');
-            }
-
-            setCompletedChecked(false);
-            setReadingChecked(true);
-        } catch (error) {
-            console.error('Error updating manga status!', error);
-        }
-
-        setCompleted(false);
-        setIsReading(!isReading);
-        setFave(!fav);
+    const handleOngoingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleFavoriteChange(false, e.target.checked);
     };
 
     if (!checkToken()) {
@@ -252,120 +129,79 @@ const MangaInfo = () => {
     }
 
     return (
-        <>
-            <div className='bg-offwhite  min-h-screen'>
-
-                <NavbarComponent />
-
-                {manga && (
-                    // all variables rendering dependent on successful fetch
-
-                    <div className='grid lg:grid-cols-7 lg:grid-rows-1 grid-rows-2 lg:ms-1 lg:px-16 '>
-                        <div className='lg:col-span-2 row-span-1 lg:flex lg:flex-col lg:justify-center w-full mt-20 lg:mt-0'>
-                            <div className='flex lg:justify-end xl:justify-center justify-center lg:pt-10 lg:px-0 pt-0 px-2'>
-
-                                {fileName && <img className='rounded-lg max-h-[455px] max-w-[342px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
-                            </div>
-
-                            <div className='flex lg:justify-end xl:justify-center justify-center items-center lg:pt-8 lg:mt-0 mt-10 flex-col w-full text xl:w-[300px] mx-auto '>
-                                {/* favorites button */}
-                                <div className='flex justify-center lg:px-0 px-5'>
-                                    <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 xl:px-12 px-8 font-mainFont lg:w-auto w-full' onClick={favBtnDisplay}>
-                                        <span className='text-xl lg:text-nowrap'>{isFavManga && fav ? "Favorited ✔" : "Favorite Manga +"}</span>
-                                    </Button>
-                                </div>
-                                <div id='dropCont' className={"favdrop bg-ivory mx-auto lg:w-[94%] w-[70%]"}>
-                                    {/* will fix formatting */}
-                                    <div className='mt-1 ms-4'>
-
-                                        <div className="flex my-2">
-                                            <input
-                                                onClick={() => handleOngoing(manga)}
-                                                checked={isChecked === 'ongoing'}
-                                                onChange={() => toggleCheck('ongoing')}
-                                                type='checkbox'
-                                                className='me-2 mt-1' />
-                                            <p>Currently Reading</p>
-                                        </div>
-
-                                        <div className="flex my-2">
-                                            <input
-                                                onClick={() => handleCompleted(manga)}
-                                                checked={isChecked === 'completed'}
-                                                onChange={() => toggleCheck('completed')}
-                                                type='checkbox'
-                                                className='me-2 mt-1' />
-                                            <p>Completed</p>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
+        <div className='bg-offwhite min-h-screen'>
+            <NavbarComponent />
+            {manga && (
+                <div className='grid lg:grid-cols-7 lg:grid-rows-1 grid-rows-2 lg:ms-1 lg:px-16 '>
+                    <div className='lg:col-span-2 row-span-1 lg:flex lg:flex-col lg:justify-center w-full mt-20 lg:mt-0'>
+                        <div className='flex lg:justify-end xl:justify-center justify-center lg:pt-10 lg:px-0 pt-0 px-2'>
+                            {fileName && <img className='rounded-lg max-h-[455px] max-w-[342px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
                         </div>
-
-
-                        <div className='lg:col-span-5 row-span-1 flex flex-col lg:mt-10 lg:ml-5 lg:mr-10 lg:px-0 px-5 rounded-lg pb-5 lg:pb-0'>
-                            {/* manga name, tags, sypnosis */}
-                            <div className='bg-white border-darkbrown border-2 rounded-t-lg'>
-                                <div className='p-5 inline-flex'>
-                                    {/* title */}
-                                    <p className='text-3xl text-darkbrown font-bold'>{manga.attributes.title.en}</p>
-                                    <div className='p-2'>
-                                        {/* publication status */}
-                                        <Badge className='bg-darkblue rounded-xl text-white px-2 mr-1 font-mainFont'>{formattedStatus}</Badge>
+                        <div className='flex lg:justify-end xl:justify-center justify-center items-center lg:pt-8 lg:mt-0 mt-10 flex-col w-full text xl:w-[300px] mx-auto '>
+                            <div className='flex justify-center lg:px-0 px-5'>
+                                <Button className='bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 xl:px-12 px-8 font-mainFont lg:w-auto w-full' onClick={() => setFavBool(!favBool)} disabled={isReading && completed} >
+                                    <span className='text-xl lg:text-nowrap'>{(isReading || completed) ? "Favorited ✔" : "Favorite Manga +"}</span>
+                                </Button>
+                            </div>
+                            <div id='dropCont' className={`favdrop bg-ivory mx-auto lg:w-[94%] w-[70%] ${favBool ? "show" : ""}`}>
+                                <div className='mt-1 ms-4'>
+                                    <div className="flex my-2">
+                                        <input
+                                            onChange={handleOngoingChange}
+                                            checked={isReading}
+                                            type='checkbox'
+                                            className='me-2 mt-1' />
+                                        <p>Currently Reading</p>
+                                    </div>
+                                    <div className="flex my-2">
+                                        <input
+                                            onChange={handleCompletedChange}
+                                            checked={completed}
+                                            type='checkbox'
+                                            className='me-2 mt-1' />
+                                        <p>Completed</p>
                                     </div>
                                 </div>
-
-                                <div className='px-5'>
-                                    <div className='inline-flex flex-wrap'>
-                                        {/* all applicable tags, .map */}
-                                        {manga.attributes.tags.map((tag: any, index: number) => (
-                                            <Badge key={index} className='bg-ivory font-normal rounded-md font-mainFont text-black text-sm px-3 py-1 mr-1 truncate my-1'>{tag.attributes.name.en}</Badge>
-                                        ))}
-
-                                    </div>
-
-                                </div>
-
-                                <div className='p-5'>
-                                    <span className="font-mainFont">{trimDescription(manga.attributes.description.en)}</span>
-
-                                </div>
                             </div>
-
-                            {/* manga author, demographic, chapters, last updated */}
-                            {/* https://uploads.mangadex.org/covers/${manga.id}/${manga.relationships.find(rel => rel.type === "cover_art" */}
-                            <div className='bg-ivory leading-loose text-darkbrown border-2 border-t-0 border-darkbrown rounded-b-lg font-mainFont p-5'>
-                                <p className='font-bold'> Author:
-                                    <span className='font-normal'> {manga.relationships.find(rel => rel.type === "author")?.attributes.name}</span>
-                                </p>
-
-                                <p className='font-bold'> Demographics:
-                                    <span className='font-normal'> {manga.attributes.publicationDemographic ? formattedDemographics : 'N/A'}</span>
-                                </p>
-
-                                <p className='font-bold'> {'Chapters: '}
-                                <span className='font-normal'>{lastChapter ?? 'N/A'}</span>
-                                </p>
-
-                                <p className='font-bold'> Last Updated:
-                                    <span className='font-normal'> {updateDT()}</span>
-                                </p>
-                            </div>
-
-
                         </div>
-
                     </div>
-
-                )}
-
-
-            </div>
-        </>
+                    <div className='lg:col-span-5 row-span-1 flex flex-col lg:mt-10 lg:ml-5 lg:mr-10 lg:px-0 px-5 rounded-lg pb-5 lg:pb-0'>
+                        <div className='bg-white border-darkbrown border-2 rounded-t-lg'>
+                            <div className='p-5 inline-flex'>
+                                <p className='text-3xl text-darkbrown font-bold'>{manga.attributes.title.en}</p>
+                                <div className='p-2'>
+                                    <Badge className='bg-darkblue rounded-xl text-white px-2 mr-1 font-mainFont'>{formattedStatus}</Badge>
+                                </div>
+                            </div>
+                            <div className='px-5'>
+                                <div className='inline-flex flex-wrap'>
+                                    {manga.attributes.tags.map((tag: any, index: number) => (
+                                        <Badge key={index} className='bg-ivory font-normal rounded-md font-mainFont text-black text-sm px-3 py-1 mr-1 truncate my-1'>{tag.attributes.name.en}</Badge>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className='p-5'>
+                                <span className="font-mainFont">{trimDescription(manga.attributes.description.en)}</span>
+                            </div>
+                        </div>
+                        <div className='bg-ivory leading-loose text-darkbrown border-2 border-t-0 border-darkbrown rounded-b-lg font-mainFont p-5'>
+                            <p className='font-bold'> Author:
+                                <span className='font-normal'> {manga.relationships.find(rel => rel.type === "author")?.attributes.name}</span>
+                            </p>
+                            <p className='font-bold'> Demographics:
+                                <span className='font-normal'> {manga.attributes.publicationDemographic ? formattedDemographics : 'N/A'}</span>
+                            </p>
+                            <p className='font-bold'> Chapters:
+                                <span className='font-normal'> {manga.attributes.lastChapter}</span>
+                            </p>
+                            <p className='font-bold'> Last Updated:
+                                <span className='font-normal'> {updateDT()}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     )
 }
 

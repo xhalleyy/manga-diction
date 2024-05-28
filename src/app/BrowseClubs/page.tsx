@@ -192,40 +192,33 @@ const BrowseClubs = () => {
         <div className={pageSize ? "grid grid-cols-3 gap-0 pt-5 px-16 items-center pb-4" : "grid grid-cols-1"}>
 
           {/* search bar hidden on lg, visible on mobile */}
-          <div className={pageSize ? "hidden" : " pt-6 grid grid-flow-row px-1"}>
-            <div className={pageSize ? "hidden" : " px-3 relative flex"}>
-              <TextInput
-                ref={inputRef}
-                id="base"
-                style={{
-                  borderRightWidth: "50px",
-                  borderColor: "rgba(207, 198, 183, 1)",
-                  height: 30,
-                  width: '317px'
-                }}
-                type="text"
-                placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
-                onKeyDown={handleKeyPress}
-                className="border-ivory font-mainFont border-8 rounded-2xl focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
-              />
+          <div className={pageSize ? "hidden" : "pt-6 grid grid-flow-row px-1"}>
+            <div className={pageSize ? "hidden" : "px-3 relative flex items-center flex-wrap"}>
+              <div className="relative md:max-w-96 sm:w-auto flex-grow md:ml-36">
+                <TextInput
+                  ref={inputRef}
+                  id="base"
+                  style={{
+                    borderColor: "rgba(207, 198, 183, 1)",
+                    height: 30,
+                    paddingRight: '10px',
+                    borderRightWidth: '50px'  // Adjust padding to make space for the button
+                  }}
+                  type="text"
+                  placeholder="°❀⋆.ೃ࿔*:･ Search a Club! ৻(  •̀ ᗜ •́  ৻)"
+                  onKeyDown={handleKeyPress}
+                  className="border-ivory text-center font-mainFont border-8 rounded-2xl focus:border-none hover:bg-transparent focus:ring-0 focus:outline-none focus:border-0"
+                />
 
-
-              <div style={{ marginLeft: '270px' }} className="absolute -inset-y-1">
-                <Button
-                  style={{ backgroundColor: "transparent" }}
-                  className="bg-transparent focus:ring-0"
-                  onClick={handleClick}
-                >
-                  <SearchIcon className="text-4xl text-white" />
-                </Button>{" "}
+                <SearchIcon style={{ backgroundColor: "transparent", position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)' }} onClick={handleClick} className="text-4xl text-white" />
+              </div>
+              <div className="mt-2 sm:mt-0 sm:ml-2 w-full sm:w-auto flex-shrink-0">
+                <ClubModalComponent />
               </div>
             </div>
-
-            <div className={pageSize ? "hidden" : "flex justify-center mt-5"}>
-              <ClubModalComponent />
-            </div>
-
           </div>
+
+
 
           <div>
             <p className={pageSize ? "text-3xl text-darkbrown font-poppinsSemi" : "text-center py-5 text-2xl text-darkbrown font-bold"}>Popular Clubs </p>
