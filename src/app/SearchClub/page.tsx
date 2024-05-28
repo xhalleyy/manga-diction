@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavbarComponent } from "../components/NavbarComponent";
 import SearchIcon from "@mui/icons-material/Search";
 import { notFound, useRouter } from "next/navigation";
-import { getClubsByName, getRecentClubPosts, specifiedClub } from "@/utils/DataServices";
+import { getClubsByName, getRecentClubPosts, getStatusInClub, specifiedClub } from "@/utils/DataServices";
 import { IClubs } from "@/Interfaces/Interfaces";
 import { useClubContext } from "@/context/ClubContext";
 import CardComponent from "../components/CardComponent";
@@ -16,7 +16,7 @@ import { checkToken } from "@/utils/token";
 const SearchClub = () => {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { searchClub, setSearchClub, setDisplayedClub, setDisplayedPosts } = useClubContext();
+  const { searchClub, setSearchClub, setDisplayedClub, displayedClub, setDisplayedPosts, setStatus, setMessage, setPrivateModal } = useClubContext();
   const [fetchedClubs, setFetchedClubs] = useState<any>(null);
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [pageSize, setPageSize] = useState<boolean>(true);
@@ -66,12 +66,31 @@ const SearchClub = () => {
 
   const handleClubCardClick = async (club: IClubs) => {
     try {
+      const userId = Number(localStorage.getItem("UserId"))
       const clubDisplayedInfo = await specifiedClub(club.id);
       const postInfo = await getRecentClubPosts(club.id)
       setDisplayedClub(clubDisplayedInfo);
       setDisplayedPosts(postInfo)
+      if(clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId){
+        const statusInfo = await getStatusInClub(club.id, userId);
+        setStatus(statusInfo)
+        if(statusInfo.status === 1){
+          setPrivateModal(false);
+        } else if(statusInfo.status === 0) {
+          setPrivateModal(true)
+          setMessage('You have already requested to join');
+        } else if (statusInfo.status === 2) {
+          setPrivateModal(true)
+          setMessage('Unfortunately, you have been denied to join.')
+        }else {
+          setPrivateModal(true)
+          setMessage('You are not able to view this private club.')
+        }
+      }else{
+        setPrivateModal(false)
+      }
     } catch (error) {
-      alert("Error fetching club information");
+      // alert("Error fetching club information");
       console.error(error);
     }
   };

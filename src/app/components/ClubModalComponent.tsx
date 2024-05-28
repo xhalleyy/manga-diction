@@ -21,7 +21,7 @@ function ClubModalComponent() {
     const [clubName, setClubName] = useState<string>("");
     const [clubDescription, setClubDescription] = useState<string>("");
     const [clubImg, setClubImg] = useState<any>("");
-    const [privateClub, setPrivateClub] = useState<boolean>(false);
+    const [publicClub, setPublicClub] = useState<boolean>(true);
     const [matureClub, setMatureClub] = useState<boolean>(false);
     const [userAge, setUserAge] = useState<number>(0);
     const [isOld, setIsOld] = useState<boolean>(false);
@@ -46,29 +46,12 @@ function ClubModalComponent() {
     useEffect(() => {
         isMinor();
     }, [])
-    // useEffect(()=> {
-    //     const fetchClubs = async () => {
-    //         try {
-    //             const userLoggedIn = loggedInData();
-
-    //             if(userLoggedIn && userLoggedIn.leaderId){
-    //                 const clubs = await getClubItemsByLeaderId(userLoggedIn.leaderId);
-    //                 setClubItems(prevClubItems => [...prevClubItems, clubs]);
-
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching club data!')
-    //         }
-    //     }
-
-    //     fetchClubs();
-    // }, [])
 
     const privateSettingOn = () => {
-        setPrivateClub(true)
+        setPublicClub(false)
     }
     const publicSettingOn = () => {
-        setPrivateClub(false)
+        setPublicClub(true)
     }
 
     const matureSettingOn = () => {
@@ -140,7 +123,7 @@ function ClubModalComponent() {
             dateCreated: formattedDate,
             image: clubImg,
             isMature: matureClub,
-            isPublic: privateClub,
+            isPublic: publicClub,
             isDeleted: false,
             
         };
@@ -231,7 +214,7 @@ function ClubModalComponent() {
                                     <option value="public" className="font-mainFont" onClick={publicSettingOn}>Public</option>
                                     <option value="priv" onClick={privateSettingOn}>Private</option>
                                 </select>
-                                {/* <Dropdown label={!privateClub ? "Public" : "Private"} style={{color: "black"}} dismissOnClick={false}>
+                                {/* <Dropdown label={!publicClub ? "Public" : "Private"} style={{color: "black"}} dismissOnClick={false}>
                                 <Dropdown.Item onClick={publicSettingOn}>Public</Dropdown.Item>
                                 <Dropdown.Item onClick={privateSettingOn}>Private</Dropdown.Item>
                             </Dropdown> */}
