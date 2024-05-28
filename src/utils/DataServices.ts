@@ -372,6 +372,39 @@ export const getUserInfo = async (userId: number | undefined) => {
     return data;
 }
 
+export const getUserInfoForClubs = async (userId: number | undefined): Promise<IUserData | null> => {
+    if (!userId) {
+      console.error('User ID is undefined');
+      return null;
+    }
+  
+    try {
+      const response = await fetch(url + 'User/GetUser/' + userId);
+  
+      if (!response.ok) {
+        console.error(`Error fetching user info: ${response.status} ${response.statusText}`);
+        return null;
+      }
+  
+      const text = await response.text(); // Read the raw response as text
+      if (!text) {
+        console.error(`Empty response for user ID ${userId}`);
+        return null;
+      }
+  
+      try {
+        const data: IUserData = JSON.parse(text); // Parse the JSON from the response text
+        return data;
+      } catch (jsonError) {
+        console.error(`Error parsing JSON for user ID ${userId}:`, jsonError);
+        return null;
+      }
+    } catch (error) {
+      console.error(`Error fetching user info for user ID ${userId}:`, error);
+      return null;
+    }
+  };
+
 // UPDATE USER INFO
 export const updateUser = async (user: IUpdateUser) => {
     const res = await fetch(`${url}User/UpdateUser/`, {

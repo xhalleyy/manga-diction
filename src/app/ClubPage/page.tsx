@@ -60,13 +60,25 @@ const ClubPage = () => {
 
       setLeader(leaderInfo);
 
-      const promises = memberIds.map((userId: number) => getUserInfo(userId));
+      const promises = memberIds.map(async (userId: number) => {
+        try {
+          const userInfo = await getUserInfo(userId);
+          return userInfo;
+        } catch (error) {
+          console.error('Error fetching user info for', userId, ':', error);
+          throw error;
+        }
+      });
       const usersInfo = await Promise.all(promises);
-      setMembers(usersInfo);
+      // Filter out undefined values from usersInfo
+      const filteredUsersInfo = usersInfo.filter((userInfo) => userInfo !== undefined);
+      setMembers(filteredUsersInfo);
     } catch (error) {
       console.error('Error fetching club data:', error);
     }
   };
+
+
 
   const handleJoinBtn = async () => {
     try {
@@ -246,7 +258,7 @@ const ClubPage = () => {
       }
     }
 
-    if((displayedClub?.isPublic === false && isLeader) || (displayedClub?.isPublic === false && joined)){
+    if ((displayedClub?.isPublic === false && isLeader) || (displayedClub?.isPublic === false && joined)) {
       setPrivateModal(false)
     }
 
@@ -833,11 +845,12 @@ const ClubPage = () => {
                   <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                     <div className='flex justify-end items-center'>
                       <Dropdown theme={customDropdown} color="lightblue" className='!bg-paleblue' label="Sort Posts" dismissOnClick={false}>
-                        <Dropdown.Item>Popular</Dropdown.Item>
-                        <Dropdown.Item>Newest</Dropdown.Item>
-                        <Dropdown.Item>Oldest</Dropdown.Item>
-                        <Dropdown.Item>Recently Updated</Dropdown.Item>
-                        <Dropdown.Item>Least Recently Updated</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortingPost("Newest")}>Newest</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortingPost("Oldest")}>Oldest</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortingPost("Mostlikes")}>Most Likes</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortingPost("Mostcomments")}>Most Comments</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortingPost("Recently Updated")}>Recently Updated</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleSortingPost("Least Recently Updated")}>Least Recently Updated</Dropdown.Item>
                       </Dropdown>
                     </div>
                     <div className='opacity-90 py-3'>

@@ -1,16 +1,19 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
-import { getUserInfo, updateUser } from '@/utils/DataServices'
+import { updateUser } from '@/utils/DataServices'
 import { IUserData } from '@/Interfaces/Interfaces'
 import Image from 'next/image'
-import { Button, Label, TextInput } from 'flowbite-react'
+import { Button, CustomFlowbiteTheme, Label, TextInput } from 'flowbite-react'
 import { AlertTitle } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import { notFound, useRouter } from 'next/navigation'
 import { useClubContext } from '@/context/ClubContext'
 import { Planet } from 'react-kawaii'
 import { checkToken } from '@/utils/token'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import { Tooltip } from '@mui/material';
 
 
 const EditSettings = () => {
@@ -20,21 +23,18 @@ const EditSettings = () => {
     const [profilePic, setProfilePic] = useState<string | null>(null);
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [success, setSuccess] = useState<boolean | undefined>(undefined);
+    const [failed, setFailed] = useState<boolean | undefined>(undefined);
+
     const [newPass, setNewPass] = useState<string | null>(null);
     const [currentPass, setCurrentPass] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<boolean | undefined>(false);
-    // useEffect(() => {
-    //     let userId = Number(localStorage.getItem("UserId"));
-    //     const fetchedUser = async () => {
-    //         const user = await getUserInfo(userId);
-    //         setDisplayedUser(user);
-    //     };
 
-    //     if (success) {
-    //         fetchedUser();
-    //     }
-
-    // }, [success, setDisplayedUser]);
+    const [username, setUsername] = useState<string| null>()
+    const [firstName, setFirstName] = useState<string| null>()
+    const [lastName, setLastName] = useState<string| null>()
+    const [age, setAge] = useState<number | null>(null)
+    const [currVisibility, setCurrVisibility] = useState<boolean>(false);
+    const [newVisibility, setNewVisibility] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -61,6 +61,9 @@ const EditSettings = () => {
                     ...prevUser!,
                     username: value
                 }));
+                setUsername(value)
+            }else{
+                setUsername(null)
             }
         }
     };
@@ -73,6 +76,9 @@ const EditSettings = () => {
                     ...prevUserData!,
                     firstName: value
                 }))
+                setFirstName(value)
+            }else {
+                setFirstName(null)
             }
         }
     };
@@ -85,6 +91,9 @@ const EditSettings = () => {
                     ...prevUserData!,
                     lastName: value
                 }))
+                setLastName(value)
+            }else {
+                setLastName(null)
             }
         }
     };
@@ -92,11 +101,14 @@ const EditSettings = () => {
     const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         if (displayedUser) {
-            if (value.trim() !== '') {
+            if(value !== '' && /^\d*\.?\d+$/.test(value) && Number(value)){
+                setAge(Number(value));
                 setDisplayedUser((prevUserData: IUserData | null) => ({
                     ...prevUserData!,
                     age: Number(value)
                 }))
+            }else{
+                setAge(null)
             }
         }
     }
@@ -121,16 +133,16 @@ const EditSettings = () => {
                 reader.onload = () => {
                     const imageData = reader.result as string;
                     setProfilePic(imageData);
-                    console.log("New profile picture data:", imageData);
+                    // console.log("New profile picture data:", imageData);
                 };
                 reader.readAsDataURL(file); // Read file as base64-encoded string
             }
         }
     };
 
-    useEffect(() => {
-        console.log("Profile Picture Updated:", profilePic);
-    }, [profilePic]);
+    // useEffect(() => {
+    // console.log("Profile Picture Updated:", profilePic);
+    // }, [profilePic]);
 
     const updateUserInfo = async () => {
         try {
@@ -162,22 +174,31 @@ const EditSettings = () => {
             };
 
             // console.log('Updated user data:', updatedUser);
-
-            const response = await updateUser(updatedUser);
-            console.log(response);
-
-            if (response) {
-                setSuccess(true);
-                setCurrentPass(null); // Reset current password field
-                setNewPass(null); // Reset new password field
-                setPasswordError(false)
+            if(username || firstName || lastName || age || (currentPass && newPass)){
+                const response = await updateUser(updatedUser);
+                console.log(response);
+    
+                if (response) {
+                    setSuccess(true);
+                    setCurrentPass(null); // Reset current password field
+                    setNewPass(null); // Reset new password field
+                    setPasswordError(false)
+                    setTimeout(() => {
+                        setSuccess(undefined);
+                        setFailed(false)
+                    }, 5000);
+                } else {
+                    console.error('Failed to update user.');
+                    setSuccess(false);
+                    setFailed(true)
+                }
+            }else{
+                setFailed(true)
+                setSuccess(false);
                 setTimeout(() => {
+                    setFailed(false)
                     setSuccess(undefined);
                 }, 5000);
-            } else {
-                console.error('Failed to update user.');
-                setSuccess(false);
-
             }
         } catch (error) {
             console.error('Failed to update:', error);
@@ -192,8 +213,8 @@ const EditSettings = () => {
     if (!checkToken()) {
         notFound();
     }
-    
-    const customInput = {
+
+    const customInput: CustomFlowbiteTheme["textInput"] = {
         "field": {
             "input": {
                 "sizes": {
@@ -205,22 +226,29 @@ const EditSettings = () => {
 
     return (
         <>
-            <div className='bg-offwhite  min-h-screen'>
+            <div className='bg-offwhite  min-h-screen relative'>
 
                 <NavbarComponent />
 
                 <div className={pageSize ? 'mx-40 py-8' : 'pt-5 mx-5'}>
-                    <div className="w-full relative flex justify-end items-end -mt-[px]">
+                    <div className="w-full absolute flex justify-end items-end -mt-[px] right-40">
                         {success && (
-                            <div className="w-72">
-                                <Alert className='rounded-xl bg-paleblue' icon={<Planet size={30} mood="happy" color="#FCCB7E" />} severity="success">
+                            <div className="w-72 rounded-xl">
+                                <Alert className='rounded-xl bg-paleblue flex items-center' icon={<Planet size={30} mood="happy" color="#FCCB7E" />} severity="success">
                                     User settings successfully updated!
+                                </Alert>
+                            </div>
+                        )}
+                        {failed && (
+                            <div className="w-72 rounded-xl">
+                                <Alert className='rounded-xl bg-rose-200 flex items-center font-mainFont text-lg' icon={<Image src={'/fail.png'} width={30} height={30} alt='Failed to update'/>} severity="error">
+                                    Fields were empty!
                                 </Alert>
                             </div>
                         )}
                     </div>
 
-                    <h1 className={pageSize ? 'text-darkbrown font-mainFont text-4xl ps-4 pb-2' : 'text-center text-darkbrown font-mainFont text-4xl py-5'}>Account Settings</h1>
+                    <h1 className={pageSize ? 'text-darkbrown font-mainFont text-4xl pt-10 ps-4 pb-2' : 'text-center text-darkbrown font-mainFont text-4xl py-5'}>Account Settings</h1>
                     <div className={pageSize ? 'bg-paleblue p-8 rounded-xl grid lg:grid-cols-2' : 'bg-paleblue p-8 rounded-xl grid grid-cols-1'}>
                         <div className='col-span-1 flex justify-center items-center '>
                             <div className='flex flex-col items-center'>
@@ -236,7 +264,7 @@ const EditSettings = () => {
 
                                 <div className={pageSize ? 'flex flex-col justify-center items-center gap-2 py-2 mt-4' : "grid grid-cols-1"}>
                                     <div className={pageSize ? "flex" : "col-span-1 text-center"}>
-                                        <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right' />
+                                        <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-poppinsMed flex-shrink-0 w-32 text-right' />
                                     </div>
                                     <input
                                         className={pageSize ? "flex xl:w-72 lg:w-52 w-72 rounded-xl bg-white" : "mt-3 col-span-1 flex justify-center"}
@@ -249,7 +277,7 @@ const EditSettings = () => {
                                 </div>
                                 <div className={pageSize ? 'flex flex-col justify-center w-full items-center gap-2 py-2' : "flex justify-center items-center my-3"}>
                                     {/* <Label htmlFor="base" value="Age:" className='text-lg font-mainFont flex-shrink-0 text-right pr-2' /> */}
-                                    <TextInput onChange={handleAgeChange} theme={customInput} placeholder='Age' id="base" type="number" sizing="post" className='w-1/3 text-center flex justify-center items-center' />
+                                    <TextInput onKeyDown={(evt) => ["e", "E", "+", "-", ".", "0"].includes(evt.key) && evt.preventDefault()} onChange={handleAgeChange} theme={customInput} placeholder='Age' type="number" sizing="post" className='w-1/3 text-center flex justify-center items-center' />
                                 </div>
 
                             </div>
@@ -258,41 +286,63 @@ const EditSettings = () => {
                         <div className='col-span-1 xl:col-span-1 flex-col justify-center items-center gap-3'>
                             <div className='flex flex-col gap-4 py-4'>
                                 <div className='flex items-center gap-2 py-2'>
-                                    <Label htmlFor="base" value="Username:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
-                                    <TextInput onChange={handleUsernameChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
+                                    <Label htmlFor="base" value="Username:" className='text-lg font-poppinsMed flex-shrink-0 w-32 text-right pr-2' />
+                                    <TextInput onChange={handleUsernameChange} theme={customInput} type="text" sizing="post" className='w-1/2' />
                                 </div>
                                 <div className='flex items-center gap-2 py-2'>
-                                    <Label htmlFor="base" value="First Name:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
-                                    <TextInput onChange={handleFirstNameChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
+                                    <Label htmlFor="base" value="First Name:" className='text-lg font-poppinsMed flex-shrink-0 w-32 text-right pr-2' />
+                                    <TextInput onChange={handleFirstNameChange} theme={customInput} type="text" sizing="post" className='w-1/2' />
                                 </div>
                                 <div className='flex items-center gap-2 py-2'>
-                                    <Label htmlFor="base" value="Last Name:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
-                                    <TextInput onChange={handleLastNameChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
+                                    <Label htmlFor="base" value="Last Name:" className='text-lg font-poppinsMed flex-shrink-0 w-32 text-right pr-2' />
+                                    <TextInput onChange={handleLastNameChange} theme={customInput} type="text" sizing="post" className='w-1/2' />
                                 </div>
-
-                                {/* <div className={pageSize ? 'flex items-center gap-2 py-2' : "grid grid-cols-1"}>
-                                    <div className={pageSize ? "flex" : "col-span-1 text-center"}>
-                                        <Label htmlFor="picture" value="Profile Picture:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right' />
-                                    </div>
-                                    <input
-                                        className={pageSize ? "flex" : "mt-3 col-span-1 flex justify-center"}
-                                        id="picture"
-                                        name="picture"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handlePicChange}
-                                    />
-                                </div> */}
                                 {passwordError ?
                                     <p className='text-red-900'>Current password incorrect. Cannot change password.</p>
                                     : null}
                                 <div className='flex items-center gap-2 py-2'>
-                                    <Label htmlFor="base" value="Current Password:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
-                                    <TextInput required onChange={handleCurrentPasswordChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
+                                    <Label htmlFor="base" value="Current Password:" className='text-lg font-poppinsMed flex-shrink-0 w-32 text-right pr-2' />
+                                    <div className='w-1/2 relative' >
+                                        {currVisibility ?
+                                            <>
+                                                <TextInput required onChange={handleCurrentPasswordChange} theme={customInput} type="text" sizing="post" className='w-[100%]' />
+                                                <Tooltip onClick={() => {setCurrVisibility(!currVisibility)}} title='Hide Password' placement='top'>
+                                                    <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2" />
+                                                </Tooltip>
+                                            </>
+                                            :
+                                            <>
+                                                <TextInput required onChange={handleCurrentPasswordChange} theme={customInput} type="password" sizing="post" className='w-[100%]' />
+                                                <Tooltip onClick={() => {setCurrVisibility(!currVisibility)}} title='Show Password' placement='top'>
+                                                    <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2" />
+                                                </Tooltip>
+                                            </>
+
+                                        }
+
+                                    </div>
                                 </div>
                                 <div className='flex items-center gap-2 py-2'>
-                                    <Label htmlFor="base" value="NewPassword:" className='text-lg font-mainFont flex-shrink-0 w-32 text-right pr-2' />
-                                    <TextInput onChange={handleNewPasswordChange} theme={customInput} id="base" type="text" sizing="post" className='w-1/2' />
+                                    <Label htmlFor="base" value="New Password:" className='text-lg font-poppinsMed flex-shrink-0 w-32 text-right pr-2' />
+                                    <div className='w-1/2 relative' >
+                                        {newVisibility ?
+                                            <>
+                                                <TextInput required onChange={handleNewPasswordChange} theme={customInput} type="text" sizing="post" className='w-[100%]' />
+                                                <Tooltip onClick={() => {setNewVisibility(!newVisibility)}} title='Hide Password' placement='top'>
+                                                    <VisibilityOffIcon fontSize="medium" className="me-1 absolute right-3 bottom-2" />
+                                                </Tooltip>
+                                            </>
+                                            :
+                                            <>
+                                                <TextInput required onChange={handleNewPasswordChange} theme={customInput} type="password" sizing="post" className='w-[100%]' />
+                                                <Tooltip onClick={() => {setNewVisibility(!newVisibility)}} title='Show Password' placement='top'>
+                                                    <RemoveRedEyeIcon fontSize="medium" className="me-1 absolute right-3 bottom-2" />
+                                                </Tooltip>
+                                            </>
+
+                                        }
+
+                                    </div>
                                 </div>
                             </div>
 
