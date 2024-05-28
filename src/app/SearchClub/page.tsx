@@ -194,6 +194,7 @@ const SearchClub = () => {
                   description={club.description}
                   dateCreated={club.dateCreated}
                   image={club.image}
+                  isMature={club.isMature}
                   isPublic={club.isPublic}
                   clubName={club.clubName}
                   isDeleted={club.isDeleted}
