@@ -455,6 +455,7 @@ const ProfilePage = (props: any) => {
                                                             leaderId={club.leaderId}
                                                             description={club.description}
                                                             dateCreated={club.dateCreated}
+                                                            isMature={club.isMature}
                                                             image={club.image}
                                                             isPublic={club.isPublic}
                                                             clubName={club.clubName}
