@@ -36,34 +36,32 @@ const SearchedUser = () => {
     // Click a club, routes them to clubpage
     const handleClubCardClick = async (club: IClubs) => {
         try {
-            const userId = info.displayedUser!.id;
-            const clubDisplayedInfo = await specifiedClub(club.id);
-            const postInfo = await getRecentClubPosts(club.id)
-            info.setDisplayedClub(clubDisplayedInfo);
-            info.setDisplayedPosts(postInfo)
-            if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
-                const statusInfo = await getStatusInClub(club.id, userId);
-                info.setStatus(statusInfo)
-                if (statusInfo.status === 1) {
-                    info.setPrivateModal(false);
-                } else if (statusInfo.status === 0) {
-                    info.setPrivateModal(true)
-                    info.setMessage('You have already requested to join');
-                } else if (statusInfo.status === 2) {
-                    info.setPrivateModal(true)
-                    info.setMessage('Unfortunately, you have been denied to join.')
-                } else {
-                    info.setPrivateModal(true)
-                    info.setMessage('You are not able to view this private club.')
-                }
-            } else {
-                info.setPrivateModal(false)
+          const userId = Number(localStorage.getItem("UserId"))
+          const clubDisplayedInfo = await specifiedClub(club.id);
+          const postInfo = await getRecentClubPosts(club.id)
+          info.setDisplayedClub(clubDisplayedInfo);
+          info.setDisplayedPosts(postInfo)
+          if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
+            console.log(club.id, userId)
+            const statusInfo = await getStatusInClub(club.id, userId);
+              info.setStatus(statusInfo)
+              if (statusInfo.status === 1) {
+                info.setPrivateModal(false);
+              } else if (statusInfo.status === 0) {
+                info.setPrivateModal(true)
+                info.setMessage('You have already requested to join');
+              } else if (statusInfo.status === 2) {
+                info.setPrivateModal(true)
+                info.setMessage('Unfortunately, you have been denied to join.')
+              } else {
+                info.setPrivateModal(true)
+                info.setMessage('You are not able to view this private club.')
+              }
             }
         } catch (error) {
-            alert("Error fetching club information");
-            console.error(error);
+    
         }
-    };
+      };
 
     useEffect(() => {
         const fetchData = async () => {

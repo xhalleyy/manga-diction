@@ -44,24 +44,23 @@ export function CarouselComponent(props: any) {
       const postInfo = await getRecentClubPosts(club.id)
       clubData.setDisplayedClub(clubDisplayedInfo);
       clubData.setDisplayedPosts(postInfo)
-      if(clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId){
+      if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
+        console.log(club.id, userId)
         const statusInfo = await getStatusInClub(club.id, userId);
-        clubData.setStatus(statusInfo)
-        if(statusInfo.status === 1){
-          clubData.setPrivateModal(false);
-        } else if(statusInfo.status === 0) {
-          clubData.setPrivateModal(true)
-          clubData.setMessage('You have already requested to join');
-        } else if (statusInfo.status === 2) {
-          clubData.setPrivateModal(true)
-          clubData.setMessage('Unfortunately, you have been denied to join.')
-        }else {
-          clubData.setPrivateModal(true)
-          clubData.setMessage('You are not able to view this private club.')
+          clubData.setStatus(statusInfo)
+          if (statusInfo.status === 1) {
+            clubData.setPrivateModal(false);
+          } else if (statusInfo.status === 0) {
+            clubData.setPrivateModal(true)
+            clubData.setMessage('You have already requested to join');
+          } else if (statusInfo.status === 2) {
+            clubData.setPrivateModal(true)
+            clubData.setMessage('Unfortunately, you have been denied to join.')
+          } else {
+            clubData.setPrivateModal(true)
+            clubData.setMessage('You are not able to view this private club.')
+          }
         }
-      }else{
-        clubData.setPrivateModal(false)
-      }
     } catch (error) {
 
     }
@@ -119,7 +118,7 @@ export function CarouselComponent(props: any) {
         swipeable
       >
         {clubs.filter(club => club.isDeleted == false).slice(0, 8).map((club, idx) => (
-          <div key={idx} className='col-span-1 mx-2' onClick={() =>handleClubCardClick(club)}>
+          <div key={idx} className='col-span-1 mx-2' onClick={() => handleClubCardClick(club)}>
             <CardComponent
               id={club.id}
               leaderId={club.leaderId}

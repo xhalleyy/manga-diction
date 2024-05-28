@@ -71,27 +71,25 @@ const SearchClub = () => {
       const postInfo = await getRecentClubPosts(club.id)
       setDisplayedClub(clubDisplayedInfo);
       setDisplayedPosts(postInfo)
-      if(clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId){
+      if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
+        console.log(club.id, userId)
         const statusInfo = await getStatusInClub(club.id, userId);
-        setStatus(statusInfo)
-        if(statusInfo.status === 1){
-          setPrivateModal(false);
-        } else if(statusInfo.status === 0) {
-          setPrivateModal(true)
-          setMessage('You have already requested to join');
-        } else if (statusInfo.status === 2) {
-          setPrivateModal(true)
-          setMessage('Unfortunately, you have been denied to join.')
-        }else {
-          setPrivateModal(true)
-          setMessage('You are not able to view this private club.')
+          setStatus(statusInfo)
+          if (statusInfo.status === 1) {
+            setPrivateModal(false);
+          } else if (statusInfo.status === 0) {
+            setPrivateModal(true)
+            setMessage('You have already requested to join');
+          } else if (statusInfo.status === 2) {
+            setPrivateModal(true)
+            setMessage('Unfortunately, you have been denied to join.')
+          } else {
+            setPrivateModal(true)
+            setMessage('You are not able to view this private club.')
+          }
         }
-      }else{
-        setPrivateModal(false)
-      }
     } catch (error) {
-      // alert("Error fetching club information");
-      console.error(error);
+
     }
   };
 

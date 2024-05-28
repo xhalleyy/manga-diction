@@ -467,7 +467,7 @@ export const AddUserToClub = async (userId: number | undefined, clubId: number |
 
 export const getStatusInClub = async(clubId: number | undefined, userId: number) => {
     const promise = await fetch(`${url}Member/GetUserStatusInClub/${clubId}/${userId}`);
-    const data: IStatus = await promise.json()
+    let data: IStatus = await promise.json()
     return data;
 }
 
