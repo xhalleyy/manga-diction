@@ -542,11 +542,11 @@ const ClubPage = () => {
         {adultModal && (
           <Modal show={adultModal} size="xl" onClose={() => setAdultModal(false)} popup>
             <Modal.Body className='bg-offwhite rounded-lg'>
-            <div className="text-center pt-10 pb-6 bg-offwhite">
-                  <div className='flex justify-center py-5'>
-                    <Browser size={130} mood="ko" color="#E0E4E8" />                  
-                  </div>                
-                  <h2 className='text-xl pb-2'>You are not old enough to view this club</h2>
+              <div className="text-center pt-10 pb-6 bg-offwhite">
+                <div className='flex justify-center py-5'>
+                  <Browser size={130} mood="ko" color="#E0E4E8" />
+                </div>
+                <h2 className='text-xl pb-2'>You are not old enough to view this club</h2>
                 <div className='flex justify-center pt-10'>
                   <button className='bg-darkerblue text-white px-4 py-2 rounded-xl' onClick={goBackToClubs}>
                     Browse other clubs
@@ -562,12 +562,12 @@ const ClubPage = () => {
             {/* <Modal.Header /> */}
             <Modal.Body className='bg-offwhite rounded-xl flex justify-center'>
               <div className="text-center pt-10 pb-6 bg-offwhite">
-                  <div className='flex justify-center py-5'>
-                    <Browser size={130} mood="ko" color="#E0E4E8" />                  
-                  </div>
-                  <h3 className="mb-5 col-span-2 text-lg font-normal text-black dark:text-gray-400">
-                    {message}
-                  </h3>
+                <div className='flex justify-center py-5'>
+                  <Browser size={130} mood="ko" color="#E0E4E8" />
+                </div>
+                <h3 className="mb-5 col-span-2 text-lg font-normal text-black dark:text-gray-400">
+                  {message}
+                </h3>
 
                 <div className="flex justify-center gap-6">
                   <Button color="gray" onClick={goBackToClubs}>
@@ -967,25 +967,53 @@ const ClubPage = () => {
                     <p className='p-2.5 font-poppinsMed  text-darkbrown text-lg'>{displayedClub?.description}</p>
                   </div>
 
-                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> {addMember ? 'Invite Members' : 'Members'}</p>
-                  {addMember ? 
-                  <div className='px-5 flex justify-center p-8 bg-white/80 rounded-lg'>
-                    <div className='items-center rounded-xl'>
-                    <div className='col-span-3 xl:col-span-2 2xl:col-span-1 w-[285px] darkBeige px-2 py-0.5 rounded-2xl flex items-center 2xl:ms-[-100px] justify-end '>
-                          <input
-                            className='rounded-xl h-7 ps-3'
-                            onChange={(e) => setSearch(e.target.value)}
-                          />
-                          <SearchIcon className='text-4xl text-white cursor-pointer flex float-right' onClick={searchUser} />
+                  <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> {addMember ? 'Invite Members:' : 'Members:'}</p>
+
+                  {addMember ?
+                    <>
+                      <div className='px-5 p-8 bg-white/80 rounded-lg'>
+
+                        <div className='items-center rounded-xl ml-5'>
+                          <div className='col-span-3 xl:col-span-2 2xl:col-span-1 w-[285px] darkBeige px-2 py-0.5 rounded-2xl flex items-center 2xl:ms-[-100px] justify-end my-2'>
+                            <input
+                              className='rounded-xl h-7 ps-3'
+                              onChange={(e) => setSearch(e.target.value)}
+                            />
+                            <SearchIcon className='text-4xl text-white cursor-pointer flex float-right' onClick={searchUser} />
+                          </div>
+
+                          <div className=''>
+                            <p className='ml-5 text-lg font-poppinsMed text-darkbrown'>{`Search Results for '${search}'`}</p>
+                          </div>
                         </div>
-                        <div className=''>
-                          <p className=' text-lg font-poppinsMed text-darkbrown'>{`Search Results for '${search}'`}</p>
+
+                        <div className='grid grid-cols-2'>
+                          {searchedUsers?.length === 0 ? <div className="text-center mt-5 col-span-5">
+                            <p className="text-center text-darkbrown pt-20 text-xl font-poppinsMed">No users found. Are they already in this club?</p>
+                          </div> : searchedUsers?.map(user => (
+                            <div key={user.id}>
+                              <div className="ms-auto mt-5 flex flex-col items-center justify-center place-content-center cursor-pointer">
+                                <Avatar onClick={() => { handleUserClick(user) }}
+                                  img={user.profilePic || ''}
+                                  rounded
+                                  theme={customAvatar}
+                                  size="lg"
+                                />
+                                <div className='text-center mt-2'>
+                                  <p className='text-lg font font-poppinsMed'>{user.username}</p>
+                                  <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
+                                  <button onClick={() => handleLeaderAdds(user.id)} className='bg-darkbrown hover:bg-green-300 text-white hover:text-black font-mainFont px-2 my-1.5 rounded-xl text-[15px] flex gap-1 items-center'>
+                                    <AddIcon sx={pageSize ? { fontSize: 20, color: grey[50] } : { fontSize: 15, color: grey[50] }} />
+                                    Member</button>
+                                </div>
+                              </div>
+
+                            </div>
+                          ))}
                         </div>
-                        
                       </div>
-                    </div>
+                    </>
                     :
-                    
                     (!membersVisible) && (
                       <div className='grid grid-cols-3 px-8 justify-center p-8 bg-white/80 rounded-lg'>
                         <div className="col-span-1 flex flex-col justify-center items-center">
@@ -1011,8 +1039,6 @@ const ClubPage = () => {
                         )}
                       </div>
                     )}
-                    
-                  
                 </div>
 
               </Tabs.Item>
