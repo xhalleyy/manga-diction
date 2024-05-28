@@ -32,7 +32,7 @@ const SearchedUser = () => {
     const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
-    const userId = Number(localStorage.getItem("UserId"))
+    // const userId = Number(localStorage.getItem("UserId"))
 
 
     // Click a club, routes them to clubpage
@@ -384,7 +384,7 @@ const SearchedUser = () => {
                                     </div>
                                     <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                         {/* displays 4 friends at a time ? */}
-                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.selectedUser?.id} />
+                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.selectedUser?.id} />
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
@@ -400,7 +400,7 @@ const SearchedUser = () => {
 
                                     <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                         <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
-                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.selectedUser?.id} />
+                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.selectedUser?.id} />
                                         </div>
                                     </div>
                                 </div>
@@ -410,7 +410,7 @@ const SearchedUser = () => {
                                     {viewAll ?
                                         allFriends.map((friend) => {
                                             return (
-                                                <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} key={friend.id} searchedUser={info.selectedUser?.id} />)
+                                                <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} key={friend.id} searchedUser={info.selectedUser?.id} />)
                                         })
                                         :
                                         <div>

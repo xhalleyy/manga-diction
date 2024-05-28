@@ -20,7 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
 import FriendsComponent from '../components/FriendsComponent';
 import { checkToken } from '@/utils/token';
-let userId = Number(localStorage.getItem("UserId"));
+// let userId = Number(localStorage.getItem("UserId"));
 
 const ProfilePage = (props: any) => {
 
@@ -386,7 +386,7 @@ const ProfilePage = (props: any) => {
                                 </div>
                                 <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                     {/* displays 4 friends at a time ? */}
-                                    <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.displayedUser?.id} />
+                                    <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} />
                                 </div>
                             </div>
 
@@ -399,7 +399,7 @@ const ProfilePage = (props: any) => {
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                     <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
-                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.displayedUser?.id} />
+                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} />
                                     </div>
                                 </div>
                             </div>
