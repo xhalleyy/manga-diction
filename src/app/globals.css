@@ -308,3 +308,39 @@
   .invisibleInk:focus {
     filter: blur(0px);
   }
+
+  @media (max-width: 425px) {
+    .relative {
+      width: 100%;
+    }
+  
+    .search-container {
+      flex-wrap: wrap;
+    }
+  
+    .search-input-wrapper {
+      width: 100%;
+      flex: 1;
+      position: relative;
+    }
+  
+    .club-modal-wrapper {
+      width: 100%;
+      margin-left: 0;
+      margin-top: 10px;
+    }
+  
+    .search-input {
+      width: calc(100% - 50px);
+    }
+  
+    .search-button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+  
+
+  

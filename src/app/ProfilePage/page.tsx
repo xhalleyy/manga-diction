@@ -593,26 +593,26 @@ const ProfilePage = (props: any) => {
 
                                 <div className={!showClubs ? favbox : noFavbox}>
                                     <p className='font-mainFont text-lg mb-4'>Currently Reading:</p>
-                                    <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 xl:gap-3 ps-2 mb-5'>
+                                    <div className='grid grid-cols-5 ms-5'>
                                         {/* current reads */}
-                                        {ongoing.length === 0 ? <p className='text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you are currently reading.</p>
+                                        {ongoing.length === 0 ? <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>You have no favorited Mangas that you are currently reading.</p>
                                             :
                                             (ongoing.map((manga, index) => (
                                                 <div key={index} onClick={() => handleMangaClick(manga.manga.id)}>
-                                                    <img className='h-[300px] w-[195px] xl:h-[280px] xl:w-[200px] 2xl:h-[300px] 2xl:w-[220px] rounded-lg cursor-pointer' src={manga.coverArtUrl} alt={manga.manga.title} />
+                                                    <img className='w-[177px] h-64 rounded-lg py-1 cursor-pointer' src={manga.coverArtUrl} alt={manga.manga.title} />
                                                 </div>
                                             )))}
 
 
                                     </div>
                                     <p className='font-mainFont text-lg mb-4'>{'Completed:'}</p>
-                                    <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-5 gap-3 xl:gap-3 ps-2 mb-5'>
+                                    <div className='grid grid-cols-5 ms-5'>
                                         {/* finished reads */}
 
                                         {/* finished reads */}
-                                        {completed.length === 0 ? <p className=' text-xl font-poppinsMed italic text-darkbrown text-center py-10 cursor-pointer'>You have no favorited Mangas that you have completed.</p> : (completed.map((manga, index) => (
+                                        {completed.length === 0 ? <p className=' col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>You have no favorited Mangas that you have completed.</p> : (completed.map((manga, index) => (
                                             <div key={index} onClick={() => handleMangaClick(manga.manga.id)}>
-                                                <img className='h-[300px] w-[195px] xl:h-[280px] xl:w-[200px] 2xl:h-[300px] 2xl:w-[220px] rounded-lg cursor-pointer' src={manga.coverArtUrl} alt={manga.manga.title} />
+                                                <img className='w-[177px] h-64 rounded-lg py-1 cursor-pointer' src={manga.coverArtUrl} alt={manga.manga.title} />
                                             </div>
                                         )))}
                                     </div>

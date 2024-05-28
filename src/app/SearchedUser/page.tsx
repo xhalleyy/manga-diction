@@ -14,11 +14,12 @@ import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
 import { addFriend, getAcceptedFriends, getClubsByLeader, getCompletedManga, getInProgessManga, getPendingFriends, getUserClubs, getUserInfo, specificManga, specifiedClub } from '@/utils/DataServices';
 import CardComponent from '../components/CardComponent';
 import ClubModalComponent from '../components/ClubModalComponent';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { checkToken } from '@/utils/token';
 
 const SearchedUser = () => {
     const info = useClubContext();
+    const router = useRouter();
     const [pageSize, setPageSize] = useState<boolean>(true);
     const [friendBool, setFriendBool] = useState<boolean>(false);
     const [clubs, setClubs] = useState<IClubs[]>([]);
@@ -32,7 +33,8 @@ const SearchedUser = () => {
     const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
-    const userId = Number(localStorage.getItem("UserId"))
+    const [hideFriends, setHideFriends] = useState<boolean>(false);
+    const userId = info.displayedUser;
 
 
     // Click a club, routes them to clubpage
@@ -45,6 +47,7 @@ const SearchedUser = () => {
             console.error(error);
         }
     };
+
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -162,27 +165,39 @@ const SearchedUser = () => {
         }
     }
 
-    const viewAllFriends = async () => {
+    // useEffect(() => {
+    //     const fetchFriendsData = async () => {
+    //         try {
+    //             const userId = info?.displayedUser;
+    //             if (userId) {
+    //                 const fetchFriends = await getAcceptedFriends(userId.id);
+    //                 console.log(fetchFriends);
+    //                 setFriends(fetchFriends);
+    //             }
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     };
 
-        if (friendBool === false) {
+    //     fetchFriendsData();
+    // }, []);
+
+    const viewAllFriends = async () => {
+        if (!friendBool) {
             document.getElementById("mobileClubFav")?.classList.add("hidden");
             document.getElementById("mobileFriends")?.classList.remove("hidden");
-            setFriendBool(true);
+            document.getElementById("hideMobileFriends")?.classList.add("hidden");
+            setHideFriends(false); // Set hideFriends state to false to show the mobile friends section
         } else {
             document.getElementById("mobileClubFav")?.classList.remove("hidden");
             document.getElementById("mobileFriends")?.classList.add("hidden");
-            setFriendBool(false);
+            document.getElementById("hideMobileFriends")?.classList.remove("hidden");
+            setHideFriends(true); // Set hideFriends state to true to hide the mobile friends section
         }
-
-        if (info.selectedUser) {
-            const getUserFriends = await getAcceptedFriends(info.selectedUser.id)
-            setAllFriends(getUserFriends);
-            setViewAll(true);
-        } else {
-            console.log('user id is undefined!')
-        }
-
+    
+        setFriendBool(!friendBool); // Toggle the friendBool state
     };
+    
 
     const clubDisplay = () => {
         setShowClubs(true);
@@ -243,6 +258,13 @@ const SearchedUser = () => {
 
         fetchManga();
     }, []);
+
+    const handleMangaClick = (newMangaId: string) => {
+        info.setMangaId(newMangaId)
+        // console.log(newMangaId)
+        // console.log(mangaId)
+        router.push('MangaInfo');
+    };
 
     if (!checkToken()) {
         notFound();
@@ -349,7 +371,7 @@ const SearchedUser = () => {
                                         <button className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed'>Requested!
                                         </button>
                                     </div>}
-                                    
+
                                 </div>
 
 
@@ -363,7 +385,7 @@ const SearchedUser = () => {
                                     </div>
                                     <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto">
                                         {/* displays 4 friends at a time ? */}
-                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.selectedUser?.id} />
+                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
@@ -377,35 +399,19 @@ const SearchedUser = () => {
                                         <button className='justify-end' onClick={() => viewAllFriends()}> View All </button>
                                     </div>
 
-                                    <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
+                                    <div id='hideMobileFriends' className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                         <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto'>
-                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} searchedUser={info.selectedUser?.id} />
+                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* friends section (toggled with View All) */}
-                                <div className={pageSize ? 'hidden' : 'mt-7 hidden'} id='mobileFriends'>
-                                    {viewAll ?
-                                        allFriends.map((friend) => {
-                                            return (
-                                                <FriendsComponent isCurrentUser={info.selectedUser?.id === userId} key={friend.id} searchedUser={info.selectedUser?.id} />)
-                                        })
-                                        :
-                                        <div>
-                                            <div className='flex justify-center'>
-                                                <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
-                                                    <input className='rounded-xl h-8 ps-3' />
-                                                    <SearchIcon className='text-4xl text-white' />
-                                                </div>
-                                            </div>
-                                            {/* <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for "</p> */}
-                                            <p className='px-16 text-xl font-poppinsMed text-darkbrown mt-5'>Search Results for &apos;{ }&apos;</p>
+                                <div className={pageSize ? 'hidden' : 'border-ivory rounded-lg bg-white border-8 hidden p-2'} id='mobileFriends'>
+                                <div className='grid grid-cols-2 overflow-y-auto'>
+                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
                                         </div>
-
-                                    }
-
-
+                                  
                                 </div>
 
 
@@ -456,7 +462,8 @@ const SearchedUser = () => {
 
                                                     {completed.map((manga, index) => {
                                                         return (
-                                                            <div key={index} className='flex justify-center py-1 px-2'>
+                                                            <div key={index} className='flex justify-center py-1 px-2'
+                                                            onClick={() => handleMangaClick(manga.manga.id)} >
                                                                 <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
                                                         );
                                                     })}
@@ -464,7 +471,8 @@ const SearchedUser = () => {
                                                     {/* finished reads */}
                                                     {ongoing.map((manga, index) => (
                                                         // Render JSX directly here
-                                                        <div key={index} className='flex justify-center py-1 px-2'>
+                                                        <div key={index} className='flex justify-center py-1 px-2'
+                                                         onClick={() => handleMangaClick(manga.manga.id)} >
                                                             <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />
 
                                                             {/* Add more JSX as needed */}
@@ -526,8 +534,9 @@ const SearchedUser = () => {
                                             :
                                             ongoing.map((manga, index) => {
                                                 return (
-                                                    <div key={index}>
-                                                        <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
+                                                    <div key={index}
+                                                    onClick={() => handleMangaClick(manga.manga.id)} >
+                                                        <img className='w-[177px] h-64 rounded-lg py-1 cursor-pointer' src={manga.coverArtUrl} />                                                        </div>
                                                 );
                                             })}
 
@@ -539,7 +548,8 @@ const SearchedUser = () => {
                                             :
                                             completed.map((manga, index) => {
                                                 return (
-                                                    <div key={index}>
+                                                    <div key={index}
+                                                    onClick={() => handleMangaClick(manga.manga.id)} >
                                                         <img className='w-[177px] h-64 rounded-lg py-1' src={manga.coverArtUrl} />                                                        </div>
                                                 );
                                             })}
