@@ -38,7 +38,7 @@ const SearchedUser = () => {
     // Click a club, routes them to clubpage
     const handleClubCardClick = async (club: IClubs) => {
         try {
-            const userId = Number(localStorage.getItem("UserId"))
+            const userId = info.displayedUser!.id;
             const clubDisplayedInfo = await specifiedClub(club.id);
             const postInfo = await getRecentClubPosts(club.id)
             info.setDisplayedClub(clubDisplayedInfo);
