@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import { CustomFlowbiteTheme, Dropdown, DropdownDivider } from "flowbite-react";
-import { getCommentById, getPendingFriends, getPendingMemberRequests, getPostById, getUserCommentLikes, getUserInfo, getUserPostLikes, handlePendingFriends, handlePendingMemberRequests } from '@/utils/DataServices';
-import { IPendingFriends, IUserDataWithRequestId, IUpdateUser, IUserData, IPendingMembers, IUserLikes, IPostData } from '@/Interfaces/Interfaces';
+import { GetReplyNotification, getCommentById, getPendingFriends, getPendingMemberRequests, getPostById, getUserCommentLikes, getUserInfo, getUserPostLikes, handlePendingFriends, handlePendingMemberRequests } from '@/utils/DataServices';
+import { IPendingFriends, IUserDataWithRequestId, IUpdateUser, IUserData, IPendingMembers, IUserLikes, IPostData, TReply } from '@/Interfaces/Interfaces';
 import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
 import { red } from '@mui/material/colors';
@@ -14,6 +14,7 @@ const NotificationComponent = () => {
     const [pendingMembers, setPendingMembers] = useState<IPendingMembers[]>([]);
     const [messages, setMessages] = useState<{ profilePic: string| null; firstUsername: string; othersText: string; postTitle: string; }[]>([]);
     const [commentMessage, setCommentMessage] = useState<{ profilePic: string| null; firstUsername: string; othersText: string; reply: string; }[]>([]);
+    const [recentReplies, setRecentReplies] = useState<TReply[]>([]);
 
     // SEE PENDING FRIEND REQUESTS
     const seePendingFriends = async () => {
@@ -127,11 +128,18 @@ const NotificationComponent = () => {
         }
     }
 
+    const SeeComments = async () => {
+        const data = await GetReplyNotification(Number(localStorage.getItem("UserId")));
+        console.log(data)
+        setRecentReplies(data)
+    }
+
     useEffect(() => {
         seePendingRequests();
         seePendingFriends();
         seePostLikes();
         seeCommentLikes();
+        SeeComments();
     }, []);
 
     const handleFriends = async (requestId: number, decision: string) => {
@@ -162,6 +170,7 @@ const NotificationComponent = () => {
     return (
         <div>
             <Box sx={{ color: 'action.active' }}>
+            
                 {((requestedFriends.length !== 0) || (pendingMembers.length !== 0) || (messages.length !== 0) || (commentMessage.length !==0)) ?
                     <Badge color='info' variant="dot" badgeContent=" ">
                         <Dropdown theme={customDropdown} className=" border-8 rounded-xl border-ivory w-96"
@@ -170,6 +179,26 @@ const NotificationComponent = () => {
                             label={
                                 <img src="/Bell.png" />}
                         >
+                          {
+                                recentReplies.length > 0 && recentReplies.map( (reply, idx) => 
+                                    <div key={idx}>
+                                        <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3y-2'>
+                                            <img
+                                                src={reply.profilePic || '/noprofile.jpg'}
+                                                alt={reply.username}
+                                                className="col-span-1 cursor-pointer w-12 h-12 shadow-lg rounded-3xl"
+                                            />
+                                            <div className='col-span-3 flex flex-col justify-center'>
+                                                <p className='font-mainFont text-[15px] text-start'>
+                                                    <span className='font-poppinsBold'>{reply.username}</span> {reply.FromPost ? "commented on your post: " : "replied to your comment: "}
+                                                    {reply.detail.length > 10 ? ` ${reply.detail.substring(0, 20)}...` : reply.detail}
+                                                </p>
+                                            </div>
+                                        </Dropdown.Item>
+                                        <DropdownDivider className="border-2 my-0 border-ivory" />
+                                    </div>
+                                 )
+                            }
                             {(
                                 requestedFriends.map((user) => (
                                     <div key={user.id}>

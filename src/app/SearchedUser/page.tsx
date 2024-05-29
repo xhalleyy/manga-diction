@@ -11,7 +11,7 @@ import { CustomFlowbiteTheme, Tabs } from 'flowbite-react';
 import router from 'next/router';
 import CardProfPgComponent from '../components/CardProfPgComponent';
 import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
-import { addFriend, getAcceptedFriends, getClubsByLeader, getCompletedManga, getInProgessManga, getPendingFriends, getRecentClubPosts, getStatusInClub, getUserClubs, getUserInfo, specificManga, specifiedClub } from '@/utils/DataServices';
+import { addFriend, deleteAsFriend, getAcceptedFriends, getClubsByLeader, getCompletedManga, getInProgessManga, getPendingFriends, getRecentClubPosts, getStatusInClub, getUserClubs, getUserInfo, specificManga, specifiedClub } from '@/utils/DataServices';
 import CardComponent from '../components/CardComponent';
 import ClubModalComponent from '../components/ClubModalComponent';
 import { notFound, useRouter } from 'next/navigation';
@@ -31,6 +31,7 @@ const SearchedUser = () => {
     const [isFavManga, setIsFavManga] = useState<IFavManga | undefined>();
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
+    const [reRenderFriend, setReRenderFriend] = useState<boolean>(false);
     const userId = info.displayedUser;
 
     // Click a club, routes them to clubpage
@@ -109,7 +110,7 @@ const SearchedUser = () => {
         fetchData();
         checkAssociation();
         checkRequested();
-    }, [showClubs]);
+    }, [showClubs, info.selectedUser]);
 
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
@@ -178,6 +179,19 @@ const SearchedUser = () => {
             } catch (error) {
                 console.log(error)
             }
+        }
+    }
+
+    const handleDeleteFriend = async() => {
+        try {
+            if(isFriend){
+                const unfriendUser = await deleteAsFriend(info.displayedUser!.id, info.selectedUser!.id)
+                console.log(unfriendUser)
+            }
+            checkAssociation()
+            setReRenderFriend(!reRenderFriend)
+        } catch (error) {
+            console.log(error)
         }
     }
 
@@ -406,7 +420,7 @@ const SearchedUser = () => {
                                     </div>
 
                                     <h2 className='text-[22px] font-mainFont'>{`${info.selectedUser?.firstName} ${info.selectedUser?.lastName}`}</h2>
-                                    {isFriend && <div className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed'> Friend
+                                    {isFriend && <div onClick={handleDeleteFriend} className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed hover:bg-rose-200 cursor-pointer hover:shadow-md'> Unfriend
                                     </div>}
                                     {(!isFriend && !requested) && <div className='mt-3 mb-5'>
                                         <button onClick={handleAddRequest} className='flex items-center justify-center darkBlue text-white font-mainFont py-1 px-3 rounded-2xl hover:bg-paleblue hover:text-darkblue hover:font-poppinsMed'>Add as Friend <AddIcon sx={{ fontSize: 20 }} />
@@ -430,7 +444,7 @@ const SearchedUser = () => {
                                     </div>
                                     <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto customScroll">
                                         {/* displays 4 friends at a time ? */}
-                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
+                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} reRenderFriend={reRenderFriend} />
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
                                         {/* <FriendsComponent /> */}
@@ -446,7 +460,7 @@ const SearchedUser = () => {
 
                                     <div id='hideMobileFriends' className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                         <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto customScroll'>
-                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
+                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} reRenderFriend={reRenderFriend} />
                                         </div>
                                     </div>
                                 </div>
@@ -454,7 +468,7 @@ const SearchedUser = () => {
                                 {/* friends section (toggled with View All) */}
                                 <div className={pageSize ? 'hidden' : 'border-ivory rounded-lg bg-white border-8 hidden p-2'} id='mobileFriends'>
                                 <div className='grid grid-cols-2 overflow-y-auto customScroll'>
-                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} />
+                                            <FriendsComponent isCurrentUser={info.selectedUser?.id === userId?.id} searchedUser={info.selectedUser?.id} reRenderFriend={reRenderFriend} />
                                         </div>
                                   
                                 </div>
@@ -587,7 +601,7 @@ const SearchedUser = () => {
                                             })}
 
                                     </div>
-                                    <p className='font-mainFont text-lg mb-4'>Completed:</p>
+                                    <p className='font-mainFont text-lg mb-4 mt-7'>Completed:</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* finished reads */}
                                         {completed.length === 0 ? <p className='col-span-5 h-64 text-xl font-poppinsMed italic text-darkbrown text-center py-10'>{info.selectedUser?.username} has no mangas that they are finished reading.</p>

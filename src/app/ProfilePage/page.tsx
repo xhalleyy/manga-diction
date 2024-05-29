@@ -390,7 +390,7 @@ const ProfilePage = (props: any) => {
                                 </div>
                                 <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto customScroll">
                                     {/* displays 4 friends at a time ? */}
-                                    <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} />
+                                    <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} reRenderFriend={true}/>
                                 </div>
                             </div>
 
@@ -403,7 +403,7 @@ const ProfilePage = (props: any) => {
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                     <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto customScroll'>
-                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} />
+                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} reRenderFriend={true}/>
                                     </div>
                                 </div>
                             </div>
@@ -517,7 +517,7 @@ const ProfilePage = (props: any) => {
                         {/* friends search section here- displayed onClick (of + button) */}
                         <div className={pageSize ? "bg-offwhite col-span-3 hidden" : "hidden"} id='friendsBB'>
                             {/* onClick of + button, target and hide div with id "clubfavBox" and display current div "friendsBB" */}
-                            <div className='flex justify-end rounded-xl'>
+                            <div className='flex items-end justify-end rounded-xl'>
                                 <div className='darkBeige px-2 pb-1 pt-2 rounded-2xl'>
                                     <input
                                         className='rounded-xl h-8 ps-3'
@@ -633,7 +633,7 @@ const ProfilePage = (props: any) => {
 
 
                                     </div>
-                                    <p className='font-mainFont text-lg mb-4'>{'Completed:'}</p>
+                                    <p className='font-mainFont text-lg mb-4 mt-7'>{'Completed:'}</p>
                                     <div className='grid grid-cols-5 ms-5'>
                                         {/* finished reads */}
 

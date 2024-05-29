@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes, IPopularClubs, IPostLikes, IMostLikedPost, IMostCommentedPost, ILastChapter, IStatus } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes, IPopularClubs, IPostLikes, IMostLikedPost, IMostCommentedPost, ILastChapter, IStatus, TReply } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -22,6 +22,8 @@ export const createUser = async (createdUser: IUserData) => {
     }
 
     const data = await res.json()
+    console.log(data)
+    return data;
     // console.log(data);
 }
 
@@ -37,11 +39,12 @@ export const login = async (loginUser: ILoginUserInfo) => {
 
     if (!res.ok) {
         const message = 'an error has occured! ' + res.status;
+        console.log(message)
         throw new Error(message);
     }
 
     const data: IToken = await res.json();
-    // console.log(data);
+    console.log(data);
     return data;
 }
 
@@ -416,14 +419,19 @@ export const updateUser = async (user: IUpdateUser) => {
     });
 
     if (!res.ok) {
-        const message = `An error has occurred: ${res.status}`;
-        throw new Error(message);
+        if (res.status === 409) {
+            throw new Error('Username already exists. Please choose a different username.');
+        } else {
+            const message = `An error has occurred: ${res.status}`;
+            throw new Error(message);
+        }
     }
 
     const data = await res.text();
     // console.log('User updated:', data);
     return data;
-}
+};
+
 
 // GET USERS BY USERNAMES
 export const getUsersByUsername = async (username: string) => {
@@ -746,5 +754,28 @@ export const handlePendingFriends = async (id: number, decision: string) => {
     }
 
     const data = await res.text()
+    return data;
+}
+
+export const deleteAsFriend = async (userId: number, friendId: number) => {
+    const res = await fetch(`${url}Friend/DeleteFriend/${userId}/${friendId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    });
+
+    if (!res.ok) {
+        const message = 'An error has occured: ' + res.status;
+        throw new Error(message);
+    }
+    const data = await res.text()
+    return data;
+}
+
+export const GetReplyNotification = async (userId: number) => {
+    const res = await fetch(`${url}Notification/GetNotificationByUserId/${userId}`);
+    const data : TReply[] = await res.json();
+    
     return data;
 }
