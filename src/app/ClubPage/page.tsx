@@ -47,6 +47,7 @@ const ClubPage = () => {
   // const [status, setStatus] = useState<IStatus>({} as IStatus);
 
   const [addMember, setAddMember] = useState(false);
+  const [addSuccess, setAddSuccess] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
   const [isLoadingPost, setIsLoadingPost] = useState<boolean>(true);
@@ -172,6 +173,7 @@ const ClubPage = () => {
     try {
       const addUser = await AddUserToClub(userId, displayedClub?.id, true)
       fetchClubMembers(displayedClub?.id)
+      setAddSuccess(true);
     } catch (error) {
       alert("User is already in the club!")
     }
@@ -210,6 +212,12 @@ const ClubPage = () => {
     }
   }, [seeMembers])
 
+  useEffect(() => {
+    if (addMember) {
+      setSearch('');
+    }
+  }, [addMember]);
+  
   useEffect(() => {
 
     let userId = Number(localStorage.getItem("UserId"));
@@ -752,7 +760,7 @@ const ClubPage = () => {
                                   <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
                                   <button onClick={() => handleLeaderAdds(user.id)} className='bg-darkbrown hover:bg-green-300 text-white hover:text-black font-mainFont px-2 my-1.5 rounded-xl text-[15px] flex gap-1 items-center'>
                                     <AddIcon sx={pageSize ? { fontSize: 20, color: grey[50] } : { fontSize: 15, color: grey[50] }} />
-                                    Member</button>
+                                    {addSuccess ? 'Added' : 'Member'}</button>
                                 </div>
                               </div>
                             ) : (
@@ -946,7 +954,7 @@ const ClubPage = () => {
 
                       {isLeader ?
                         <div className='py-1'>
-                          <button onClick={() => setAddMember(!addMember)} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>Invite Members</button>
+                          <button onClick={() => setAddMember(!addMember)} className='text-center flex w-full justify-center bg-white/80 border-2 border-ivory rounded-xl py-1 font-mainFont text-darkbrown text-lg'>{addMember ? 'View All Members' : 'Invite Members'}</button>
                         </div> : null}
 
                       {isLeader ? (
@@ -989,7 +997,7 @@ const ClubPage = () => {
 
                         <div className='grid grid-cols-2'>
                           {searchedUsers?.length === 0 ? <div className="text-center mt-5 col-span-5">
-                            <p className="text-center text-darkbrown pt-20 text-xl font-poppinsMed">No users found. Are they already in this club?</p>
+                            <p className="text-center text-darkbrown pt-5 text-xl font-poppinsMed">No users found. Are they already in this club?</p>
                           </div> : searchedUsers?.map(user => (
                             <div key={user.id}>
                               <div className="ms-auto mt-5 flex flex-col items-center justify-center place-content-center cursor-pointer">
@@ -1004,7 +1012,7 @@ const ClubPage = () => {
                                   <p className='text-sm -mt-1'>{user.firstName} {user.lastName}</p>
                                   <button onClick={() => handleLeaderAdds(user.id)} className='bg-darkbrown hover:bg-green-300 text-white hover:text-black font-mainFont px-2 my-1.5 rounded-xl text-[15px] flex gap-1 items-center'>
                                     <AddIcon sx={pageSize ? { fontSize: 20, color: grey[50] } : { fontSize: 15, color: grey[50] }} />
-                                    Member</button>
+                                    {addSuccess ? 'Added' : 'Member'}</button>
                                 </div>
                               </div>
 
