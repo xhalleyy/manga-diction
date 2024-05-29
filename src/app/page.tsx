@@ -107,7 +107,7 @@ const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     }
     
     if (!validateUsername(username)) {
-        setInvalidUsername("Invalid username. Username must be 5 or more characters long and can include letters, numbers, '.', '_', '-', and '@'.");
+        setInvalidUsername("Invalid username. Username must be 4 or more characters long and can include letters, numbers, '.', '_', '-', and '@'.");
 
     }
 
