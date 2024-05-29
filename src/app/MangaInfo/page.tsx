@@ -146,7 +146,7 @@ const MangaInfo = () => {
         <div className='bg-offwhite min-h-screen'>
             <NavbarComponent />
             {manga && (
-                <div className={pageSize ? 'grid lg:grid-cols-7 lg:grid-rows-1 grid-rows-2 lg:ms-1 lg:px-16 ' : ''}>
+                <div className={pageSize ? 'grid lg:grid-cols-7 lg:grid-rows-1 grid-rows-2 lg:ms-1 lg:px-16 mb-10' : ''}>
                     <div className={pageSize ? 'lg:col-span-2 row-span-1 lg:flex lg:flex-col lg:justify-center w-full mt-20 lg:mt-0' : ''}>
                         <div className={pageSize ? 'flex lg:justify-end xl:justify-center justify-center lg:pt-10 lg:px-0 pt-0 px-2' : 'flex justify-center mt-5'}>
                             {fileName && <img className='rounded-lg max-h-[455px] max-w-[342px]' src={`https://manga-covers.vercel.app/api/proxy?url=https://uploads.mangadex.org/covers/${manga.id}/${fileName}`} />}
