@@ -81,7 +81,7 @@ function ClubModalComponent() {
         }
     
         // Check file size (limit to 5MB)
-        const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+        const maxSizeInBytes = 200 * 1024; // 5MB
         if (file.size > maxSizeInBytes) {
             alert("File size exceeds the limit. Please choose a smaller file.");
             e.target.value = ''; // Clear the input value

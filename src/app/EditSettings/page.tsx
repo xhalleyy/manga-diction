@@ -123,7 +123,7 @@ const EditSettings = () => {
 
     const handlePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files && e.target.files[0];
-        const maxByteSize = 5 * 1024 * 1024;
+        const maxByteSize = 200 * 1024;
         if (file) {
             if (file.size > maxByteSize) {
                 alert("File is too big!");
