@@ -61,6 +61,8 @@ export function CarouselComponent(props: any) {
             clubData.setPrivateModal(true)
             clubData.setMessage('You are not able to view this private club.')
           }
+        }else{
+          clubData.setPrivateModal(false)
         }
     } catch (error) {
 

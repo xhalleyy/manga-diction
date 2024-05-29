@@ -88,6 +88,8 @@ const SearchClub = () => {
             setPrivateModal(true)
             setMessage('You are not able to view this private club.')
           }
+        }else{
+          setPrivateModal(false)
         }
     } catch (error) {
 

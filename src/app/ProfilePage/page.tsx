@@ -172,7 +172,9 @@ const ProfilePage = (props: any) => {
                 info.setPrivateModal(true)
                 info.setMessage('You are not able to view this private club.')
               }
-            }
+            }else{
+                info.setPrivateModal(false)
+              }
         } catch (error) {
     
         }
