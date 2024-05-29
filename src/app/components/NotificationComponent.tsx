@@ -179,26 +179,6 @@ const NotificationComponent = () => {
                             label={
                                 <img src="/Bell.png" />}
                         >
-                          {
-                                recentReplies.length > 0 && recentReplies.map( (reply, idx) => 
-                                    <div key={idx}>
-                                        <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3y-2'>
-                                            <img
-                                                src={reply.profilePic || '/noprofile.jpg'}
-                                                alt={reply.username}
-                                                className="col-span-1 cursor-pointer w-12 h-12 shadow-lg rounded-3xl"
-                                            />
-                                            <div className='col-span-3 flex flex-col justify-center'>
-                                                <p className='font-mainFont text-[15px] text-start'>
-                                                    <span className='font-poppinsBold'>{reply.username}</span> {reply.FromPost ? "commented on your post: " : "replied to your comment: "}
-                                                    {reply.detail.length > 10 ? ` ${reply.detail.substring(0, 20)}...` : reply.detail}
-                                                </p>
-                                            </div>
-                                        </Dropdown.Item>
-                                        <DropdownDivider className="border-2 my-0 border-ivory" />
-                                    </div>
-                                 )
-                            }
                             {(
                                 requestedFriends.map((user) => (
                                     <div key={user.id}>
@@ -269,6 +249,26 @@ const NotificationComponent = () => {
                                     ))}
                                 </div>
                             ))}
+                            {
+                                recentReplies.length > 0 && recentReplies.map( (reply, idx) => 
+                                    <div key={idx}>
+                                        <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3y-2'>
+                                            <img
+                                                src={reply.profilePic || '/noprofile.jpg'}
+                                                alt={reply.username}
+                                                className="col-span-1 cursor-pointer w-12 h-12 shadow-lg rounded-3xl"
+                                            />
+                                            <div className='col-span-3 flex flex-col justify-center'>
+                                                <p className='font-mainFont text-[15px] text-start'>
+                                                    <span className='font-poppinsBold'>{reply.username}</span> {reply.FromPost ? "commented on your post: " : "replied to your comment: "}
+                                                    {reply.detail.length > 10 ? ` ${reply.detail.substring(0, 20)}...` : reply.detail}
+                                                </p>
+                                            </div>
+                                        </Dropdown.Item>
+                                        <DropdownDivider className="border-2 my-0 border-ivory" />
+                                    </div>
+                                 )
+                            }
                             {messages.map((message, idx) => (
                                 <div key={idx}>
                                     <Dropdown.Item className='grid grid-cols-4 ps-7 pe-3'>
