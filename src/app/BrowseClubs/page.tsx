@@ -69,6 +69,7 @@ const BrowseClubs = () => {
       const userId = Number(localStorage.getItem("UserId"))
       const clubDisplayedInfo = await specifiedClub(club.id);
       const postInfo = await getRecentClubPosts(club.id)
+      clubData.setSelectedPostId(null)
       clubData.setDisplayedClub(clubDisplayedInfo);
       clubData.setDisplayedPosts(postInfo)
       if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {

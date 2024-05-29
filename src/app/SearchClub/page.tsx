@@ -16,7 +16,7 @@ import { checkToken } from "@/utils/token";
 const SearchClub = () => {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { searchClub, setSearchClub, setDisplayedClub, displayedClub, setDisplayedPosts, setStatus, setMessage, setPrivateModal } = useClubContext();
+  const { searchClub, setSearchClub, setDisplayedClub, displayedClub, setDisplayedPosts, setStatus, setMessage, setPrivateModal, setSelectedPostId } = useClubContext();
   const [fetchedClubs, setFetchedClubs] = useState<any>(null);
   const [clubs, setClubs] = useState<IClubs[]>([]);
   const [pageSize, setPageSize] = useState<boolean>(true);
@@ -69,6 +69,7 @@ const SearchClub = () => {
       const userId = Number(localStorage.getItem("UserId"))
       const clubDisplayedInfo = await specifiedClub(club.id);
       const postInfo = await getRecentClubPosts(club.id)
+      setSelectedPostId(null)
       setDisplayedClub(clubDisplayedInfo);
       setDisplayedPosts(postInfo)
       if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
