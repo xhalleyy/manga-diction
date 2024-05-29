@@ -575,7 +575,7 @@ const ClubPage = () => {
                 <div className='flex justify-center py-5'>
                   <Browser size={130} mood="ko" color="#E0E4E8" />
                 </div>
-                <h2 className='text-xl pb-2'>You cannot view post unless you're a member</h2>
+                <h2 className='text-xl pb-2'>{"You cannot view post unless you're a member"}</h2>
                 <div className="flex justify-center gap-6">
                   <Button color="gray" onClick={goBackToClubs}>
                     {"Browse other Clubs"}
