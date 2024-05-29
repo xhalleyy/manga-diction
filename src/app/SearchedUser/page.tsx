@@ -43,6 +43,7 @@ const SearchedUser = () => {
           info.setSelectedPostId(null)
           info.setDisplayedClub(clubDisplayedInfo);
           info.setDisplayedPosts(postInfo)
+          info.setPrivateModal(false)
           if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
             console.log(club.id, userId)
             const statusInfo = await getStatusInClub(club.id, userId);
