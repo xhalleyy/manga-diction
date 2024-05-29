@@ -44,6 +44,7 @@ const ClubPage = () => {
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
   const [modalVisible, setModalVisible] = useState(false);
   const [adultModal, setAdultModal] = useState<boolean>(false);
+  const [nonMemberModal, setNonMemberModal] = useState<boolean>(false);
   // const [status, setStatus] = useState<IStatus>({} as IStatus);
 
   const [addMember, setAddMember] = useState(false);
@@ -89,9 +90,10 @@ const ClubPage = () => {
       let userId = Number(localStorage.getItem("UserId"));
       const joinUser = await AddUserToClub(userId, displayedClub?.id, false);
       setJoined(true);
+      setNonMemberModal(false)
       fetchClubMembers(displayedClub?.id)
+
     } catch (error) {
-      alert('Unable to Join Club at this moment');
       console.log(error);
     }
   };
@@ -175,7 +177,7 @@ const ClubPage = () => {
       fetchClubMembers(displayedClub?.id)
       setAddSuccess(true);
     } catch (error) {
-      alert("User is already in the club!")
+      console.log(error)
     }
   }
 
@@ -312,7 +314,7 @@ const ClubPage = () => {
       console.log("You requested to join this club")
       router.push('BrowseClubs')
     } catch (error) {
-      alert("User already requested to join!")
+      console.log("User already requested to join!")
     }
   }
 
@@ -389,7 +391,7 @@ const ClubPage = () => {
     // event.stopPropagation(); // Prevent the click event from bubbling up to the parent div
 
     if (!isLeader && !joined) {
-      alert("You need to join the club to view this post.");
+      setNonMemberModal(!nonMemberModal)
     } else {
       handlePostPage(postId);
     }
@@ -565,6 +567,30 @@ const ClubPage = () => {
           </Modal>
         )}
 
+        {nonMemberModal && (
+          <Modal show={nonMemberModal} size="xl" onClose={() => setNonMemberModal(false)} popup>
+            <Modal.Header/>
+            <Modal.Body className='bg-offwhite rounded-lg'>
+              <div className="text-center pt-10 pb-6 bg-offwhite">
+                <div className='flex justify-center py-5'>
+                  <Browser size={130} mood="ko" color="#E0E4E8" />
+                </div>
+                <h2 className='text-xl pb-2'>You cannot view post unless you're a member</h2>
+                <div className="flex justify-center gap-6">
+                  <Button color="gray" onClick={goBackToClubs}>
+                    {"Browse other Clubs"}
+                  </Button>
+                  {status.status !== 0 && status.status !== 2 && (
+                    <Button className='bg-mutedgreen' onClick={handleJoinBtn}>
+                      Join Club!
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
+        )}
+
         {!privateModal ? null : (
           <Modal show={privateModal} size="xl" onClose={() => setPrivateModal(false)} popup>
             {/* <Modal.Header /> */}
@@ -680,7 +706,7 @@ const ClubPage = () => {
                   {selectedPostId ? (
                     (isLeader || joined) ? (
                       <div>
-                        <Button theme={customButton} gradientDuoTone="purpleToBlue" onClick={() => setSelectedPostId(null)}>Back</Button>
+                        <button className='bg-offwhite px-3 py-1.5 mt-2 font-poppinsMed text-darkbrown rounded-md hover:bg-paleblue' onClick={() => setSelectedPostId(null)}>Back</button>
                         <PostRepliesComponent />
                       </div>
                     ) : null

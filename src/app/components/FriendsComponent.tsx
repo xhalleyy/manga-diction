@@ -11,10 +11,11 @@ import { useClubContext } from '@/context/ClubContext';
 type FriendsType = {
     searchedUser: number | undefined
     isCurrentUser: boolean
+    reRenderFriend: boolean
 }
 
 
-const FriendsComponent = ({ searchedUser, isCurrentUser }: FriendsType) => {
+const FriendsComponent = ({ searchedUser, isCurrentUser, reRenderFriend }: FriendsType) => {
 
     const router = useRouter();
     const { selectedUser, setSelectedUser } = useClubContext();
@@ -39,7 +40,7 @@ const FriendsComponent = ({ searchedUser, isCurrentUser }: FriendsType) => {
             displayFriends(userId);
         }
 
-    }, [searchedUser, selectedUser?.id]); // Include selectedUser?.id in the dependencies array
+    }, [searchedUser, selectedUser?.id, reRenderFriend]); // Include selectedUser?.id in the dependencies array
 
     
     const handleFriendClick = (friend: IUserData | null) => {

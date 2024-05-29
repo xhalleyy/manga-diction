@@ -222,7 +222,7 @@ const BrowseClubs = () => {
 
 
           <div>
-            <p className={pageSize ? "text-3xl text-darkbrown font-poppinsSemi" : "text-center py-5 text-2xl text-darkbrown font-bold"}>Popular Clubs </p>
+            <p className={pageSize ? "text-3xl text-darkbrown font-poppinsMed" : "text-center py-5 text-2xl text-darkbrown font-bold"}>Popular Clubs </p>
           </div>
 
           {/* search bar visible on lg, hidden on mobile */}

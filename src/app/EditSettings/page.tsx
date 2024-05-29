@@ -140,10 +140,6 @@ const EditSettings = () => {
         }
     };
 
-    // useEffect(() => {
-    // console.log("Profile Picture Updated:", profilePic);
-    // }, [profilePic]);
-
     const updateUserInfo = async () => {
         try {
             if (!displayedUser) {
@@ -180,8 +176,8 @@ const EditSettings = () => {
     
                 if (response) {
                     setSuccess(true);
-                    setCurrentPass(null); // Reset current password field
-                    setNewPass(null); // Reset new password field
+                    setCurrentPass(null);
+                    setNewPass(null); 
                     setPasswordError(false)
                     setTimeout(() => {
                         setSuccess(undefined);

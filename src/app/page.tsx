@@ -35,93 +35,153 @@ export default function Home() {
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
   const [logsign, setLogsign] = useState<boolean>(true);
-  const [loginFail, setLoginFail] = useState<boolean | undefined>(false);
+  const [loginFail, setLoginFail] = useState<boolean| undefined>(false);
   const [required, setRequired] = useState<boolean | undefined>(false);
 
   const [success, setSuccess] = useState<boolean | undefined>(undefined);
   const [visibility, setVisibility] = useState<boolean>(false);
+  const [invalidPass, setInvalidPass] = useState<string>("");
+  const [invalidUsername, setInvalidUsername] = useState<string | null>(null);
+  const [usernameTaken, setUsernameTaken] = useState<string | null>(null);
 
   const router = useRouter();
 
   const logsignSwitch = () => {
-    setLogsign(!logsign);
-    // remove hidden class from sign up labels + inputs
+    setLogsign(prev => !prev);
+    // Reset all states related to form inputs and errors
+    setUsername("");
+    setPassword("");
+    setId(0);
+    setFirstN("");
+    setLastN("");
+    setProfilePic(null);
+    setAge(0);
+    setUsernameTaken(null);
+    setInvalidUsername(null);
+    setInvalidPass("");
+    setLoginFail(false);
+    setRequired(false);
+};
+
+
+
+const validatePassword = (input: string) => {
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  return passwordRegex.test(input);
+}
+
+const validateUsername = (input: string) => {
+  const usernameRegex = /^[a-zA-Z0-9._@-]{4,}$/;
+  return usernameRegex.test(input);
+}
+
+const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { value } = e.target;
+  if (value !== '' && /^\d*\.?\d+$/.test(value) && Number(value)) {
+    setAge(Number(value));
+  } else {
+    setAge(0)
+  }
+}
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputUsername = e.target.value;
+    const filteredUsername = inputUsername.replace(/[^a-zA-Z0-9._@-]/g, '');
+    setUsername(filteredUsername);
+    setInvalidUsername(null);
+  }
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputPassword = e.target.value;
+    setPassword(inputPassword);
+    setInvalidPass("");
   }
 
   const handleSignUp = async () => {
-
     if (!username || !password || (!logsign && (!firstN || !lastN || age === 0))) {
-      setRequired(true);
-      setTimeout(() => {
-        setRequired(undefined);
-      }, 5000);
-      return;
+        setRequired(true);
+        console.log("hit")
+        setTimeout(() => {
+            setRequired(undefined);
+        }, 5000);
+
+    }
+    
+    if (!validateUsername(username)) {
+        setInvalidUsername("Invalid username. Username must be 5 or more characters long and can include letters, numbers, '.', '_', '-', and '@'.");
+
     }
 
+    if (!validatePassword(password)) {
+        setInvalidPass("Invalid password. Password needs to be 8 characters long with one capital letter and a number.");
+
+    }
     let userData = {
-      id: id,
-      username: username,
-      firstName: firstN,
-      lastName: lastN,
-      age: age,
-      password: password,
-      profilePic: profilePic
-    }
-
+        id: id,
+        username: username,
+        firstName: firstN,
+        lastName: lastN,
+        age: age,
+        password: password,
+        profilePic: profilePic
+    };
 
     let loginData = {
-      username: username,
-      password: password
-    }
+        username: username,
+        password: password
+    };
+    
 
-    console.log(userData);
-
-    // if you're loggin in then this codeblock:
     if (logsign) {
-      try {
-        let token: IToken = await login(loginData);
-        console.log('Token received:', token);
+        // Login Logic
+        try {
+            let token = await login(loginData);
+            console.log('Token received:', token);
 
-        if (token.token != null) {
-          setId(token.userId);
-          localStorage.setItem("Token", token.token);
-          localStorage.setItem("UserId", token.userId.toLocaleString());
-          router.push('/Dashboard');
-          // console.log('Username:', username);
-        } else {
-          alert('Signup failed! </3');
+            if (token && token.token) {
+                setId(token.userId);
+                localStorage.setItem("Token", token.token);
+                localStorage.setItem("UserId", token.userId.toString());
+                router.push('/Dashboard');
+            } else {
+                console.log('Login error');
+                setLoginFail(true);
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            setLoginFail(true);
+            setTimeout(() => {
+                setLoginFail(undefined);
+            }, 5000);
         }
-      } catch (error) {
-        console.error('Login error:', error);
-        setLoginFail(true);
-        setTimeout(() => {
-          setLoginFail(undefined);
-        }, 5000);
-      }
     } else {
-      // ELSE you're signing up so 
-      try {
-        await createUser(userData);
-        // Reset 
-        setSuccess(true);
-        setTimeout(() => {
-          setSuccess(undefined);
-        }, 5000);
-        setLogsign(true);
-        setUsername("");
-        setPassword("");
-        setId(0);
-        setFirstN("");
-        setLastN("");
-        setProfilePic(null);
-        setAge(0);
-        setLoginFail(false);
-
-      } catch (error) {
-        setLogsign(true);
-        setSuccess(false)
-        // setSuccess(false);
-      }
+        // Signup Logic
+        try {
+            const isUserCreated = await createUser(userData);
+            if (isUserCreated) {
+                // Reset states
+                setSuccess(true);
+                setTimeout(() => {
+                    setSuccess(undefined);
+                }, 5000);
+                setLogsign(true);
+                setUsername("");
+                setPassword("");
+                setId(0);
+                setFirstN("");
+                setLastN("");
+                setProfilePic(null);
+                setAge(0);
+                setLoginFail(false);
+                setUsernameTaken(null);
+                setInvalidUsername(null);
+            } else {
+                setUsernameTaken("Username is already taken. Please choose another one.");
+            }
+        } catch (error) {
+            console.error('Signup error:', error);
+            setLogsign(true);
+            setSuccess(false);
+        }
     }
   }
 
@@ -154,10 +214,10 @@ export default function Home() {
             <p className="font-mainFont text-white text-2xl">Create or join clubs to regularly interact with your communities about anything Manga related.</p>
           </div>
         </div>
-        <div className={logsign ? "flex flex-col flex-1 mt-36 font-mainFont" : "flex flex-col flex-1 pt-5 font-mainFont"}>
+        <div className={logsign ? "flex flex-col flex-1 mt-36 font-mainFont relative" : "flex flex-col flex-1 pt-5 font-mainFont"}>
           <div className="w-full flex justify-end items-end -mt-[90px]">
             {success && (
-              <div className="w-72">
+              <div className="w-72 me-10 absolute top-[-80px]">
                 <Alert className='rounded-xl bg-paleblue' icon={<Planet size={30} mood="happy" color="#FCCB7E" />} severity="success">
                   Account successfully created!
                 </Alert>
@@ -172,37 +232,45 @@ export default function Home() {
             </div>
 
             {loginFail && logsign ?
-              <p className="text-red-900"> Incorrect username or password. Try again!</p> :
+              <p className="text-red-800 font-bold"> Incorrect username or password. Try again!</p> :
               null}
 
             {required && !logsign ?
-              <p className="text-red-900"> Please fill out all fields to create an account. </p>
+              <p className="text-red-800 font-bold"> Please fill out all fields to create an account. </p>
               : null
             }
+
+            {(invalidPass && !logsign) && <div className="text-red-800 font-bold">{invalidPass}</div>}
+            {(invalidUsername && !logsign) && <div className="text-red-800 font-bold">{invalidUsername}</div>}
+            {(usernameTaken && !logsign) && <div className="text-red-800 font-bold">{usernameTaken}</div>}
 
             <form>
               <div className="mb-3">
                 <Label className={logsign ? 'text-darkbrown' : 'text-signUp'} htmlFor="username1" value="Username" />
 
-                <TextInput value={username} theme={customInput} color="brown" id="username1" type="text" placeholder="Enter Username" required onChange={(e) => setUsername(e.target.value)} />
+                <TextInput value={username} theme={customInput} color="brown" id="username1" type="text" placeholder="Enter Username" required onChange={handleUsernameChange} />
               </div>
 
               <div className={logsign ? "hidden mb-3 " : "normale mb-3"}>
                 <Label className="text-signUp" htmlFor="firstname1" value="First Name:" />
 
-                <TextInput theme={customInput} color="brown" id="firstname1" type="text" placeholder="Enter First Name" required onChange={(e) => setFirstN(e.target.value)} />
+                <TextInput value={firstN} theme={customInput} color="brown" id="firstname1" type="text" placeholder="Enter First Name" required onChange={(e) => setFirstN(e.target.value)} />
               </div>
 
               <div className={logsign ? "hidden mb-3" : "normale mb-3"}>
                 <Label className="text-signUp" htmlFor="lastname1" value="Last Name:" />
 
-                <TextInput theme={customInput} color="brown" id="lastname1" type="text" placeholder="Enter Last Name" required onChange={(e) => setLastN(e.target.value)} />
+                <TextInput value={lastN} theme={customInput} color="brown" id="lastname1" type="text" placeholder="Enter Last Name" required onChange={(e) => setLastN(e.target.value)} />
               </div>
 
               <div className={logsign ? "hidden mb-3" : "normale mb-3"}>
                 <Label className="text-signUp" htmlFor="age1" value="Age:" />
 
-                <TextInput theme={customInput} color="brown" id="age1" type="text" placeholder="Enter Age" required onChange={(e) => setAge(Number(e.target.value))} />
+                <TextInput onKeyDown={(evt) => {
+                  if (!(evt.key === 'Backspace' || /^\d$/.test(evt.key))) {
+                    evt.preventDefault();
+                  }
+                }} theme={customInput} color="brown" id="age1" type="text" placeholder="Enter Age" required onChange={handleAgeChange} />
               </div>
 
               <div className="mb-3 flex flex-col">
@@ -223,11 +291,13 @@ export default function Home() {
                   </div>
                 </div>
 
-                <TextInput value={password} theme={customInput} color="brown" id="password1" type={visibility ? 'text' : 'password'} placeholder="Enter Password" required onChange={(e) => setPassword(e.target.value)} />
+                <TextInput value={password} theme={customInput} color="brown" id="password1" type={visibility ? 'text' : 'password'} placeholder="Enter Password" required onChange={handlePasswordChange} />
               </div>
             </form>
 
-            <button onClick={handleSignUp} className={logsign ? "bg-darkbrown p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-lightbrown p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-5 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
+            <button onClick={() => {
+              handleSignUp()
+            } } className={logsign ? "bg-darkbrown p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-10" : "bg-lightbrown p-3 text-white pl-24 pr-24 rounded-3xl font-thin mt-5 mb-3"}>{logsign ? "Sign in" : "Sign up"}</button>
 
 
             <div className="flex pt-1.5 ps-3 ">
@@ -287,7 +357,7 @@ export default function Home() {
             </div>
 
             <div className={logsign ? "grid grid-cols-8 mt-10" : "grid grid-cols-8"}>
-              <input value={password} className="mobileInputPass col-span-7" placeholder="Password" id="password2" type={visibility ? 'text' : 'password'} required onChange={(e) => setPassword(e.target.value)} />
+              <input value={password} className="mobileInputPass col-span-7" placeholder="Password" id="password2" type={visibility ? 'text' : 'password'} required onChange={handlePasswordChange} />
 
               <div onClick={handlePasswordVisibility} className=" col-span-1 justify-end text-sm text-signUp cursor-pointer border-b border-gray-400">
                 {visibility ? (
@@ -301,6 +371,7 @@ export default function Home() {
                 )}
               </div>
             </div>
+            {invalidPass && <div>{invalidPass}</div>}
             <div>
               {/* remember password? buttons */}
             </div>

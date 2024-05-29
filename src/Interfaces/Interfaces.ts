@@ -288,3 +288,10 @@ export interface ILastChapter {
 export interface IStatus {
     status: number
 }
+
+export type TReply = {
+    username: string,
+    profilePic: string | null,
+    FromPost: boolean,
+    detail: string,
+}
