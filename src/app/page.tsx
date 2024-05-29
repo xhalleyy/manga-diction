@@ -99,7 +99,7 @@ const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const handleSignUp = async () => {
     if (!username || !password || (!logsign && (!firstN || !lastN || age === 0))) {
         setRequired(true);
-        console.log("hit")
+        // console.log("hit")
         setTimeout(() => {
             setRequired(undefined);
         }, 5000);
@@ -156,31 +156,35 @@ const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     } else {
         // Signup Logic
         try {
+          if (userData && validatePassword(password) && validateUsername(username) && age !== 0) {
             const isUserCreated = await createUser(userData);
             if (isUserCreated) {
-                // Reset states
-                setSuccess(true);
-                setTimeout(() => {
-                    setSuccess(undefined);
-                }, 5000);
-                setLogsign(true);
-                setUsername("");
-                setPassword("");
-                setId(0);
-                setFirstN("");
-                setLastN("");
-                setProfilePic(null);
-                setAge(0);
-                setLoginFail(false);
-                setUsernameTaken(null);
-                setInvalidUsername(null);
+              // Reset 
+              setSuccess(true);
+              setTimeout(() => {
+                setSuccess(undefined);
+              }, 5000);
+              setLogsign(true);
+              setUsername("");
+              setPassword("");
+              setId(0);
+              setFirstN("");
+              setLastN("");
+              setProfilePic(null);
+              setAge(0);
+              setLoginFail(false);
+              setUsernameTaken(null);
+              setUsernameTaken(null);
+              setInvalidUsername(null)
             } else {
-                setUsernameTaken("Username is already taken. Please choose another one.");
+              setUsernameTaken("Username is already taken. Please choose another one.");
             }
+          }
+  
         } catch (error) {
-            console.error('Signup error:', error);
-            setLogsign(true);
-            setSuccess(false);
+          setLogsign(true);
+          setSuccess(false)
+          // setSuccess(false);
         }
     }
   }
