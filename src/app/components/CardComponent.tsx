@@ -11,7 +11,7 @@ function CardComponent( prop: {id: number, leaderId: number, description: string
   
   
   const goToClub = () => {
-    router.push('/ClubPage');
+    router.push(`/Clubs/${prop.id}`);
   }
 
   if(prop.isDeleted){

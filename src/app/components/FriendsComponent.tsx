@@ -9,48 +9,36 @@ import { useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
 
 type FriendsType = {
+    userId: number
     searchedUser: number | undefined
     isCurrentUser: boolean
     reRenderFriend: boolean
 }
 
 
-const FriendsComponent = ({ searchedUser, isCurrentUser, reRenderFriend }: FriendsType) => {
+const FriendsComponent = ({ userId, searchedUser, isCurrentUser, reRenderFriend }: FriendsType) => {
 
     const router = useRouter();
     const { selectedUser, setSelectedUser } = useClubContext();
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [friends, setFriends] = useState<IAcceptedFriends[]>([]);
 
-    const displayFriends = async (userId: number) => {
-        try {
-            const data = await getAcceptedFriends(userId);
-            setFriends(data);
-        } catch (error) {
-            console.error('Error fetching friends:', error);
-        }
-    };
-
-
     useEffect(() => {
-        if (searchedUser !== undefined && searchedUser === selectedUser?.id) {
-            displayFriends(selectedUser?.id);
-        } else {
-            let userId = Number(localStorage.getItem("UserId"));
-            displayFriends(userId);
-        }
+        const displayFriends = async (userId: number) => {
+            try {
+                const data = await getAcceptedFriends(userId);
+                setFriends(data);
+            } catch (error) {
+                console.error('Error fetching friends:', error);
+            }
+        };
+        displayFriends(userId);
 
-    }, [searchedUser, selectedUser?.id, reRenderFriend]); // Include selectedUser?.id in the dependencies array
+    }, [searchedUser, userId, reRenderFriend]); // Include selectedUser?.id in the dependencies array
 
     
     const handleFriendClick = (friend: IUserData | null) => {
-        let userId = Number(localStorage.getItem("UserId"))
-        if (friend && friend.id !== userId) {
-            setSelectedUser(friend);
-            router.push('/SearchedUser');
-        } else if (friend && friend.id === userId) {
-            router.push('/ProfilePage')
-        }
+        router.push(`/Profile/${friend!.id}`)
     };
 
 

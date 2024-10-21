@@ -4,15 +4,15 @@ import useAutosizeTextArea from "@/utils/useAutosizeTextArea";
 import { TextInput, Label, Dropdown, Select } from 'flowbite-react';
 import { createPost, getPostsByClubId, getRecentClubPosts } from '@/utils/DataServices';
 import { IPostData, IPosts } from '@/Interfaces/Interfaces';
-import { useClubContext } from '@/context/ClubContext';
 
 type CreatePostType = {
+    club: number
     setPosts: React.Dispatch<React.SetStateAction<IPosts[]>>
     setCreatePost: React.Dispatch<React.SetStateAction<boolean>>
 }
-const CreatePostComponent = ({ setPosts, setCreatePost }: CreatePostType) => {
+const CreatePostComponent = ({ club, setPosts, setCreatePost }: CreatePostType) => {
 
-    const info = useClubContext();
+    // const info = useClubContext();
     const [value, setValue] = useState<any>([]);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [pageSize, setPageSize] = useState<boolean>(false)
@@ -95,7 +95,7 @@ const CreatePostComponent = ({ setPosts, setCreatePost }: CreatePostType) => {
                 const postData: IPostData = {
                     id,
                     userId,
-                    clubId: info.displayedClub!.id,
+                    clubId: club,
                     title,
                     category,
                     tags: tags ?? null,
@@ -109,7 +109,7 @@ const CreatePostComponent = ({ setPosts, setCreatePost }: CreatePostType) => {
 
                 if (data) {
                     resetValues();
-                    const getPosts = await getRecentClubPosts(info.displayedClub!.id);
+                    const getPosts = await getRecentClubPosts(club);
                     setPosts(getPosts);
                     setCreatePost(false)
                 }

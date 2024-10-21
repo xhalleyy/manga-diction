@@ -1,4 +1,4 @@
-import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes, IPopularClubs, IPostLikes, IMostLikedPost, IMostCommentedPost, ILastChapter, IStatus, TReply } from "@/Interfaces/Interfaces";
+import { IAcceptedFriends, IClubs, IComments, ILoginUserInfo, IMemberToClubAssociation, IPostData, IPosts, IToken, IUpdateUser, IUserData, IFavManga, IPendingFriends, IGetLikes, IPendingMembers, IGetManga, IUserLikes, IPopularClubs, IPostLikes, IMostLikedPost, IMostCommentedPost, ILastChapter, IStatus, TReply, IMangaChapters } from "@/Interfaces/Interfaces";
 import axios from 'axios';
 
 const url = 'https://mangadictionapi.azurewebsites.net/';
@@ -76,7 +76,7 @@ export const createClub = async (Club: IClubs) => {
         throw new Error(message);
     }
 
-    const data = await res.json;
+    const data: IClubs = await res.json();
     // console.log(data);
     return data;
 
@@ -194,6 +194,12 @@ export const searchManga = async(manga: IGetManga) => {
     }
 
     const data = await res.json();
+    return data;
+}
+
+export const getAllChapters = async(mangaId: string) => {
+    const res = await fetch(`${url}GetChapters/${mangaId}`);
+    const data: IMangaChapters[] = await res.json();
     return data;
 }
 
@@ -444,7 +450,7 @@ export const getUsersByUsername = async (username: string) => {
 // ----------------- CLUB MEMBERS API FETCHES--------------
 // GET USER'S CLUBS
 export const getUserClubs = async (userId: number | undefined) => {
-    const res = await fetch(url + '/Member/GetUserClubs/' + userId);
+    const res = await fetch(url + 'Member/GetUserClubs/' + userId);
     const data: number[] = await res.json();
     // console.log(data);
     return data;
@@ -452,7 +458,7 @@ export const getUserClubs = async (userId: number | undefined) => {
 
 // GET CLUB'S MEMBERS
 export const getClubMembers = async (clubId: number | undefined) => {
-    const res = await fetch(url + '/Member/GetClubMembers/' + clubId);
+    const res = await fetch(url + 'Member/GetClubMembers/' + clubId);
     const data: number[] = await res.json();
     // console.log(data);
     return data;

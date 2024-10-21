@@ -1,51 +1,57 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { NavbarComponent } from '../components/NavbarComponent'
-import ClubModalComponent from '../components/ClubModalComponent'
+import { NavbarComponent } from '../../components/NavbarComponent'
+import ClubModalComponent from '../../components/ClubModalComponent'
 import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image'
-import CardComponent from '../components/CardComponent';
+import CardComponent from '../../components/CardComponent';
 import { IClubs, IFavManga, IManga, IUserData } from '@/Interfaces/Interfaces';
-import { GetLikesByPost, getClubsByLeader, getCompletedManga, getInProgessManga, getRecentClubPosts, getStatusInClub, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
+import { GetLikesByPost, addFriend, deleteAsFriend, getAcceptedFriends, getClubsByLeader, getCompletedManga, getInProgessManga, getPendingFriends, getRecentClubPosts, getStatusInClub, getUserClubs, getUserInfo, getUsersByUsername, publicClubsApi, specificManga, specifiedClub } from '@/utils/DataServices';
 import { Router } from 'next/router';
 import { notFound, useRouter } from 'next/navigation';
 import { useClubContext } from '@/context/ClubContext';
 // import FriendsDesktopComponent from '../components/FriendsComponent';
 import { Avatar, CustomFlowbiteTheme, Spinner, Tabs } from 'flowbite-react';
-import CardComponent2 from '../components/CardComponent2';
-import CardProfPgComponent from '../components/CardProfPgComponent';
+import CardComponent2 from '../../components/CardComponent2';
+import CardProfPgComponent from '../../components/CardProfPgComponent';
 import EditIcon from '@mui/icons-material/Edit';
 import { Tooltip } from '@mui/material';
 import SearchIcon from "@mui/icons-material/Search";
-import SearchedFriendsComponent from '../components/SearchedFriendsComponent';
-import FriendsComponent from '../components/FriendsComponent';
+import SearchedFriendsComponent from '../../components/SearchedFriendsComponent';
+import FriendsComponent from '../../components/FriendsComponent';
 import { checkToken } from '@/utils/token';
 // let userId = Number(localStorage.getItem("UserId"));
 
-const ProfilePage = (props: any) => {
-
+const ProfilePage = ({ params }: { params: { userId: number } }) => {
+    let user = params.userId;
     const info = useClubContext();
     const { mangaId, setMangaId } = useClubContext();
     const [clubs, setClubs] = useState<IClubs[]>([]);
     const [pageSize, setPageSize] = useState<boolean>(false);
     const [isLoadingClubs, setIsLoadingClubs] = useState<boolean>(true)
 
+    const [userId, setUserId] = useState(0);
     const [showClubs, setShowClubs] = useState<boolean>(true);
-    const [userData, setUserData] = useState<IUserData>();
+    const [userData, setUserData] = useState<IUserData>({} as IUserData);
     const [isMyProfile, setIsMyProfile] = useState<boolean>(true);
     const [picture, setPicture] = useState<string>("");
     const router = useRouter();
 
+    const [requested, setRequested] = useState<boolean>(false);
     const [friendBool, setFriendBool] = useState<boolean>(false);
     const [search, setSearch] = useState<string>("");
     const [searchedUsers, setSearchedUsers] = useState<IUserData[]>();
+    const [reRenderFriend, setReRenderFriend] = useState<boolean>(false);
+    const [friends, setFriends] = useState<IUserData[]>([]);
 
     const [completed, setCompleted] = useState<any[]>([]);
     const [ongoing, setOngoing] = useState<any[]>([]);
+    const [isFriend, setIsFriend] = useState(false);
+    const [isYou, setIsYou] = useState(true);
 
     const searchUser = async () => {
         try {
-            let userId = Number(localStorage.getItem("UserId"))
+            // let userId = Number(localStorage.getItem("UserId"))
             const data = await getUsersByUsername(search);
             const filteredUsers = data.filter(user => user.id !== userId);
 
@@ -57,8 +63,8 @@ const ProfilePage = (props: any) => {
     }
 
     const handleUserClick = (user: IUserData) => {
-        info.setSelectedUser(user);
-        router.push('/SearchedUser');
+        info.setDisplayedUser(user);
+        router.push(`/Profile/${user.id}`);
     }
 
 
@@ -150,45 +156,59 @@ const ProfilePage = (props: any) => {
 
     const handleClubCardClick = async (club: IClubs) => {
         try {
-          const userId = Number(localStorage.getItem("UserId"))
-          const clubDisplayedInfo = await specifiedClub(club.id);
-          const postInfo = await getRecentClubPosts(club.id)
-          info.setSelectedPostId(null)
-          info.setDisplayedClub(clubDisplayedInfo);
-          info.setDisplayedPosts(postInfo)
-          if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
-            console.log(club.id, userId)
-            const statusInfo = await getStatusInClub(club.id, userId);
-              info.setStatus(statusInfo)
-              if (statusInfo.status === 1) {
-                info.setPrivateModal(false);
-              } else if (statusInfo.status === 0) {
-                info.setPrivateModal(true)
-                info.setMessage('You have already requested to join');
-              } else if (statusInfo.status === 2) {
-                info.setPrivateModal(true)
-                info.setMessage('Unfortunately, you have been denied to join.')
-              } else {
-                info.setPrivateModal(true)
-                info.setMessage('You are not able to view this private club.')
-              }
-            }else{
+            //   const userId = Number(localStorage.getItem("UserId"))
+            const clubDisplayedInfo = await specifiedClub(club.id);
+            const postInfo = await getRecentClubPosts(club.id)
+            info.setSelectedPostId(null)
+            info.setDisplayedClub(clubDisplayedInfo);
+            info.setDisplayedPosts(postInfo)
+            if (clubDisplayedInfo.isPublic === false && clubDisplayedInfo.leaderId !== userId) {
+                console.log(club.id, userId)
+                const statusInfo = await getStatusInClub(club.id, userId);
+                info.setStatus(statusInfo)
+                if (statusInfo.status === 1) {
+                    info.setPrivateModal(false);
+                } else if (statusInfo.status === 0) {
+                    info.setPrivateModal(true)
+                    info.setMessage('You have already requested to join');
+                } else if (statusInfo.status === 2) {
+                    info.setPrivateModal(true)
+                    info.setMessage('Unfortunately, you have been denied to join.')
+                } else {
+                    info.setPrivateModal(true)
+                    info.setMessage('You are not able to view this private club.')
+                }
+            } else {
                 info.setPrivateModal(false)
-              }
+            }
         } catch (error) {
-    
+
         }
-      };
+    };
 
 
+    // DISPLAY USER INFO
     useEffect(() => {
-        let userId = Number(localStorage.getItem("UserId"));
+        const localUserId = Number(localStorage.getItem("UserId"));
+        const paramUserId = params.userId;
+
         const fetchedUser = async () => {
-            const user = await getUserInfo(userId);
-            info.setDisplayedUser(user);
-            // console.log("User data updated:", user);
+            let user: IUserData;
+            if (localUserId == paramUserId) {
+                setIsYou(true);
+                user = await getUserInfo(localUserId);
+            } else {
+                setIsYou(false);
+                user = await getUserInfo(paramUserId);
+            }
+
+            if (user) {
+                setUserData(user)
+            }
         };
         fetchedUser();
+        checkAssociation();
+        checkRequested();
 
         // handling resize
         if (typeof window !== 'undefined') {
@@ -201,7 +221,7 @@ const ProfilePage = (props: any) => {
             window.addEventListener('resize', handleResize);
             return () => window.removeEventListener('resize', handleResize);
         }
-    }, []);
+    }, [user]);
 
     const fetchUserClubs = async (userId: number | undefined) => {
         try {
@@ -227,14 +247,15 @@ const ProfilePage = (props: any) => {
         }
     };
 
+    // SHOW CLUBS
     useEffect(() => {
         const fetchData = async () => {
             if (showClubs) {
                 setIsLoadingClubs(true)
                 try {
-                    const userId = Number(localStorage.getItem("UserId"));
-                    const userClubs = await fetchUserClubs(userId);
-                    const leaderClubs = await fetchClubsbyLeader(userId);
+                    // const userId = Number(localStorage.getItem("UserId"));
+                    const userClubs = await fetchUserClubs(user);
+                    const leaderClubs = await fetchClubsbyLeader(user);
 
                     const allClubs = [...userClubs, ...leaderClubs];
 
@@ -264,9 +285,10 @@ const ProfilePage = (props: any) => {
         fetchData();
     }, [showClubs]);
 
+    // DISPLAY FAVORITED MANGAS
     useEffect(() => {
         const fetchManga = async () => {
-            let user = Number(localStorage.getItem("UserId"));
+            // let user = Number(localStorage.getItem("UserId"));
 
             const completedManga = await getCompletedManga(user);
             const allCompleted = await Promise.all(
@@ -281,7 +303,6 @@ const ProfilePage = (props: any) => {
                 })
             );
             setCompleted(allCompleted);
-            // console.log(allCompleted)
 
             const ongoingManga = await getInProgessManga(user);
             const allOngoing = await Promise.all(
@@ -296,7 +317,6 @@ const ProfilePage = (props: any) => {
                 })
             );
             setOngoing(allOngoing);
-            // console.log(allOngoing)
         };
 
 
@@ -323,6 +343,66 @@ const ProfilePage = (props: any) => {
             setFriendBool(false);
         }
     };
+
+    const checkAssociation = async () => {
+        let userId = Number(localStorage.getItem("UserId"));
+        try {
+            const fetchFriends = await getAcceptedFriends(user);
+            setFriends(fetchFriends);
+
+            if (userData) {
+                const friend = fetchFriends.find(friend => friend.id === userId)
+                setIsFriend(!!friend)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // HANDLES ADDING FRIENDS
+    const handleAddRequest = async () => {
+        let userId = Number(localStorage.getItem("UserId"));
+        if (info.displayedUser) {
+            try {
+                const addFriendApi = await addFriend(userId, user)
+                setRequested(true);
+                console.log(addFriendApi)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
+    // CHECKS ALREADY PENDING
+    const checkRequested = async () => {
+        let userId = Number(localStorage.getItem("UserId"));
+        if (info.displayedUser) {
+            try {
+                const getPending = await getPendingFriends(user);
+                const requested = getPending.find(user => user.id === userId)
+
+                if (requested) {
+                    setRequested(true);
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
+    const handleDeleteFriend = async () => {
+        let userId = Number(localStorage.getItem("UserId"));
+        try {
+            if (isFriend) {
+                const unfriendUser = await deleteAsFriend(user, userId)
+                console.log(unfriendUser)
+            }
+            checkAssociation()
+            setReRenderFriend(!reRenderFriend)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const viewAllFriends = () => {
         // same function as openFriendSearch, but for mobile
@@ -354,29 +434,33 @@ const ProfilePage = (props: any) => {
                             <div className='flex flex-col justify-center mb-10'>
                                 <div className='flex justify-center'>
                                     <Image
-                                        src={info.displayedUser?.profilePic || '/noprofile.jpg'}
+                                        src={userData?.profilePic || '/noprofile.jpg'}
                                         alt='profile image'
                                         width={150}
                                         height={150}
                                         className='pfp shadow-md'
                                     />
                                 </div>
-                                <div className='text-center mt-5'>
+                                <div className='text-center mt-5 flex flex-col justify-center items-center'>
                                     <div className='inline-flex'>
-                                        <h1 className='text-[28px] font-mainFont font-bold'>{info.displayedUser?.username}</h1>
+                                        <h1 className='text-[28px] font-mainFont font-bold'>{userData?.username}</h1>
                                         <Tooltip onClick={editSettingsPage} title='Edit Profile' placement='right'>
                                             <EditIcon className='cursor-pointer mt-2 ml-1' />
 
                                         </Tooltip>
                                     </div>
 
-                                    <h2 className='text-[22px] font-mainFont'>{`${info.displayedUser?.firstName} ${info.displayedUser?.lastName}`}</h2>
-                                    <div className='mt-3'>
-                                        {!isMyProfile &&
-                                            <button className='darkBlue text-white py-1 px-3 rounded-2xl'>Add as Friend <AddIcon />
-
-                                            </button>}
-                                    </div>
+                                    <h2 className='text-[22px] font-mainFont'>{`${userData?.firstName} ${userData?.lastName}`}</h2>
+                                    {isFriend && <div onClick={handleDeleteFriend} className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed hover:bg-rose-200 cursor-pointer hover:shadow-md'> Unfriend
+                                    </div>}
+                                    {(!isFriend && !requested && !isYou) && <div className='mt-3 mb-5'>
+                                        <button onClick={handleAddRequest} className='flex items-center justify-center darkBlue text-white font-mainFont py-1 px-3 rounded-2xl hover:bg-paleblue hover:text-darkblue hover:font-poppinsMed'>Add as Friend <AddIcon sx={{ fontSize: 20 }} />
+                                        </button>
+                                    </div>}
+                                    {(requested) && <div className='mt-3 mb-5'>
+                                        <button className='flex items-center justify-center py-1 px-3 rounded-2xl bg-paleblue text-darkblue font-poppinsMed'>Requested!
+                                        </button>
+                                    </div>}
                                 </div>
                             </div>
 
@@ -387,12 +471,12 @@ const ProfilePage = (props: any) => {
                                         <h3 className='text-2xl font-mainFont font-semibold'>Friends</h3>
                                     </div>
                                     <div className='me-5'>
-                                        <AddIcon fontSize='large' className='addI' onClick={() => openFriendSearch()} />
+                                        {isYou && <AddIcon fontSize='large' className='addI' onClick={() => openFriendSearch()} />}
                                     </div>
                                 </div>
                                 <div className="bg-white border-8 border-ivory rounded-lg py-[5px] h-72 overflow-y-auto customScroll">
                                     {/* displays 4 friends at a time ? */}
-                                    <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} reRenderFriend={true}/>
+                                    <FriendsComponent userId={user} isCurrentUser={userData?.id === userData?.id} searchedUser={userData?.id} reRenderFriend={true} />
                                 </div>
                             </div>
 
@@ -405,7 +489,7 @@ const ProfilePage = (props: any) => {
 
                                 <div className='border-ivory rounded-lg bg-white border-8 md:h-36 h-48 flex md:flex-row flex-col justify-start md:justify-center md:items-center '>
                                     <div className='grid md:grid-cols-3 grid-cols-1 gap-3 md:gap-10 overflow-y-auto customScroll'>
-                                        <FriendsComponent isCurrentUser={info.selectedUser?.id === info.displayedUser?.id} searchedUser={info.displayedUser?.id} reRenderFriend={true}/>
+                                        <FriendsComponent userId={user} isCurrentUser={userData?.id === userData?.id} searchedUser={userData?.id} reRenderFriend={true} />
                                     </div>
                                 </div>
                             </div>

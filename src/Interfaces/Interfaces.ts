@@ -209,6 +209,17 @@ export interface IGetManga {
     status: string
 }
 
+export interface IMangaChapters {
+    id: string,
+    attributes: {
+        volume: number | null,
+        chapterNumber: number,
+        title: string,
+        publishedAt: Date,
+        updatedAt: Date
+    }
+}
+
 export interface IPostLikes {
     likesCount: number
     likedByUsers: ILikedByUsers[]

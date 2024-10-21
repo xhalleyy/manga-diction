@@ -1,30 +1,33 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { NavbarComponent } from '../components/NavbarComponent'
+import { NavbarComponent } from '../../components/NavbarComponent'
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import { grey, brown } from '@mui/material/colors';
 import { Dropdown, Modal, Button, CustomFlowbiteTheme, Tabs, Avatar, Spinner } from 'flowbite-react';
-import PostsComponent from '../components/PostsComponent';
-import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByCategory, getPostsByClubId, getPostsByTags, getPostsbyComments, getPostsbyMostLiked, getStatusInClub, getUserInfo, getUsersByUsername } from '@/utils/DataServices';
-import { IPosts, IStatus, IUserData } from '@/Interfaces/Interfaces';
+import { AddUserToClub, GetLikesByPost, RemoveMember, deleteClub, getClubMembers, getPostsByCategory, getPostsByClubId, getPostsByTags, getPostsbyComments, getPostsbyMostLiked, getStatusInClub, getUserInfo, getUsersByUsername, specifiedClub } from '@/utils/DataServices';
+import { IClubs, IPosts, IStatus, IUserData } from '@/Interfaces/Interfaces';
 import { useClubContext } from '@/context/ClubContext';
 import Image from 'next/image'
-import CreatePostComponent from '../components/CreatePostComponent';
-import EditClubSettingsComponent from '../components/EditClubSettingsComponent';
 import { Chocolate, Planet } from 'react-kawaii';
 import { Alert } from '@mui/material';
-import PostRepliesComponent from '../components/PostRepliesComponent';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
 import SearchIcon from "@mui/icons-material/Search";
 import { File } from 'react-kawaii'
 import { checkToken } from '@/utils/token';
 import ScrollToTop from "react-scroll-to-top";
 import { Browser } from 'react-kawaii'
+import CreatePostComponent from '@/app/components/CreatePostComponent';
+import EditClubSettingsComponent from '@/app/components/EditClubSettingsComponent';
+import PostRepliesComponent from '@/app/components/PostRepliesComponent';
+import PostsComponent from '@/app/components/PostsComponent';
 
-const ClubPage = () => {
-  const { displayedClub, selectedPostId, setSelectedPostId, setSelectedUser, setDisplayedPosts, displayedPosts, status, message, setPrivateModal, privateModal } = useClubContext();
+const ClubPage = ({ params }: { params: { clubId: number } }) => {
+  const clubId = params.clubId;
+
+  const [club, setClub] = useState<IClubs>({} as IClubs);
+  const { selectedPostId, setSelectedPostId, setSelectedUser, status, message, setPrivateModal, privateModal } = useClubContext();
   const [joined, setJoined] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [posts, setPosts] = useState<IPosts[]>([]);
@@ -56,10 +59,10 @@ const ClubPage = () => {
   const router = useRouter();
 
   // CLUB MEMBERS, JOINING, CHECKING IF JOINED
-  const fetchClubMembers = async (clubId: number | undefined) => {
+  const fetchClubMembers = async () => {
     try {
       const [leaderInfo, memberIds] = await Promise.all([
-        getUserInfo(displayedClub?.leaderId),
+        getUserInfo(club.leaderId),
         getClubMembers(clubId),
       ]);
 
@@ -83,15 +86,13 @@ const ClubPage = () => {
     }
   };
 
-
-
   const handleJoinBtn = async () => {
     try {
       let userId = Number(localStorage.getItem("UserId"));
-      const joinUser = await AddUserToClub(userId, displayedClub?.id, false);
+      const joinUser = await AddUserToClub(userId, club.id, false);
       setJoined(true);
       setNonMemberModal(false)
-      fetchClubMembers(displayedClub?.id)
+      fetchClubMembers()
 
     } catch (error) {
       console.log(error);
@@ -123,13 +124,13 @@ const ClubPage = () => {
   const handleLeave = async () => {
     let userId = Number(localStorage.getItem("UserId"));
     if (!isLeader) {
-      const removeMember = await RemoveMember(userId, displayedClub?.id);
+      const removeMember = await RemoveMember(userId, club.id);
       setOpenModal(false);
       setJoined(false);
     } else {
-      if (userId === displayedClub?.leaderId) {
+      if (userId === club.leaderId) {
         try {
-          await deleteClub(displayedClub);
+          await deleteClub(club);
           router.push('/Dashboard');
         } catch (error) {
           console.error('Error deleting club, ', error);
@@ -147,18 +148,13 @@ const ClubPage = () => {
 
   // SEARCH, ADDING MEMBER TO CLUB, MEMBER CLICKS TO PROFILE
   const handleMemberClick = (user: IUserData | null) => {
-    if (user!.id === Number(localStorage.getItem("UserId"))) {
-      router.push('/ProfilePage')
-    } else {
-      setSelectedUser(user);
-      router.push('/SearchedUser')
-    }
+    router.push(`/Profile/${user!.id}`)
   }
 
   const searchUser = async () => {
     try {
       const data = await getUsersByUsername(search);
-      const filteredUsers = data.filter(user => user.id !== displayedClub?.leaderId && !members.some(member => member.id === user.id));
+      const filteredUsers = data.filter(user => user.id !== club.leaderId && !members.some(member => member.id === user.id));
       setSearchedUsers(filteredUsers);
       // setSearch(data);
     } catch (error) {
@@ -167,14 +163,13 @@ const ClubPage = () => {
   }
 
   const handleUserClick = (user: IUserData) => {
-    setSelectedUser(user);
-    router.push('/SearchedUser');
+    router.push(`/Profile/${user!.id}`)
   }
 
   const handleLeaderAdds = async (userId: number) => {
     try {
-      const addUser = await AddUserToClub(userId, displayedClub?.id, true)
-      fetchClubMembers(displayedClub?.id)
+      const addUser = await AddUserToClub(userId, club.id, true)
+      fetchClubMembers()
       setAddSuccess(true);
     } catch (error) {
       console.log(error)
@@ -210,7 +205,7 @@ const ClubPage = () => {
   // if seeMembers is true, then we fetch the club members based on club's id and it rerenders when seeMembers is changed
   useEffect(() => {
     if (seeMembers) {
-      fetchClubMembers(displayedClub?.id);
+      fetchClubMembers();
     }
   }, [seeMembers])
 
@@ -223,22 +218,26 @@ const ClubPage = () => {
   useEffect(() => {
 
     let userId = Number(localStorage.getItem("UserId"));
-
-    if (displayedClub?.leaderId === userId) {
-      setIsLeader(true);
+    const fetchClub = async () => {
+      const clubData = await specifiedClub(clubId);
+      setClub(clubData);
+      if (clubData.leaderId === userId) {
+        setIsLeader(true);
+      }
+      
     }
-
-    const fetchedData = async (clubId: number | undefined) => {
+    
+    const fetchedData = async () => {
       setIsLoadingPost(true)
       try {
         if (clubId !== undefined) {
           // POSTS
-          // const getPosts = await getPostsByClubId(clubId);
-          setPosts(displayedPosts);
-          setInitialPosts(displayedPosts)
+          const getPosts = await getPostsByClubId(clubId);
+          setPosts(getPosts);
+          setInitialPosts(getPosts)
 
           // MEMBER IDS OF EACH POSTS TO GET USER INFO
-          const memberIds = displayedPosts.map((post) => post.userId);
+          const memberIds = getPosts.map((post) => post.userId);
           const membersInfo = await Promise.all(
             memberIds.map(async (memberId) => {
               const member = await getUserInfo(memberId);
@@ -259,8 +258,8 @@ const ClubPage = () => {
       }
     };
 
-
-    fetchedData(displayedClub?.id);
+    fetchedData();
+    fetchClub();
 
     // checks if user is joined 
     const checkJoined = async (clubId: number | undefined) => {
@@ -274,13 +273,13 @@ const ClubPage = () => {
       }
     }
 
-    if ((displayedClub?.isPublic === false && isLeader) || (displayedClub?.isPublic === false && joined)) {
+    if ((club.isPublic === false && isLeader) || (club.isPublic === false && joined)) {
       setPrivateModal(false)
     }
 
-    // privateModal(displayedClub?.id);
-    checkJoined(displayedClub?.id)
-  }, [displayedClub?.id, displayedPosts])
+    // privateModal(club.id);
+    checkJoined(club.id)
+  }, [clubId])
 
 
   useEffect(() => {
@@ -288,9 +287,9 @@ const ClubPage = () => {
     const checkAge = async (userId: number) => {
       try {
         const user = await getUserInfo(userId)
-        if (user.age > 18 && displayedClub?.isMature === true) {
+        if (user.age > 18 && club.isMature === true) {
           setAdultModal(false);
-        } else if (user.age < 18 && (displayedClub?.isMature === true)) {
+        } else if (user.age < 18 && (club.isMature === true)) {
           setAdultModal(true);
         } else {
           setAdultModal(false);
@@ -300,7 +299,7 @@ const ClubPage = () => {
       }
     }
     checkAge(userId);
-  }, [joined, displayedClub?.isMature]);
+  }, [joined, club.isMature]);
 
   const goBackToClubs = () => {
     router.push('BrowseClubs')
@@ -309,7 +308,7 @@ const ClubPage = () => {
   const requestToJoin = async () => {
     let userId = Number(localStorage.getItem("UserId"))
     try {
-      const addUser = await AddUserToClub(userId, displayedClub?.id, false)
+      const addUser = await AddUserToClub(userId, club.id, false)
       console.log(addUser)
       console.log("You requested to join this club")
       router.push('BrowseClubs')
@@ -323,7 +322,7 @@ const ClubPage = () => {
 
     try {
       if (option === "Mostlikes") {
-        const getPostsbyLikes = await getPostsbyMostLiked(displayedClub!.id);
+        const getPostsbyLikes = await getPostsbyMostLiked(club!.id);
         newOrder = getPostsbyLikes.map(post => ({
           id: post.postId,
           userId: post.user.id,
@@ -348,7 +347,7 @@ const ClubPage = () => {
       } else if (option === "Least Recently Updated") {
         newOrder.sort((a, b) => new Date(a.dateUpdated).getTime() - new Date(b.dateUpdated).getTime());
       } else if (option === "Mostcomments") {
-        const getPostsbyMostComments = await getPostsbyComments(displayedClub!.id);
+        const getPostsbyMostComments = await getPostsbyComments(club!.id);
         newOrder = getPostsbyMostComments.map(post => ({
           id: post.postId,
           userId: post.user.id,
@@ -629,13 +628,13 @@ const ClubPage = () => {
 
           <div className={pageSize ? 'hidden' : 'pt-4'}>
             <div className=''>
-              <p className='text-xl font-mainFont text-darkbrown'>{displayedClub?.isPublic ? 'Public' : 'Private'}</p>
+              <p className='text-xl font-mainFont text-darkbrown'>{club.isPublic ? 'Public' : 'Private'}</p>
             </div>
           </div>
 
           <div className={pageSize ? 'flex pt-4' : 'contents'}>
             <div className={pageSize ? 'flex-1 items-end pt-3' : 'py-2'}>
-              <h1 className='font-poppinsMed text-3xl text-darkbrown'>{displayedClub?.clubName}</h1>
+              <h1 className='font-poppinsMed text-3xl text-darkbrown'>{club.clubName}</h1>
             </div>
             <div className='flex flex-row gap-3'>
               {isLeader ?
@@ -665,13 +664,13 @@ const ClubPage = () => {
 
           <div className={pageSize ? 'py-1.5' : 'hidden'}>
             <div className='bg-ivory inline-block rounded-xl'>
-              <p className='text-lg font-mainFont text-darkbrown px-4'>{displayedClub?.isPublic ? 'Public' : 'Private'}</p>
+              <p className='text-lg font-mainFont text-darkbrown px-4'>{club.isPublic ? 'Public' : 'Private'}</p>
             </div>
           </div>
 
           <div className={pageSize ? 'hidden' : 'bg-white/80 border-8 border-ivory rounded-xl mt-4'}>
             <img
-              src={displayedClub?.image || '/dummyImg.jpg'}
+              src={club.image || '/dummyImg.jpg'}
               alt='profile image'
               className='object-fit w-full shadow-lg rounded-md'
             />
@@ -682,7 +681,7 @@ const ClubPage = () => {
           <div className={pageSize ? 'grid grid-cols-7 pt-3 gap-5 pb-5' : 'hidden'}>
             {!seeMembers ? <div className='col-span-5'>
               {((createPost && joined) || (createPost && isLeader)) && (
-                <CreatePostComponent setPosts={setPosts} setCreatePost={setCreatePost} />
+                <CreatePostComponent setPosts={setPosts} setCreatePost={setCreatePost} club={clubId} />
               )}
               <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
                 {!selectedPostId && <div className='flex justify-end items-center'>
@@ -706,7 +705,7 @@ const ClubPage = () => {
                   {selectedPostId ? (
                     (isLeader || joined) ? (
                       <div>
-                        <button className='bg-offwhite px-3 py-1.5 mt-2 font-poppinsMed text-darkbrown rounded-md hover:bg-paleblue' onClick={() => setSelectedPostId(null)}>Back</button>
+                        <button className='bg-offwhite px-3 py-1.5 mt-2 font-poppinsMed text-darkbrown rounded-md hover:bg-paleblue hover:cursor-pointer' onClick={() => setSelectedPostId(null)}>Back</button>
                         <PostRepliesComponent />
                       </div>
                     ) : null
@@ -835,11 +834,11 @@ const ClubPage = () => {
               <h1 className='font-mainFont text-lg ps-3 text-darkbrown'>Description:</h1>
               <div className='bg-white/80 border-8 border-ivory rounded-xl'>
                 <img
-                  src={displayedClub?.image || '/dummyImg.jpg'}
+                  src={club.image || '/dummyImg.jpg'}
                   alt='profile image'
                   className='object-fit w-full shadow-lg'
                 />
-                <p className='p-2.5 font-poppinsMed text-darkbrown text-lg mt-1'>{displayedClub?.description}</p>
+                <p className='p-2.5 font-poppinsMed text-darkbrown text-lg mt-1'>{club.description}</p>
               </div>
 
               <div>
@@ -869,7 +868,7 @@ const ClubPage = () => {
                       </div>
 
                       <div className='font-mainFont col-span-2'>
-                        Are you sure you want to delete <br /> {displayedClub?.clubName}?
+                        Are you sure you want to delete <br /> {club.clubName}?
                       </div>
                     </div>
                     :
@@ -879,7 +878,7 @@ const ClubPage = () => {
                       </div>
 
                       <div className='font-mainFont col-span-2'>
-                        Are you sure you want to leave <br /> {displayedClub?.clubName}?
+                        Are you sure you want to leave <br /> {club.clubName}?
                       </div>
                     </div>}
 
@@ -904,7 +903,7 @@ const ClubPage = () => {
               <Tabs.Item className='tabsFont' title='Posts'>
                 <div className=''>
                   {((createPost && joined) || (createPost && isLeader)) && (
-                    <CreatePostComponent setPosts={setPosts} setCreatePost={setCreatePost} />
+                    <CreatePostComponent setPosts={setPosts} setCreatePost={setCreatePost} club={clubId} />
                   )}
 
                   <div className='bg-mutedblue px-5 pb-5 pt-2 rounded-xl'>
@@ -998,7 +997,7 @@ const ClubPage = () => {
                   <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> Description: </p>
 
                   <div className='bg-white/80  rounded-lg'>
-                    <p className='p-2.5 font-poppinsMed  text-darkbrown text-lg'>{displayedClub?.description}</p>
+                    <p className='p-2.5 font-poppinsMed  text-darkbrown text-lg'>{club.description}</p>
                   </div>
 
                   <p className='text-darkbrown text-lg font-bold font-poppinsMed p-2'> {addMember ? 'Invite Members:' : 'Members:'}</p>

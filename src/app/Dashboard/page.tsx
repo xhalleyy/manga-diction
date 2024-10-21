@@ -91,7 +91,8 @@ const Dashboard = () => {
       const postsData = await getPostsByClubId(clubId);
       setDisplayedClub(clubData);
       setDisplayedPosts(postsData)
-      router.push('/ClubPage')
+      // router.push('/ClubPage')
+      router.push(`/Clubs/${clubId}`);
     };
 
     fetchAndSetClubData();

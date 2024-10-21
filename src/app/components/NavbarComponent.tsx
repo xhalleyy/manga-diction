@@ -10,6 +10,7 @@ import DrawerComponent from "./DrawerComponent";
 import { useClubContext } from "@/context/ClubContext";
 import SearchMangaModalComponent from "./SearchMangaModalComponent";
 import NotificationComponent from "./NotificationComponent";
+import Image from 'next/image';
 
 export function NavbarComponent() {
 
@@ -67,13 +68,14 @@ export function NavbarComponent() {
     <Navbar className={pageSize ? "bg-offwhite font-mainFont text-darkbrown !pt-6 !px-8" : 'font-mainFont bg-ivory !pt-6 text-darkbrown drop-shadow-md'} fluid rounded>
       <Navbar.Brand onClick={homePage} className="cursor-pointer">
         <div className="flex items-center sm:grid-cols-3">
-          <img className={pageSize ? "w-14 h-14" : "w-10 h-10"} src='./logo.png' alt="Logo" />
+          {/* <img className={pageSize ? "w-14 h-14" : "w-10 h-10"} src='./logo.png' alt="Logo" /> */}
+          <Image src="/logo.png" alt="Logo" width={56} height={56} />
           <span style={pageSize ? {fontSize: '30px'} : {fontSize: '27px'}} className={pageSize ? "self-center whitespace-nowrap font-semibold dark:text-white pl-4" : "self-center whitespace-nowrap font-semibold dark:text-white pl-2"}>MangaDiction!</span>
         </div>
       </Navbar.Brand>
 
       <Navbar.Collapse className="hidden md:hidden lg:flex lg:flex-grow lg:items-center xl:content-end lg:justify-end">
-        <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-darkbrown navhover" as={Link} href="BrowseClubs">Browse Clubs</Navbar.Link>
+        <Navbar.Link className="text-xl font-bold mr-3 mt-2 text-darkbrown navhover" as={Link} href="/BrowseClubs" >Browse Clubs</Navbar.Link>
         <Navbar.Link onClick={handleSearchModal} className="text-xl text-darkbrown font-bold mr-3 mt-2 navhover" href="#">Search Manga</Navbar.Link>
 
         <div className="mt-2">
@@ -81,7 +83,7 @@ export function NavbarComponent() {
         </div>
 
         <div className="flex gap-2.5">
-          <img src={info.displayedUser?.profilePic || '/noprofile.jpg'} alt="Profile Picture" className="cursor-pointer w-11 h-11 shadow-lg rounded-3xl" onClick={() => router.push('/ProfilePage')} />
+          <img src={info.displayedUser?.profilePic || '/noprofile.jpg'} alt="Profile Picture" className="cursor-pointer w-11 h-11 shadow-lg rounded-3xl" onClick={() => router.push(`/Profile/${info.displayedUser?.id}`)} />
 
           <div className="mt-3">
             <Dropdown className="border-8 border-offwhite rounded-xl w-56"

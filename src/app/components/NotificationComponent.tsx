@@ -130,7 +130,7 @@ const NotificationComponent = () => {
 
     const SeeComments = async () => {
         const data = await GetReplyNotification(Number(localStorage.getItem("UserId")));
-        console.log(data)
+        // console.log(data)
         setRecentReplies(data)
     }
 
@@ -144,13 +144,13 @@ const NotificationComponent = () => {
 
     const handleFriends = async (requestId: number, decision: string) => {
         const data = await handlePendingFriends(requestId, decision);
-        console.log(data);
+        // console.log(data);
         seePendingFriends();
     };
 
     const handleClubRequests = async (requestId: number, decision: string) => {
         const data = await handlePendingMemberRequests(requestId, decision);
-        console.log(data)
+        // console.log(data)
         seePendingRequests();
     }
 

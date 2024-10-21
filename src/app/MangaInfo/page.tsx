@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { NavbarComponent } from '../components/NavbarComponent'
 import { Badge, Button } from 'flowbite-react'
 import { useClubContext } from '@/context/ClubContext'
-import { addMangaFav, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
-import { IFavManga, IManga } from '@/Interfaces/Interfaces'
+import { addMangaFav, getAllChapters, getCompletedManga, getInProgessManga, removeFavManga, specificManga } from '@/utils/DataServices'
+import { IFavManga, IManga, IMangaChapters } from '@/Interfaces/Interfaces'
 import { notFound } from 'next/navigation'
 import { checkToken } from '@/utils/token'
 
@@ -19,6 +19,7 @@ const MangaInfo = () => {
     const [completed, setCompleted] = useState<boolean>(false);
     const [isReading, setIsReading] = useState<boolean>(false);
     const [pageSize, setPageSize] = useState<boolean>(false);
+    const [chapters, setChapters] = useState<IMangaChapters[]>([]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -44,7 +45,18 @@ const MangaInfo = () => {
             }
         };
 
+        const fetchMangaChapters = async () => {
+            try {
+                const data = await getAllChapters(mangaId);
+                console.log(data);
+                setChapters(data)
+            } catch (error) {
+                console.log('Error fetching data:', error);
+            }
+        }
+
         fetchMangaInfo();
+        fetchMangaChapters();
     }, [mangaId]);
 
     useEffect(() => {
@@ -153,7 +165,7 @@ const MangaInfo = () => {
                         </div>
                         <div className={pageSize ? 'flex lg:justify-end xl:justify-center justify-center items-center lg:pt-8 lg:mt-0 mt-10 flex-col w-full text xl:w-[300px] mx-auto ' : 'my-8'}>
                             <div className={pageSize ? 'flex justify-center lg:px-0 px-5' : 'flex justify-center px-5'}>
-                                <Button className={pageSize ? 'bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont w-full ' : 'bg-darkblue enabled:hover:bg-darkerblue rounded-2xl focus:ring-0 font-mainFont w-80' } onClick={() => setFavBool(!favBool)} disabled={isReading && completed} >
+                                <Button className={pageSize ? 'bg-darkblue rounded-2xl enabled:hover:bg-darkerblue focus:ring-0 px-12 font-mainFont w-full ' : 'bg-darkblue enabled:hover:bg-darkerblue rounded-2xl focus:ring-0 font-mainFont w-80'} onClick={() => setFavBool(!favBool)} disabled={isReading && completed} >
                                     <span className={(isReading || completed) ? 'text-xl lg:text-nowrap px-5' : 'text-xl lg:text-nowrap'}>{(isReading || completed) ? "Favorited ✔" : "Favorite Manga +"}</span>
                                 </Button>
                             </div>
@@ -211,6 +223,16 @@ const MangaInfo = () => {
                             <p className='font-bold'> Last Updated:
                                 <span className='font-normal'> {updateDT()}</span>
                             </p>
+                        </div>
+                        <div className='mt-5 bg-white border-darkbrown border-2 rounded-lg h-[400px] overflow-y-auto'>
+                            {chapters.map((chapter) => {
+                                const { chapterNumber, title } = chapter.attributes;
+                                return (
+                                    <div key={chapter.id} className='font-mainFont px-4 p-2 hover:text-darkbrown hover:bg-lightbrown'>
+                                        {`Chapter ${chapterNumber}: ${title}`}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

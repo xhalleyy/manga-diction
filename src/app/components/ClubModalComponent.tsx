@@ -132,10 +132,8 @@ function ClubModalComponent() {
         setClubItems(prevClubItems => [...prevClubItems, newClub]);
 
         try {
-            await createClub(newClub)
-
-                clubData.setDisplayedClub(newClub)
-                router.push('/ProfilePage')
+            const club: IClubs = await createClub(newClub)
+            router.push(`/Club/${club.id}`)
             
         } catch (error) {
             alert("Creating Group Unsuccessful!")
